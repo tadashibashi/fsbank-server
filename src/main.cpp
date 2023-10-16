@@ -1,9 +1,10 @@
 #include <iostream>
-#include <crow.h>
 #include <fsbank.h>
 #include <fsbank_errors.h>
 
 #include <thread>
+
+#include "server.h"
 
 #define FSB_CHECK(result) do { \
         const FSBANK_RESULT res = (result); \
@@ -25,4 +26,8 @@ int main (int argc, char *argv[])
 
     FSB_CHECK ( FSBank_Release() );
     std::cout << "FSBank Released.\n";
+
+    Insound::getApp().port(1234).multithreaded().run();
+
+    return 0;
 }
