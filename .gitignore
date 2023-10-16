@@ -8,3 +8,5 @@ build/
 *.sublime-workspace
 .cache/
 .fscache/
+
+src/definitions.h
