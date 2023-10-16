@@ -1,0 +1,23 @@
+{
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	],
+
+	"settings": {
+		"open_context_path": {
+			"directories": [
+				"src"
+			]
+		}
+	},
+
+	"build_systems": [
+		{
+			"name": "Config",
+			"shell_cmd": "cmake -E make_directory $project_path/build && cmake -G Ninja -S $project_path -B $project_path/build -DCMAKE_EXPORT_COMPILE_COMMANDS=1"
+		}
+	]
+}
