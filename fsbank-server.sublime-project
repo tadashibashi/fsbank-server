@@ -21,11 +21,11 @@
 		},
 		{
 			"name": "Build",
-			"shell_cmd": "cmake --build $project_path/build"
+			"shell_cmd": "cmake --build $project_path/build --target fsbank-server"
 		},
 		{
 			"name": "Run",
-			"shell_cmd": "cmake --build $project_path/build && $project_path/build/fsbank-server"
+			"shell_cmd": "cmake --build $project_path/build && $project_path/build/fsbank-server --target fsbank-server"
 		}
 	]
 }

@@ -4,8 +4,9 @@ project (fsbank-server)
 set (CMAKE_CXX_STANDARD 20)
 
 # Include submodule libraries
-add_subdirectory(lib)
+add_subdirectory (lib)
 
 # FSBank server setup
-add_executable(${PROJECT_NAME} src/main.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE fmod fsbank Crow)
+file (GLOB_RECURSE FSBANK_SERVER_SRC src/*.cpp)
+add_executable (${PROJECT_NAME} ${FSBANK_SERVER_SRC})
+target_link_libraries (${PROJECT_NAME} PRIVATE fmod fsbank Crow)
