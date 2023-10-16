@@ -5,6 +5,8 @@
 #include <thread>
 
 #include "server.h"
+#include <cstdlib>
+
 
 #define FSB_CHECK(result) do { \
         const FSBANK_RESULT res = (result); \
@@ -14,7 +16,7 @@
         } \
     } while(0)
 
-
+const int DefaultPort = 1234;
 
 int main (int argc, char *argv[])
 {
@@ -27,7 +29,21 @@ int main (int argc, char *argv[])
     FSB_CHECK ( FSBank_Release() );
     std::cout << "FSBank Released.\n";
 
-    Insound::getApp().port(1234).multithreaded().run();
+    int PORT;
+    if (auto portEnv = std::getenv("PORT"))
+    {
+        try {
+            PORT = std::atoi(portEnv);
+        } catch (...) {
+            PORT = DefaultPort;
+        }
+    }
+    else
+    {
+        PORT = DefaultPort;
+    }
+
+    Insound::getApp().port(PORT).multithreaded().run();
 
     return 0;
 }
