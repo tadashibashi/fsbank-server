@@ -8,4 +8,4 @@ add_subdirectory(lib)
 
 # FSBank server setup
 add_executable(${PROJECT_NAME} src/main.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE Crow)
+target_link_libraries(${PROJECT_NAME} PRIVATE fmod fsbank Crow)
