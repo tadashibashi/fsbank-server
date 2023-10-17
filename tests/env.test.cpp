@@ -1,17 +1,17 @@
 #include "insound/env.h"
+#include "catch2/catch_test_case_info.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <cstdlib>
 #include <cstring>
 
-TEST_CASE("Read/configure environment variables from file", "[env]")
+TEST_CASE("getEnv reads from the environment", "[getEnv]")
 {
-    SECTION("Test Variables do not exist in environment")
-    {
-        REQUIRE (std::getenv("APPLES") == nullptr);
-        REQUIRE (Insound::getEnv("APPLES", "NULL") == "NULL");
-    }
+    REQUIRE_NOTHROW(Insound::resetEnv("tests/test-env"));
+    REQUIRE (std::getenv("APPLES") == nullptr);
+    REQUIRE (std::getenv("ORANGES") == nullptr);
+    REQUIRE (std::getenv("GRAPES") == nullptr);
 
-    SECTION("getEnv gets environment variable")
+    SECTION("getEnv finds variable")
     {
         setenv ("TestValue", "1234567", true);
         REQUIRE (Insound::getEnv("TestValue") == "1234567");
@@ -20,9 +20,43 @@ TEST_CASE("Read/configure environment variables from file", "[env]")
         REQUIRE (Insound::getEnv("TestValue") == "");
     }
 
+    SECTION("getEnv gets default value when non-existent variable queried")
+    {
+        unsetenv("TestValue");
+        REQUIRE (Insound::getEnv("TestValue", "NULL") == "NULL");
+    }
+}
+
+TEST_CASE("requireEnv reads from the environment", "[requireEnv]")
+{
+    REQUIRE_NOTHROW(Insound::resetEnv("tests/test-env"));
+    REQUIRE (std::getenv("APPLES") == nullptr);
+    REQUIRE (std::getenv("ORANGES") == nullptr);
+    REQUIRE (std::getenv("GRAPES") == nullptr);
+
+
+    SECTION("requireEnv finds variable")
+    {
+        setenv ("TestValue", "1234567", true);
+        REQUIRE (Insound::requireEnv("TestValue") == "1234567");
+    }
+
+    SECTION("requireEnv throws on missing variable")
+    {
+        REQUIRE_THROWS( Insound::requireEnv("ONIONS") );
+    }
+}
+
+TEST_CASE("Read/configure environment variables from file", "[env]")
+{
+    REQUIRE_NOTHROW(Insound::resetEnv("tests/test-env"));
+    REQUIRE (std::getenv("APPLES") == nullptr);
+    REQUIRE (std::getenv("ORANGES") == nullptr);
+    REQUIRE (std::getenv("GRAPES") == nullptr);
+
     SECTION("Test Variables are set when loaded")
     {
-        Insound::configureEnv("tests/test-env");
+        REQUIRE_NOTHROW(Insound::configureEnv("tests/test-env"));
 
         REQUIRE ( Insound::getEnv("APPLES") == "1" );
         REQUIRE ( Insound::getEnv("GRAPES") == "2" );
@@ -33,11 +67,11 @@ TEST_CASE("Read/configure environment variables from file", "[env]")
 
     SECTION("Test Variables are unset via resetEnv")
     {
-        Insound::configureEnv("tests/test-env");
+        REQUIRE_NOTHROW(Insound::configureEnv("tests/test-env"));
 
         REQUIRE ( Insound::getEnv("APPLES") == "1" );
 
-        Insound::resetEnv("tests/test-env");
+        REQUIRE_NOTHROW(Insound::resetEnv("tests/test-env"));
 
         REQUIRE ( std::getenv("APPLES") == nullptr );
     }
