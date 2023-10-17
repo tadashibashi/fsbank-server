@@ -1,5 +1,6 @@
 #include "server.h"
-#include "controllers/auth.h"
+#include <crow/routing.h>
+#include "controllers/api/auth.h"
 
 namespace Insound {
     static crow::Crow<> app;
@@ -14,7 +15,9 @@ namespace Insound {
                 return "Hello from Insound Server!";
             });
 
-            CROW_ROUTE(app, "/api/auth/login")
+            crow::Blueprint auth("api/auth");
+
+            CROW_BP_ROUTE(auth, "/login/email")
                 .methods(crow::HTTPMethod::POST)
                 (Auth::post_login);
 
@@ -36,9 +39,12 @@ namespace Insound {
                 PORT = DefaultPort;
             }
 
+            app.register_blueprint(auth);
+            app.loglevel(crow::LogLevel::Warning);
 
-            app.port(PORT).multithreaded().run();
+            std::cout << "Insound server listening at http://localhost:" << PORT << '\n';
             wasInit = true;
+            app.port(PORT).multithreaded().run();
         }
     }
 }
