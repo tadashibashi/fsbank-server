@@ -3,10 +3,10 @@
 
 namespace Insound {
     class Json : public Poco::JSON::Object, public crow::returnable {
+    public:
         Json(): Poco::JSON::Object(), crow::returnable("application/json") { }
         ~Json() = default;
 
-    public:
         std::string dump() const override;
     };
 }
