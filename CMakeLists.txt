@@ -1,18 +1,15 @@
 cmake_minimum_required (VERSION 3.14)
 
-project (fsbank-server)
+project (insound)
 set (CMAKE_CXX_STANDARD 20)
 
 # Include submodule libraries
 add_subdirectory (lib)
+add_subdirectory (insound)
 
-set (CROW_FEATURES compression)
+# Insound server driver
+add_executable(${PROJECT_NAME}-server main.cpp)
+target_link_libraries(${PROJECT_NAME}-server insound)
 
-# FSBank server setup
-file (GLOB_RECURSE FSBANK_SERVER_SRC src/*.cpp)
-add_executable (${PROJECT_NAME} ${FSBANK_SERVER_SRC})
-target_link_libraries (${PROJECT_NAME} PRIVATE fmod fsbank z Poco::JWT)
-target_compile_definitions(${PROJECT_NAME} PRIVATE "CROW_ENABLE_COMPRESSION=1")
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/lib/Crow/include)
-
-configure_file( ${CMAKE_SOURCE_DIR}/src/definitions.h.in ${CMAKE_SOURCE_DIR}/src/definitions.h)
+# Tests
+add_subdirectory (tests)
