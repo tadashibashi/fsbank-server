@@ -37,6 +37,7 @@ namespace Insound {
 
     void configureEnv(const std::string &path)
     {
+        // Open env file
         auto file = std::fstream(makePath(path));
         if (!file.is_open())
         {
@@ -44,27 +45,34 @@ namespace Insound {
             return;
         }
 
-        // Visit each line of file & set environment variables
+        // Visit each line of file
         while (true)
         {
+            // get current line
             std::string line;
             std::getline(file, line);
+
+            // exit condition
             if (file.eof() || file.bad()) {
                 break;
             }
 
+            // skip empty lines
             if (line.empty()) continue;
 
+            // read name and value
             auto eqPos = line.find_first_of('=');
             std::string name = line.substr(0, eqPos);
             std::string value = line.substr(eqPos+1);
 
+            // commit to environment
             setenv(name.c_str(), value.c_str(), true);
         }
     }
 
     void resetEnv(const std::string &path)
     {
+        // Open env file
         auto file = std::fstream(makePath(path));
         if (!file.is_open())
         {
@@ -72,15 +80,20 @@ namespace Insound {
             return;
         }
 
-        // Visit each line of file & unset environment variables
+        // Visit each line of file
         while (true)
         {
+            // get current line
             std::string line;
             std::getline(file, line);
+
+            // exit condition
             if (file.eof() || file.bad()) break;
 
+            // skip empty lines
             if (line.empty()) continue;
 
+            // read name & unset
             auto eqpos = line.find_first_of('=');
             std::string name = line.substr(0, eqpos);
 
