@@ -10,3 +10,5 @@ build/
 .fscache/
 
 insound/definitions.h
+
+Testing/
