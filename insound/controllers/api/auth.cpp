@@ -1,18 +1,16 @@
-#include "../server.h"
+#include <insound/server.h>
 #include <crow.h>
 
 namespace Insound::Auth {
     crow::response post_login(const crow::request &req)
     {
-        //std::cout << req.headers.find("content-type")->second << '\n';
         auto msg = crow::multipart::message(req);
-        auto password = msg.get_part_by_name("password").body;
-        auto email = msg.get_part_by_name("email").body;
 
-        // it looks like you can't stack files, so they each need a unique name
-        auto file = msg.get_part_by_name("file0").body;
-        auto file2 = msg.get_part_by_name("file1").body;
+        std::string password;
+        std::string email;
+        std::vector<std::string> files;
 
+        // visit each part
         for (const auto &part : msg.part_map) {
             const auto &part_name = part.first;
             const auto &part_value = part.second;
@@ -25,19 +23,29 @@ namespace Insound::Auth {
                 return crow::response(400);
             }
 
+            // check if it has a file name
             auto params_it = headers_it->second.params.find("filename");
             if (params_it == headers_it->second.params.end())
             {
                 // It's a text part
                 std::cout << "part: " << part_name <<  ", value: " << part_value.body << '\n';
+                if (part_name == "password")
+                {
+                    password = part_value.body;
+                }
+                else if (part_name == "email")
+                {
+                    email = part_value.body;
+                }
             }
             else
             {
                 // It's a file
                 std::cout << "part: " << part_name << ", filename: " << params_it->second << '\n';
+                files.emplace_back(part_value.body);
             }
         }
 
-        return crow::response("Password: " + password + ", Email: " + email + ", File: " + file2);
+        return crow::response("Password: " + password + ", Email: " + email + ", File: " + (files.empty() ? "" : files[0]) );
     }
 }
