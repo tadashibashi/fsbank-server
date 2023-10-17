@@ -15,4 +15,4 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC ${CMAKE_SOURCE_DIR}
 )
 
-configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/definitions.h.in ${CMAKE_CURRENT_SOURCE_DIR}/src/definitions.h)
+configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/definitions.h.in ${CMAKE_CURRENT_SOURCE_DIR}/definitions.h)
