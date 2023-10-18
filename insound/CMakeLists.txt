@@ -12,7 +12,7 @@ find_package(asio REQUIRED)
 # FSBank server setup
 file (GLOB_RECURSE FSBANK_SERVER_SRC ./*.cpp)
 add_library (${PROJECT_NAME} STATIC ${FSBANK_SERVER_SRC})
-target_link_libraries (${PROJECT_NAME} PUBLIC fmod fsbank Poco::JWT Poco::Net Poco::NetSSL z asio::asio glaze::glaze)
+target_link_libraries (${PROJECT_NAME} PUBLIC fmod fsbank Poco::JWT Poco::Net Poco::NetSSL z asio::asio glaze::glaze mongocxx_shared)
 target_include_directories(${PROJECT_NAME}
     PUBLIC ${CMAKE_SOURCE_DIR}/lib/Crow/include
     PUBLIC ${CMAKE_SOURCE_DIR}
