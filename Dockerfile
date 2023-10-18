@@ -2,7 +2,7 @@ FROM ubuntu:22.04
 
 # Install dependency libraries
 RUN apt-get update
-RUN apt-get cmake g++ git openssl zlib
+RUN apt-get cmake g++ git openssl zlib libmongoc-dev
 
 COPY . /app
 
