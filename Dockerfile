@@ -2,14 +2,11 @@ FROM ubuntu:22.04
 
 # Install dependency libraries
 RUN apt-get update -y
-RUN apt-get install -y cmake g++ git openssl zlib1g libmongoc-dev
+RUN apt-get install -y cmake g++ openssl zlib1g libmongoc-dev
 
 COPY . /app
 
 WORKDIR /app
-
-# Initialize any submodules
-RUN git submodule update --init --recursive
 
 # Copy dependencies to system lib directory
 COPY ./lib/fmod/lib/linux/libfmod.so.13 /usr/lib/libfmod.so.13
