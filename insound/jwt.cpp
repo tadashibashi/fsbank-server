@@ -35,7 +35,7 @@ namespace Insound::Jwt
         token.setType("JWT");
 
         // Copy payload into token payload
-        for (auto [k, v] : payload)
+        for (const auto &[k, v] : payload)
             token.payload().set(k, v);
 
         // Set expiration
