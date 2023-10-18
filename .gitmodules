@@ -8,3 +8,6 @@
 [submodule "lib/Catch2"]
 	path = lib/Catch2
 	url = https://github.com/catchorg/Catch2
+[submodule "lib/glaze"]
+	path = lib/glaze
+	url = https://github.com/stephenberry/glaze
