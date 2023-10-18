@@ -10,3 +10,6 @@
 [submodule "lib/Crow"]
 	path = lib/Crow
 	url = https://github.com/tadashibashi/Crow
+[submodule "lib/mongo-cxx-driver"]
+	path = lib/mongo-cxx-driver
+	url = https://github.com/tadashibashi/mongo-cxx-driver
