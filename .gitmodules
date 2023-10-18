@@ -7,9 +7,6 @@
 [submodule "lib/glaze"]
 	path = lib/glaze
 	url = https://github.com/stephenberry/glaze
-[submodule "lib/mongo-cxx-driver"]
-	path = lib/mongo-cxx-driver
-	url = https://github.com/mongodb/mongo-cxx-driver
 [submodule "lib/Crow"]
 	path = lib/Crow
 	url = https://github.com/tadashibashi/Crow
