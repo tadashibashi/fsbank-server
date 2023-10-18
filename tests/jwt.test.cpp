@@ -6,6 +6,15 @@
 
 using namespace Insound::ChronoLiterals;
 
+#include <insound/thirdparty/glaze.hpp>
+
+struct person {
+    std::string name;
+    int age;
+};
+GLZ_META(person, name, age);
+
+
 TEST_CASE ("JWT serialize & deserialize", "[Jwt]")
 {
     // Configure the JWT_SECRET test variable
@@ -13,26 +22,32 @@ TEST_CASE ("JWT serialize & deserialize", "[Jwt]")
 
     SECTION("sign does not throw & generates token string")
     {
-        Poco::JSON::Object json;
-        json.set("name", "Joe");
-        json.set("age", 42);
+        person p {
+            .name = "Joe",
+            .age = 42,
+        };
 
         std::string jwt;
-        REQUIRE_NOTHROW(jwt = Insound::Jwt::sign(json, 14_d)); // 14 day expiry
+        REQUIRE_NOTHROW(jwt = Insound::Jwt::sign(p, 14_d)); // 14 day expiry
 
         REQUIRE(!jwt.empty());
 
-        Poco::JSON::Object res;
-        REQUIRE_NOTHROW(res = Insound::Jwt::verify(jwt));
+        person res;
+        REQUIRE_NOTHROW(res = Insound::Jwt::verify<person>(jwt));
 
-        REQUIRE (json.get("name").toString() == res.get("name").toString());
-        REQUIRE (json.get("age").convert<int>() == res.get("age").convert<int>());
+        REQUIRE (p.name == res.name);
+        REQUIRE (p.age == res.age);
     }
 
     SECTION("expired token throws")
     {
+        person p {
+            .name = "Bob",
+            .age = 43,
+        };
+
         std::string jwt;
-        REQUIRE_NOTHROW(jwt = Insound::Jwt::sign(Poco::JSON::Object(), -1_s));
+        REQUIRE_NOTHROW(jwt = Insound::Jwt::sign(p, -1_s));
 
         REQUIRE(!jwt.empty());
 
