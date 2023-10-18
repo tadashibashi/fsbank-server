@@ -11,7 +11,7 @@ namespace Insound {
     std::string getEnv(const std::string &varName, const std::string &defaultVal = std::string());
 
     template <typename T>
-    T getEnv(const std::string &varName, T defaultVal);
+    T getEnvType(const std::string &varName, T defaultVal);
 
     /**
      * Get an environment variable, or throw an error if it doesn't exist.
@@ -36,7 +36,7 @@ namespace Insound {
 }
 
 template<>
-inline int Insound::getEnv<int>(const std::string &varName, int defaultVal)
+inline int Insound::getEnvType<int>(const std::string &varName, int defaultVal)
 {
     auto var = std::getenv(varName.c_str());
     if (!var) return defaultVal;
@@ -51,7 +51,7 @@ inline int Insound::getEnv<int>(const std::string &varName, int defaultVal)
 }
 
 template<>
-inline float Insound::getEnv<float>(const std::string &varName, float defaultVal)
+inline float Insound::getEnvType<float>(const std::string &varName, float defaultVal)
 {
     auto var = std::getenv(varName.c_str());
     if (!var) return defaultVal;
@@ -66,7 +66,7 @@ inline float Insound::getEnv<float>(const std::string &varName, float defaultVal
 }
 
 template<>
-inline double Insound::getEnv<double>(const std::string &varName, double defaultVal)
+inline double Insound::getEnvType<double>(const std::string &varName, double defaultVal)
 {
     auto var = std::getenv(varName.c_str());
     if (!var) return defaultVal;
@@ -79,4 +79,3 @@ inline double Insound::getEnv<double>(const std::string &varName, double default
         return defaultVal;
     }
 }
-
