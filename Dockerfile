@@ -1,8 +1,8 @@
 FROM ubuntu:22.04
 
 # Install dependency libraries
-RUN apt-get update
-RUN apt-get cmake g++ git openssl zlib libmongoc-dev
+RUN apt-get update -y
+RUN apt-get install -y cmake g++ git openssl zlib1g libmongoc-dev
 
 COPY . /app
 
@@ -18,7 +18,8 @@ COPY ./lib/fsbank/lib/linux/libfsbvorbis.so /usr/lib/libfsbvorbis.so
 COPY ./lib/fsbank/lib/linux/libopus.so /usr/lib/libopus.so
 
 # Build project
-RUN mkdir build
+WORKDIR /app/build
+WORKDIR /app
 RUN cmake -S . -B build
 RUN cmake --build build
 
