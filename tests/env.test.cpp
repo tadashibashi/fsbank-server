@@ -1,5 +1,4 @@
-#include "insound/env.h"
-#include "catch2/catch_test_case_info.hpp"
+#include <insound/env.h>
 #include <catch2/catch_test_macros.hpp>
 #include <cstdlib>
 #include <cstring>
