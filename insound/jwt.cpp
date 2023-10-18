@@ -44,11 +44,7 @@ namespace Insound::Jwt
         Poco::JWT::Token token;
         token.setType("JWT");
 
-        for (auto &[k, v] : *payload)
-        {
-            std::cout << k << ": " << v.toString() << '\n';
-            token.payload().set(k, v);
-        }
+        token.payload() = *payload;
 
         // Set expiration
         const auto cur = Poco::Timestamp().epochMicroseconds();
