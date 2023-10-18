@@ -27,25 +27,8 @@ namespace Insound {
                 .methods(crow::HTTPMethod::POST)
                 (Auth::post_login);
 
-
-
             // Get the PORT from environment
-            const int DefaultPort = 1234;
-            int PORT;
-            if (auto portEnv = std::getenv("PORT"))
-            {
-                try {
-                    PORT = std::atoi(portEnv);
-                } catch (...) {
-                    std::cerr << "Invalid PORT: not a number. Reverting to default " <<
-                        DefaultPort << '\n';
-                    PORT = DefaultPort;
-                }
-            }
-            else
-            {
-                PORT = DefaultPort;
-            }
+            auto PORT = getEnv<int>("PORT", 3000);
 
             app.register_blueprint(auth);
             app.loglevel(crow::LogLevel::Warning);
