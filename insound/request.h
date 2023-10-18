@@ -43,7 +43,10 @@ namespace Insound {
 
         T res;
         glz::context ctx{};
-        glz::parse_error error = glz::read<glz::opts{.error_on_unknown_keys=false}>(res, std::forward<std::string>(body), ctx);
+        glz::parse_error error = glz::read<glz::opts{
+            .error_on_unknown_keys=false,
+            .error_on_missing_keys=true
+        }> (res, std::forward<std::string>(body), ctx);
 
         if (error.ec != glz::error_code::none)
             throw "Glaze error: " + std::to_string((int)error.ec);

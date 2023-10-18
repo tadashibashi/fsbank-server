@@ -21,7 +21,7 @@ std::string Insound::request(const std::string &url, const std::string &method, 
     Poco::URI uri(url);
     auto path = uri.getPathAndQuery();
     if (path.empty()) path = "/";
-    std::cout << "method: " << method << '\n';
+
     auto session = Poco::Net::HTTPSClientSession(uri.getHost(), uri.getPort());
     auto req = Poco::Net::HTTPRequest(method, path, Poco::Net::HTTPMessage::HTTP_1_1);
 
@@ -50,7 +50,7 @@ std::string Insound::request(const std::string &url, const std::string &method, 
     {
         throw "HTTPError code: " + std::to_string(status) + ": " + res.getReasonForStatus(status);
     }
-    
+
     std::ostringstream stream;
     stream << resStream.rdbuf();
     return stream.str();

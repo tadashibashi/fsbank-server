@@ -48,3 +48,14 @@ TEST_CASE ("Request sends and receives response body in post request")
     REQUIRE(body.json.name == "Joe");
     REQUIRE(body.json.age == 10);
 }
+
+TEST_CASE ("Request throws when data does not meet expected type")
+{
+    ip_response p {
+        .origin = "0.0.0.0",
+    };
+
+    person_response body;
+    REQUIRE_THROWS(body = Insound::request<person_response>("https://httpbin.org/post",
+        Insound::HttpMethod::Post, &p));
+}
