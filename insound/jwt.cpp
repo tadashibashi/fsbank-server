@@ -2,12 +2,16 @@
 
 #include <insound/env.h>
 #include <insound/errors/ExpiredTokenError.h>
+
+#include <Poco/JSON/Parser.h>
 #include <Poco/JWT/Serializer.h>
 #include <Poco/JWT/Signer.h>
 
+#include <sstream>
+
 namespace Insound::Jwt
 {
-    Poco::JSON::Object verify(const std::string &jwt)
+    std::string verify(const std::string &jwt)
     {
         // Create the signer
         static const auto JWT_SECRET = requireEnv("JWT_SECRET");
@@ -21,11 +25,17 @@ namespace Insound::Jwt
             throw ExpiredTokenError(token);
         }
 
-        return token.payload();
+        std::stringstream stream;
+        token.payload().stringify(stream);
+        return stream.str();
     }
 
-    std::string sign(const Poco::JSON::Object &payload, long long duration)
+    std::string sign(const std::string &payloadStr, long long duration)
     {
+        // Parse payload into object
+        Poco::JSON::Parser parser;
+        auto payload = parser.parse(payloadStr).extract<Poco::JSON::Object::Ptr>();
+
         // Create the signer
         static const auto JWT_SECRET = requireEnv("JWT_SECRET");
         Poco::JWT::Signer signer(JWT_SECRET);
@@ -34,9 +44,11 @@ namespace Insound::Jwt
         Poco::JWT::Token token;
         token.setType("JWT");
 
-        // Copy payload into token payload
-        for (const auto &[k, v] : payload)
+        for (auto &[k, v] : *payload)
+        {
+            std::cout << k << ": " << v.toString() << '\n';
             token.payload().set(k, v);
+        }
 
         // Set expiration
         const auto cur = Poco::Timestamp().epochMicroseconds();
