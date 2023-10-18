@@ -12,6 +12,7 @@ namespace Insound {
     {
         if (!wasInit)
         {
+            // Configure .env variables
             configureEnv();
 
             // Initialize app
@@ -21,21 +22,26 @@ namespace Insound {
                 return "Hello from Insound Server!";
             });
 
-            crow::Blueprint auth("api/auth");
-
-            CROW_BP_ROUTE(auth, "/login/email")
-                .methods(crow::HTTPMethod::POST)
-                (Auth::post_login);
+            // Mount blueprints
+            auto auth = Auth::config();
+            app.register_blueprint(auth);
 
             // Get the PORT from environment
-            auto PORT = getEnv<int>("PORT", 3000);
+            auto PORT = getEnvType<int>("PORT", 3000);
 
-            app.register_blueprint(auth);
-            app.loglevel(crow::LogLevel::Warning);
+            app.loglevel(crow::LogLevel::Info);
 
-            std::cout << "Insound server listening at http://localhost:" << PORT << '\n';
+
+
+            try {
+                auto result = app.port(PORT).multithreaded().run_async();
+                std::cout << "Insound server listening at http://localhost:" << PORT << '\n';
+            } catch (const std::exception &e)
+            {
+                std::cerr << "Error during startup: " << e.what() << '\n';
+            }
+
             wasInit = true;
-            app.port(PORT).multithreaded().run();
         }
     }
 }

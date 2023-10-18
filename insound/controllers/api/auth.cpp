@@ -1,7 +1,20 @@
-#include <insound/server.h>
-#include <crow.h>
+#include "auth.h"
+#include "crow/common.h"
+
+using crow::HTTPMethod;
 
 namespace Insound::Auth {
+    crow::Blueprint config()
+    {
+        auto auth = crow::Blueprint("api/auth");
+
+        CROW_BP_ROUTE(auth, "/login/email")
+            .methods(HTTPMethod::POST)
+            (post_login);
+
+        return auth;
+    }
+
     crow::response post_login(const crow::request &req)
     {
         auto msg = crow::multipart::message(req);
