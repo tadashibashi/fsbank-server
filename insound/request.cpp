@@ -16,7 +16,7 @@ namespace Insound::HttpMethod {
     const std::string Delete = Poco::Net::HTTPRequest::HTTP_DELETE;
 }
 
-Poco::JSON::Object::Ptr Insound::request(const std::string &url, const std::string &method, const Insound::Json *payload)
+std::string Insound::request(const std::string &url, const std::string &method, const std::string &payload)
 {
     Poco::URI uri(url);
     auto path = uri.getPathAndQuery();
@@ -27,21 +27,16 @@ Poco::JSON::Object::Ptr Insound::request(const std::string &url, const std::stri
 
     auto res = Poco::Net::HTTPResponse();
 
-    if (payload)
+    if (!payload.empty())
     {
-        // Write JSON payload if user provided it
-        // stringify payload
-        std::stringstream stream;
-        payload->stringify(stream);
-        auto data = stream.str();
-
-        // set request headers for json object
+        // Add JSON payload if user provided it
+        // Set request headers for json object
         req.setContentType("application/json");
-        req.setContentLength(data.size());
+        req.setContentLength(payload.size());
 
         // send the request and pipe the payload body
         auto &reqStream = session.sendRequest(req);
-        reqStream << data;
+        reqStream << payload;
     }
     else
     {
@@ -55,9 +50,8 @@ Poco::JSON::Object::Ptr Insound::request(const std::string &url, const std::stri
     {
         throw "HTTPError code: " + std::to_string(status) + ": " + res.getReasonForStatus(status);
     }
-
-    Poco::JSON::Parser parser;
-    auto var = parser.parse(resStream);
-
-    return var.extract<Poco::JSON::Object::Ptr>();
+    
+    std::ostringstream stream;
+    stream << resStream.rdbuf();
+    return stream.str();
 }

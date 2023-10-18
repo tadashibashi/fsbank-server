@@ -1,7 +1,7 @@
 #pragma once
 
 #include "json.h"
-
+#include <glaze/glaze.hpp>
 
 namespace Insound {
 
@@ -16,14 +16,41 @@ namespace Insound {
         extern const std::string Delete;
     }
 
+
+   /**
+     * Send a request, and receive the payload as a string
+     * @param  url         endpoint url
+     * @param  method      http method - use constants in Insound::HttpMethod namespace
+     * @param  jsonPayload [optional] JSON payload string
+     * @return             The JSON body as a string
+     */
+    std::string request(const std::string &url, const std::string &method = HttpMethod::Get, const std::string &jsonPayload = "");
+
+
     /**
      * Send an http request and receive body of the response.
      *
-     * @param  url     end point url
+     * @param  url     endpoint url
      * @param  method  http method, use constants in Insound::HttpMethod namespace
      * @param  payload optional Json payload to set
      * @return         body of the response as a Json object
      */
-    Poco::JSON::Object::Ptr request(const std::string &url, const std::string &method = HttpMethod::Get, const Json *payload = nullptr);
+    template <typename T, typename Payload = int>
+    T request(const std::string &url, const std::string &method = HttpMethod::Get, const Payload *payload = nullptr)
+    {
+        auto stringified = payload ? glz::write_json(*payload) : std::string();
+        auto body = request(url, method, stringified);
+
+        T res;
+        glz::context ctx{};
+        glz::parse_error error = glz::read<glz::opts{.error_on_unknown_keys=false}>(res, std::forward<std::string>(body), ctx);
+
+        if (error.ec != glz::error_code::none)
+            throw "Glaze error: " + std::to_string((int)error.ec);
+
+        return res;
+    }
+
+
 
 }
