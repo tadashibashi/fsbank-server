@@ -1,17 +1,23 @@
 #include "server.h"
-#include <crow/routing.h>
+#include <crow.h>
 #include "controllers/api/auth.h"
+#include "insound/env.h"
+#include "middleware/UserContext.hpp"
 
 namespace Insound {
-    static crow::Crow<> app;
+    static crow::Crow<UserContext> app;
     static bool wasInit;
 
     void initApp()
     {
         if (!wasInit)
         {
+            configureEnv();
+
             // Initialize app
-            CROW_ROUTE(app, "/")([]() {
+            CROW_ROUTE(app, "/")([](const crow::request &req) {
+                auto &userCtx = app.get_context<UserContext>(req);
+
                 return "Hello from Insound Server!";
             });
 
@@ -20,6 +26,8 @@ namespace Insound {
             CROW_BP_ROUTE(auth, "/login/email")
                 .methods(crow::HTTPMethod::POST)
                 (Auth::post_login);
+
+
 
             // Get the PORT from environment
             const int DefaultPort = 1234;
