@@ -2,7 +2,7 @@
 
 #include "common.h"
 #include <vector>
-#include <cstdlib>
+#include <cstdint>
 
 namespace Insound {
 
