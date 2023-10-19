@@ -2,7 +2,7 @@ FROM ubuntu:22.04
 
 # Install dependency libraries
 RUN apt-get update -y
-RUN apt-get install -y cmake g++ git openssl zlib1g libmongoc-dev python3.9 python-is-python3
+RUN apt-get install -y cmake clang git openssl zlib1g libmongoc-dev python3.9 python-is-python3 libasio-dev
 
 RUN git clone --recursive https://github.com/tadashibashi/insound-cpp /app
 
