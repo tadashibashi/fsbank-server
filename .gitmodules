@@ -13,3 +13,6 @@
 [submodule "lib/mongo-cxx-driver"]
 	path = lib/mongo-cxx-driver
 	url = https://github.com/tadashibashi/mongo-cxx-driver
+[submodule "lib/spdlog"]
+	path = lib/spdlog
+	url = https://github.com/gabime/spdlog
