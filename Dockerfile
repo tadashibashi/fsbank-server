@@ -20,11 +20,4 @@ WORKDIR /app
 RUN cmake -S . -B build
 RUN cmake --build build --target insound-server
 
-# Install built executable to system bin directory
-RUN mv build/fsbank-server /usr/bin/fsbank-server
-
-# Clean up
-RUN rm -rf /app
-
-# Run server
-CMD ["fsbank-server"]
+CMD ./build/insound-server
