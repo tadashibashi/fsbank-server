@@ -1,9 +1,10 @@
 FROM ubuntu:22.04
 
 # Install dependency libraries
-RUN apt-get update -y
-RUN apt-get install -y cmake ninja-build clang git openssl zlib1g libmongoc-dev python3.9 python-is-python3 libasio-dev
+RUN apt-get update -y && apt-get install -y cmake ninja-build clang git \
+    openssl zlib1g libmongoc-dev python3.9 python-is-python3 libasio-dev
 
+# Clone repo
 RUN git clone --recursive https://github.com/tadashibashi/insound-cpp /app
 
 WORKDIR /app
@@ -17,7 +18,15 @@ COPY ./lib/fsbank/lib/linux/libopus.so /usr/lib/libopus.so.0
 # Build project
 WORKDIR /app/build
 WORKDIR /app
-RUN cmake -G Ninja -S . -B build
-RUN cmake --build build --target insound-server
+
+# Config and build
+RUN cmake -G Ninja -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build --target insound-server
+
+# Clean up build tools
+RUN apt-get remove -y python3.9 python-is-python3 git clang ninja-build cmake
+
+# Clean up source
+RUN rm -rf /app/lib /app/tests /app/main.cpp /app/.git/ /app/.gitignore \
+    /app/.gitmodules /app/Dockerfile /app/CMakeLists.txt
 
 CMD ./build/insound-server
