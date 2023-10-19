@@ -1,9 +1,8 @@
 #include "BankBuilder.h"
-#include "common.h"
 
-#include <cassert>
 #include <fsbank.h>
 
+#include <cassert>
 #include <thread>
 
 static const char *CacheDirectory = ".fscache";
