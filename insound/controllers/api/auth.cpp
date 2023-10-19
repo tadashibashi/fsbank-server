@@ -1,5 +1,6 @@
 #include "auth.h"
 #include "crow/common.h"
+#include "insound/log.h"
 
 using crow::HTTPMethod;
 
@@ -41,7 +42,7 @@ namespace Insound::Auth {
             if (params_it == headers_it->second.params.end())
             {
                 // It's a text part
-                std::cout << "part: " << part_name <<  ", value: " << part_value.body << '\n';
+                IN_LOG("part: {}, value: {}", part_name, part_value.body);
                 if (part_name == "password")
                 {
                     password = part_value.body;
@@ -54,7 +55,7 @@ namespace Insound::Auth {
             else
             {
                 // It's a file
-                std::cout << "part: " << part_name << ", filename: " << params_it->second << '\n';
+                IN_LOG("part: {}, filename: {}", part_name, params_it->second);
                 files.emplace_back(part_value.body);
             }
         }

@@ -1,4 +1,5 @@
 #include "UserContext.hpp"
+#include "insound/log.h"
 #include <insound/jwt.h>
 
 void Insound::UserContext::before_handle(crow::request &req,
@@ -18,7 +19,7 @@ void Insound::UserContext::before_handle(crow::request &req,
 
         ctx.user = user;
     } catch (...) {
-        // something went wrong during verification, set user as guest
+        // Something went wrong during verification, set user as guest
         ctx.user.type = User::Type::Guest;
     }
 
@@ -28,5 +29,5 @@ void Insound::UserContext::before_handle(crow::request &req,
 void Insound::UserContext::after_handle(crow::request &req,
                                          crow::response &res, context &ctx)
 {
-    std::cout << "User type: " << ctx.user.type << '\n';
+    IN_LOG("User type: {}", ctx.user.type);
 }

@@ -1,12 +1,14 @@
 #include "env.h"
-#include "definitions.h"
-#include "errors/MissingEnvError.h"
+
+#include <insound/definitions.h>
+#include <insound/errors/MissingEnvError.h>
+#include <insound/log.h>
+
 #include <cstdlib>
 #include <stdexcept>
 #include <string>
 
 #include <fstream>
-#include <iostream>
 
 namespace Insound {
 
@@ -41,7 +43,7 @@ namespace Insound {
         auto file = std::fstream(makePath(path));
         if (!file.is_open())
         {
-            std::cerr << "Attempted to configure env but file could not be opened\n";
+            IN_WARN("Attempted to configure env but file could not be opened");
             return;
         }
 
@@ -76,7 +78,7 @@ namespace Insound {
         auto file = std::fstream(makePath(path));
         if (!file.is_open())
         {
-            std::cerr << "Attempted to configure env but file could not be opened\n";
+            IN_WARN("Attempted to configure env but file could not be opened");
             return;
         }
 

@@ -2,6 +2,7 @@
 #include <crow.h>
 #include "controllers/api/auth.h"
 #include "insound/env.h"
+#include "insound/log.h"
 #include "middleware/UserContext.hpp"
 
 namespace Insound {
@@ -38,7 +39,7 @@ namespace Insound {
                 std::cout << "Insound server listening at http://localhost:" << PORT << '\n';
             } catch (const std::exception &e)
             {
-                std::cerr << "Error during startup: " << e.what() << '\n';
+                IN_LOG("Error during startup: {}", e.what());
             }
 
             wasInit = true;
