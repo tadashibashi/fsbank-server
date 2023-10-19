@@ -12,7 +12,7 @@ WORKDIR /app
 COPY ./lib/fmod/lib/linux/libfmod.so.13 /usr/lib/libfmod.so.13
 COPY ./lib/fsbank/lib/linux/libfsbank.so.13 /usr/lib/libfsbank.so.13
 COPY ./lib/fsbank/lib/linux/libfsbvorbis.so /usr/lib/libfsbvorbis.so
-COPY ./lib/fsbank/lib/linux/libopus.so /usr/lib/libopus.so
+COPY ./lib/fsbank/lib/linux/libopus.so /usr/lib/libopus.so.0
 
 # Build project
 WORKDIR /app/build
