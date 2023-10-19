@@ -18,7 +18,7 @@ COPY ./lib/fsbank/lib/linux/libopus.so /usr/lib/libopus.so
 WORKDIR /app/build
 WORKDIR /app
 RUN cmake -S . -B build
-RUN cmake --build build
+RUN cmake --build build --target insound-server
 
 # Install built executable to system bin directory
 RUN mv build/fsbank-server /usr/bin/fsbank-server
