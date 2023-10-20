@@ -43,7 +43,7 @@
 			"type": "lldb",
 			"request": "launch",
 			"name": "Launch Server",
-			"program": "${project_path}/build/insound-server",
+			"program": "${project_path}/build/debug/insound-server",
 			"args": [],
 			"cwd": "${project_path}",
 			"pre_debug_task": "Build & Kill"
@@ -52,7 +52,8 @@
 	"debugger_tasks": [
 		{
 			"name": "Build & Kill",
-			"shell_cmd": "cmake --build ${project_path}/build --target insound-server && if pgrep insound-server; then pkill insound-server; fi",
+			"shell_cmd": "python3 run.py kill_server && python3 run.py build",
+			"working_dir": "${project_path}"
 		},
 	]
 }
