@@ -1,6 +1,8 @@
 #pragma once
 
-#ifdef _DEBUG
+#define INSOUND_ALLOW_LOGGING
+#if defined(_DEBUG) || defined(INSOUND_ALLOW_LOGGING)
+
 #include <insound/thirdparty/spdlog.hpp>
 namespace Insound::Log {
     std::shared_ptr<spdlog::logger> appLogger();

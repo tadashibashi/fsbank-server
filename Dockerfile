@@ -5,7 +5,7 @@ RUN apt-get update -y && apt-get install -y cmake ninja-build clang git \
     openssl zlib1g libmongoc-dev python3.9 python-is-python3 libasio-dev
 
 ENV APP_DIR=/app
-ENV BUILD_TYPE=relwithdebinfo
+ENV BUILD_TYPE=release
 
 # Clone repo
 # Invalidate cache every commit
@@ -26,7 +26,7 @@ RUN python3 run build $BUILD_TYPE
 
 # Clean up build tools & source
 RUN apt-get remove -y python3.9 python-is-python3 git clang ninja-build cmake \
-    && rm -rf ./lib ./tests ./main.cpp ./.git/ \
+    && rm -rf ./lib ./insound ./tests ./main.cpp ./.git/ \
     ./.gitignore ./.gitmodules ./Dockerfile \
     ./CMakeLists.txt && apt-get autoremove -y
 
