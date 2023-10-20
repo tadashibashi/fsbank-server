@@ -23,6 +23,8 @@ import sys
 # Name of the server project file
 PROJECT_NAME: str = "insound-server"
 
+TEST_NAME: str = "insound-tests"
+
 # Path to the project root (this file should be located in root)
 PROJECT_PATH: str = os.path.dirname(__file__)
 
@@ -35,15 +37,30 @@ def config(type: str = "Debug"):
         Configure server CMake project and submodule libs
     """
     target_build_dir = os.path.join(BUILD_PATH, type.lower())
-    os.system((
+    os.system(
         f"cmake -E make_directory {target_build_dir} && "
         f"cmake -G Ninja -S {PROJECT_PATH} -B {target_build_dir} "
         f"-DCMAKE_BUILD_TYPE={type} "
         f"-DCMAKE_EXPORT_COMPILE_COMMANDS=1 "
         f"-DCROW_BUILD_TESTS=OFF -DCROW_BUILD_EXAMPLES=OFF "
-    ))
+    )
 
     # move the current compile_commands.json to the build directory
+    compile_commands_dest = os.path.join(BUILD_PATH, "compile_commands.json")
+    compile_commands_orig = os.path.join(target_build_dir,
+                                         "compile_commands.json")
+
+    if not os.path.isfile(compile_commands_orig):
+        print(
+            f"Error: compile_commands.json was not generated at expected"
+            f"location \"{compile_commands_orig}\""
+        )
+        exit()
+
+    if os.path.isfile(compile_commands_dest):
+        os.remove(compile_commands_dest)
+
+    os.rename(compile_commands_orig, compile_commands_dest)
 
 
 def build(type: str = "Debug", target: str = PROJECT_NAME):
@@ -51,7 +68,9 @@ def build(type: str = "Debug", target: str = PROJECT_NAME):
         Build a Cmake project, default is the server
     """
     config(type)
-    os.system(f"cmake --build {BUILD_PATH} --target {target}")
+    os.system(
+        f"cmake --build {os.path.join(BUILD_PATH, type.lower())} "
+        f"--target {target}")
 
 
 def kill_server():
@@ -71,16 +90,16 @@ def serve(type: str = "Debug"):
     """
     kill_server()
     build(type, PROJECT_NAME)
-    os.system(f"{os.path.join(BUILD_PATH, PROJECT_NAME)}")
+    os.system(f"{os.path.join(BUILD_PATH, type.lower(), PROJECT_NAME)}")
 
 
 def test(type: str = "Debug"):
     """
         Build & run the tests
     """
-    build(type, "insound-tests")
-    print(f"{os.path.join(BUILD_PATH, 'tests', 'insound-tests')}")
-    os.system(f"{os.path.join(BUILD_PATH, 'tests', 'insound-tests')}")
+    build(type, TEST_NAME)
+    target = os.path.join(BUILD_PATH, type.lower(), 'tests', TEST_NAME)
+    os.system(target)
 
 
 def help():
