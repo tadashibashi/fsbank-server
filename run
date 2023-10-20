@@ -1,14 +1,15 @@
+#!/usr/bin/env python3
 """Python commands to manage the Insound project
 
 Example:
     Configuring CMake project in Debug mode:
-    `python run.py config Debug`
+    `python run config Debug`
 
     Build server CMake project in Debug mode:
-    `python run.py build Debug`
+    `python run build Debug`
 
     Build & Run the server in Release mode:
-    `python run.py serve Release`
+    `python run serve Release`
 
 
 Pre-install requirements:
@@ -106,10 +107,44 @@ def help():
     """
         Display the help menu
     """
-    print("Please provide a command:")
-    print("  config     <build_type>")
-    print("  build      <build_type> <target_name>")
-    print("  run_server <build_type>")
+    print(
+        "\n"
+        "====== Insound build helper script ===============================\n"
+        "\n"
+        "       Build script for project management. Please make sure that \n"
+        "       Python 3, CMake and Ninja are installed on your system in \n"
+        "       order to use the build system.\n"
+        "\n"
+        "COMMANDS\n"
+        "\n"
+        "  config     <build_type>\n"
+        "\n"
+        "      configures build scripts\n"
+        "\n"
+        "      available build types: \n"
+        "      - Release\n"
+        "      - Debug (default)\n"
+        "      - RelWithDebInfo\n"
+        "      - MinSizeRel\n"
+        "\n"
+        "\n"
+        "  build      <build_type> <target_name>\n"
+        "\n"
+        "      builds a cmake target\n"
+        "\n"
+        "      available target names: \n"
+        "      - insound-server (default)\n"
+        "      - insound-tests\n"
+        "\n"
+        "  serve      <build_type>\n"
+        "\n"
+        "      configures, builds, and runs insound-server\n"
+        "\n"
+        "  test       <build_type>\n"
+        "\n"
+        "      configures, builds, and runs insound-tests\n"
+        "\n"
+    )
 
 
 def main(argc: int, argv: list[str]):
@@ -121,7 +156,13 @@ def main(argc: int, argv: list[str]):
         exit()
 
     # Get the command, and run it if it is available
-    command = getattr(this, argv[1])
+    try:
+        command = getattr(this, argv[1])
+    except AttributeError as e:
+        print(f"Could not find command \"{argv[1]}\"")
+        help()
+        exit()
+
     if command is not None and callable(command):
         # Pass args if any
         if argc > 2:
