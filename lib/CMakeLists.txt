@@ -1,6 +1,7 @@
 add_subdirectory (fmod)
 add_subdirectory (fsbank)
 add_subdirectory (poco)
+add_subdirectory (Crow)
 add_subdirectory (Catch2)
 add_subdirectory (glaze)
 add_subdirectory (mongo-cxx-driver)
