@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef _DEBUG
-#include <spdlog/spdlog.h>
+#include <insound/thirdparty/spdlog.hpp>
 namespace Insound::Log {
     std::shared_ptr<spdlog::logger> appLogger();
 }
