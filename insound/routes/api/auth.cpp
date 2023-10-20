@@ -2,6 +2,7 @@
 #include "crow/common.h"
 #include "insound/log.h"
 #include <insound/app.h>
+#include <insound/App.h>
 
 using crow::HTTPMethod;
 
