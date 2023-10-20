@@ -19,6 +19,7 @@ namespace Insound::Auth {
 
     crow::response post_login(const crow::request &req)
     {
+        // testing getContext
         auto &userCtx = getContext<UserAuth>(req);
 
         IN_LOG("User type in post route: {}", userCtx.user.type);
@@ -34,7 +35,7 @@ namespace Insound::Auth {
             const auto &part_name = part.first;
             const auto &part_value = part.second;
 
-            // get filename
+            // get content info
             auto headers_it = part_value.headers.find("Content-Disposition");
             if (headers_it == part_value.headers.end())
             {
@@ -42,11 +43,11 @@ namespace Insound::Auth {
                 return crow::response(400);
             }
 
-            // check if it has a file name
+            // check if part has a filename
             auto params_it = headers_it->second.params.find("filename");
             if (params_it == headers_it->second.params.end())
             {
-                // It's a text part
+                // if not, it's a text part
                 IN_LOG("part: {}, value: {}", part_name, part_value.body);
                 if (part_name == "password")
                 {
@@ -59,7 +60,7 @@ namespace Insound::Auth {
             }
             else
             {
-                // It's a file
+                // otherwise it's a file
                 IN_LOG("part: {}, filename: {}", part_name, params_it->second);
                 files.emplace_back(part_value.body);
             }
