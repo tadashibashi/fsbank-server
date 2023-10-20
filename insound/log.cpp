@@ -9,7 +9,10 @@ namespace Insound::Log {
     std::shared_ptr<spdlog::logger> appLogger()
     {
         if (!sAppLogger)
+        {
             sAppLogger = spdlog::stdout_color_mt("Insound");
+            sAppLogger->set_pattern("[%n] [%l] %v");
+        }
 
         return sAppLogger;
     }
