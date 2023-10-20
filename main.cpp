@@ -1,4 +1,4 @@
-#include <insound/server.h>
+#include <insound/app.h>
 #include <iostream>
 #include <cstdlib>
 
