@@ -5,7 +5,7 @@ RUN apt-get update -y && apt-get install -y cmake ninja-build clang git \
     openssl zlib1g libmongoc-dev python3.9 python-is-python3 libasio-dev
 
 # Clone repo
-# RUN git clone --recursive https://github.com/tadashibashi/insound-cpp /app
+RUN git clone --recursive https://github.com/tadashibashi/insound-cpp /app
 
 WORKDIR /app
 
