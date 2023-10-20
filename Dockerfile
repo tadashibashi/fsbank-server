@@ -20,7 +20,7 @@ WORKDIR /app/build
 WORKDIR /app
 
 # Config and build
-RUN cmake -G Ninja -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build --target insound-server
+RUN python3 run build RelWithDebInfo
 
 # Clean up build tools
 RUN apt-get remove -y python3.9 python-is-python3 git clang ninja-build cmake
