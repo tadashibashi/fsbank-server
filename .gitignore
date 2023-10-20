@@ -1,14 +1,22 @@
-
+# ----- OS files -----
+# macOS
 .DS_Store
+Thumbs.db
 
-build/
 
+# ----- IDE -----
 .idea/
 .vscode/
 *.sublime-workspace
+
+
+# ----- Temporary files -----
 .cache/
 .fscache/
-
-insound/definitions.h
-
 Testing/
+
+
+# ----- Built files -----
+insound/definitions.h
+build/
+cmake-build*/
