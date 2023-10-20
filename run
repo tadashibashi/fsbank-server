@@ -53,15 +53,14 @@ def config(type: str = "Debug"):
 
     if not os.path.isfile(compile_commands_orig):
         print(
-            f"Error: compile_commands.json was not generated at expected "
+            f"Warning: compile_commands.json was not generated at expected "
             f"location -> \"{compile_commands_orig}\""
         )
-        exit()
+    else:
+        if os.path.isfile(compile_commands_dest):
+            os.remove(compile_commands_dest)
 
-    if os.path.isfile(compile_commands_dest):
-        os.remove(compile_commands_dest)
-
-    os.rename(compile_commands_orig, compile_commands_dest)
+        os.rename(compile_commands_orig, compile_commands_dest)
 
 
 def build(type: str = "Debug", target: str = PROJECT_NAME):
