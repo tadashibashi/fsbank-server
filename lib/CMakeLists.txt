@@ -5,5 +5,6 @@ add_subdirectory (Crow)
 add_subdirectory (Catch2)
 add_subdirectory (glaze)
 add_subdirectory (mongo-cxx-driver)
-add_subdirectory (fmt)
+
+set (SPDLOG_BUILD_SHARED OFF)
 add_subdirectory (spdlog)

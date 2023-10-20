@@ -3,9 +3,6 @@
 #include <insound/routes/api/auth.h>
 
 #include <insound/env.h>
-#include <insound/log.h>
-
-#include <format>
 
 namespace Insound {
     static App *app;
@@ -31,9 +28,9 @@ namespace Insound {
         auto &user = App::getContext<UserAuth>(req);
 
         if (user.user.isAuthorized())
-            return "hello " + user.user.displayName + "!";
+            return f("hello {}!", user.user.username);
         else
-            return std::string("hello guest!");
+            return f("hello {}!", "guest");
     }
 
 

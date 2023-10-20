@@ -9,7 +9,7 @@ add_library (${PROJECT_NAME} STATIC ${INSOUND_SRC})
 
 target_link_libraries (${PROJECT_NAME} PUBLIC
     fmod fsbank Poco::JWT Poco::Net Poco::NetSSL Poco::Crypto z glaze::glaze
-    mongocxx_shared fmt spdlog::spdlog Crow
+    mongocxx_shared spdlog::spdlog Crow
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -20,3 +20,8 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/definitions.h.in
     ${CMAKE_CURRENT_SOURCE_DIR}/definitions.h
 )
+
+target_precompile_headers(${PROJECT_NAME} PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/log.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/fmt.hpp
+    )

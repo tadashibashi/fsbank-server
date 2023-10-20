@@ -7,5 +7,4 @@ namespace Insound {
      * @param  length - the number of chars
      */
     std::string genHexString(unsigned int length=16);
-
 }
