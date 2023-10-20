@@ -32,6 +32,7 @@ namespace Insound {
         }
 
         template <typename MiddlewareType>
+            requires std::is_base_of_v<crow::ILocalMiddleware, MiddlewareType>
         static typename MiddlewareType::context &getContext(const crow::request &req)
         {
             return instance().m_app.get_context<MiddlewareType>(req);
