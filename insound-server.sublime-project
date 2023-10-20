@@ -17,27 +17,19 @@
 	"build_systems": [
 		{
 			"name": "Config",
-			"target": "terminus_exec",
-			"cancel": "terminus_cancel_build",
-			"shell_cmd": "cmake -E make_directory $project_path/build && cmake -G Ninja -S $project_path -B $project_path/build -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCROW_BUILD_TESTS=OFF -DCROW_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Debug",
+			"shell_cmd": "python3 run.py config",
 		},
 		{
 			"name": "Build",
-			"target": "terminus_exec",
-			"shell_cmd": "cmake --build $project_path/build --target insound-server",
-			"cancel": "terminus_cancel_build",
+			"shell_cmd": "python3 run.py build",
 		},
 		{
 			"name": "Run",
-			"shell_cmd": "if pgrep insound-server; then pkill insound-server; fi && cmake --build $project_path/build && $project_path/build/insound-server --target insound-server",
-			"target": "terminus_exec",
-			"cancel": "terminus_cancel_build",
+			"shell_cmd": "python3 run.py serve",
 		},
 		{
 			"name": "Run Tests",
-			"shell_cmd": "cmake --build $project_path/build && cd $project_path/build && ./tests/insound-tests",
-			"target": "terminus_exec",
-			"cancel": "terminus_cancel_build",
+			"shell_cmd": "python3 run.py test",
 		},
 	],
 
