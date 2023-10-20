@@ -1,10 +1,30 @@
 add_subdirectory (fmod)
 add_subdirectory (fsbank)
-add_subdirectory (poco)
 add_subdirectory (Crow)
 add_subdirectory (Catch2)
 add_subdirectory (glaze)
 add_subdirectory (mongo-cxx-driver)
-
-set (SPDLOG_BUILD_SHARED OFF)
 add_subdirectory (spdlog)
+
+
+set_target_properties(spdlog PROPERTIES
+    SPDLOG_BUILD_SHARED OFF
+)
+
+set (BUILD_SHARED_LIBS OFF)
+set (ENABLE_APACHECONNECTOR OFF)
+set (ENABLE_DATA OFF)
+set (ENABLE_DATA_SQLITE OFF)
+set (ENABLE_DATA_MYSQL OFF)
+set (ENABLE_DATA_ODBC OFF)
+set (ENABLE_DATA_POSTGRESQL OFF)
+set (ENABLE_MONGODB OFF)
+set (ENABLE_UTIL OFF)
+set (ENABLE_ZIP OFF)
+set (ENABLE_ENCODINGS OFF)
+set (ENABLE_PAGECOMPILER OFF)
+set (ENABLE_PAGECOMPILER_FILE2PAGE OFF)
+set (ENABLE_LONG_RUNNING_TESTS OFF)
+set (ENABLE_REDIS OFF)
+set (ENABLE_XML OFF)
+add_subdirectory (poco)
