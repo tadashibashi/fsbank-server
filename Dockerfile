@@ -26,8 +26,8 @@ RUN python3 run build $BUILD_TYPE
 
 # Clean up build tools & source
 RUN apt-get remove -y python3.9 python-is-python3 git clang ninja-build cmake \
-    && rm -rf /app/lib $APP_DIR/tests $APP_DIR/main.cpp $APP_DIR/.git/ \
-    $APP_DIR/.gitignore $APP_DIR/.gitmodules $APP_DIR/Dockerfile \
-    $APP_DIR/CMakeLists.txt && apt-get autoremove -y
+    && rm -rf ./lib ./tests ./main.cpp ./.git/ \
+    ./.gitignore ./.gitmodules ./Dockerfile \
+    ./CMakeLists.txt && apt-get autoremove -y
 
 CMD ./build/$BUILD_TYPE/insound-server
