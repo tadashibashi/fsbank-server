@@ -21,6 +21,11 @@ namespace Insound {
         std::string email;
 
         /**
+         * Encrypted fingerprint
+         */
+        std::string fingerprint;
+
+        /**
          * Encrypted password, hidden from the frontend
          */
         std::string password;
