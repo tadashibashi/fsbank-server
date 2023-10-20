@@ -2,8 +2,10 @@
 #include "Poco/Crypto/Cipher.h"
 #include "Poco/Crypto/CipherFactory.h"
 #include "Poco/Crypto/CipherKey.h"
-#include "insound/env.h"
-#include "insound/log.h"
+#include <insound/env.h>
+#include <insound/log.h>
+
+#include <memory>
 
 using Poco::Crypto::Cipher;
 using Poco::Crypto::CipherFactory;
@@ -13,7 +15,7 @@ namespace Insound {
 
     static Cipher &getCipher()
     {
-        static Cipher *sCipher;
+        static std::shared_ptr<Cipher> sCipher;
         if (!sCipher)
         {
             auto &factory = CipherFactory::defaultFactory();
@@ -23,8 +25,7 @@ namespace Insound {
             auto key = CipherKey("aes-256-cbc",
                 Cipher::ByteVec{password.begin(), password.end()},
                 Cipher::ByteVec{salt.begin(), salt.end()});
-            auto cipher = factory.createCipher(key);
-            sCipher = cipher;
+            sCipher = std::shared_ptr<Cipher>(factory.createCipher(key));
         }
 
         return *sCipher;
