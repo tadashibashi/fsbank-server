@@ -1,12 +1,13 @@
 #pragma once
 #include <insound/routes/Router.h>
 #include <insound/thirdparty/crow.hpp>
+#include <crow/middlewares/cookie_parser.h>
 #include <insound/middleware/UserAuth.hpp>
 #include <type_traits>
 #include <vector>
 
 namespace Insound {
-    using CrowApp = crow::App<UserAuth>;
+    using CrowApp = crow::App<crow::CookieParser, UserAuth>;
 
     class App
     {
@@ -32,7 +33,6 @@ namespace Insound {
         }
 
         template <typename MiddlewareType>
-            requires std::is_base_of_v<crow::ILocalMiddleware, MiddlewareType>
         static typename MiddlewareType::context &getContext(const crow::request &req)
         {
             return instance().m_app.get_context<MiddlewareType>(req);

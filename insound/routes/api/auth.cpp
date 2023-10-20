@@ -1,27 +1,57 @@
 #include "auth.h"
-#include "crow/common.h"
-#include "insound/log.h"
+#include <crow/common.h>
+#include <crow/middlewares/cookie_parser.h>
+
 #include <insound/App.h>
+#include <insound/util.h>
 
-using crow::HTTPMethod;
-
+using SameSitePolicy = crow::CookieParser::Cookie::SameSitePolicy;
 namespace Insound {
     Auth::Auth() : Router("api/auth") {}
 
     crow::Blueprint &Auth::config()
     {
         CROW_BP_ROUTE(bp, "/login/email")
-            .methods(HTTPMethod::POST)
+            .methods("POST"_method)
             (Auth::post_login);
 
+        CROW_BP_ROUTE(bp, "/check")
+            .methods("GET"_method)
+            (Auth::get_check);
+
         return bp;
+    }
+
+    crow::response Auth::get_check(const crow::request &req)
+    {
+        auto &cookies = App::getContext<crow::CookieParser>(req);
+        auto &user = App::getContext<UserAuth>(req).user;
+
+        
+
+        auto lastTestVal = cookies.get_cookie("test");
+        IN_LOG("current test cookie val: {}", lastTestVal);
+
+        auto testVal = genHexString();
+        cookies.set_cookie("test", testVal)
+            .httponly()
+            .same_site(SameSitePolicy::Strict)
+            .max_age(60 * 60 * 24 * 14)
+            .path("/");
+        return crow::response("Check auth GET!");
     }
 
     crow::response Auth::post_login(const crow::request &req)
     {
         auto &user = App::getContext<UserAuth>(req).user;
+        auto &cookies = App::getContext<crow::CookieParser>(req);
 
-        IN_LOG("User type in post route: {}", user.type);
+        const auto fingerprint = genHexString();
+        cookies.set_cookie("fingerprint", fingerprint)
+            .httponly()
+            .same_site(SameSitePolicy::Strict)
+            .max_age(60 * 60 * 24 * 14)
+            .path("/");
 
         auto msg = crow::multipart::message(req);
 
