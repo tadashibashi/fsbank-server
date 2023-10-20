@@ -3,23 +3,16 @@ project (insound)
 # Enable zlib compression
 set (CROW_FEATURES compression)
 
-# Added to use Crow's FindAsio.cmake
-list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/lib/Crow/cmake)
-
-# Asio is required by Crow
-find_package(asio REQUIRED)
-
-# FSBank server setup
-file (GLOB_RECURSE INSOUND_SRC ./*.cpp)
+# Insound server setup
+file (GLOB_RECURSE INSOUND_SRC ./*.cpp ./*.h ./*.hpp)
 add_library (${PROJECT_NAME} STATIC ${INSOUND_SRC})
 
 target_link_libraries (${PROJECT_NAME} PUBLIC
-    fmod fsbank Poco::JWT Poco::Net Poco::NetSSL z asio::asio glaze::glaze
-    mongocxx_shared spdlog::spdlog
+    fmod fsbank Poco::JWT Poco::Net Poco::NetSSL z glaze::glaze
+    mongocxx_shared spdlog::spdlog Crow::Crow
 )
 
 target_include_directories(${PROJECT_NAME}
-    PUBLIC ${CMAKE_SOURCE_DIR}/lib/Crow/include
     PUBLIC ${CMAKE_SOURCE_DIR}
 )
 
