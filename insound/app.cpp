@@ -1,31 +1,33 @@
-#include "server.h"
-#include <crow.h>
-#include "controllers/api/auth.h"
-#include "insound/env.h"
-#include "insound/log.h"
-#include "middleware/UserContext.hpp"
+#include "app.h"
+
+#include <insound/controllers/api/auth.h>
+
+#include <insound/env.h>
+#include <insound/log.h>
 
 namespace Insound {
-    static crow::Crow<UserContext> app;
+    static App app;
     static bool wasInit;
+
+    App &getApp() {
+        return app;
+    }
 
     void initApp()
     {
-        if (!wasInit)
+        if (!wasInit) // make sure this function is only called once
         {
             // Configure .env variables
             configureEnv();
 
             // Initialize app
-            CROW_ROUTE(app, "/")([](const crow::request &req) {
-                auto &userCtx = app.get_context<UserContext>(req);
-
-                return "Hello from Insound Server!";
+            CROW_CATCHALL_ROUTE(app)([]() {
+                //auto &userCtx = getContext<UserAuth>(req);
+                return "hello insound!";
             });
 
             // Mount blueprints
-            auto auth = Auth::config();
-            app.register_blueprint(auth);
+            app.register_blueprint(Auth::config());
 
             // Get the PORT from environment
             auto PORT = getEnvType<int>("PORT", 3000);
@@ -35,14 +37,13 @@ namespace Insound {
 
 
             try {
-                auto result = app.port(PORT).multithreaded().run_async();
                 std::cout << "Insound server listening at http://localhost:" << PORT << '\n';
+                wasInit = true;
+                app.port(PORT).multithreaded().run();
             } catch (const std::exception &e)
             {
                 IN_LOG("Error during startup: {}", e.what());
             }
-
-            wasInit = true;
         }
     }
 }
