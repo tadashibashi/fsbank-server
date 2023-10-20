@@ -6,6 +6,7 @@ namespace Insound {
 
     /**
      * Encrypt a text string
+     * @param text - the string to encrypt
      */
     [[nodiscard]]
     std::string hash(const std::string &text);
@@ -13,6 +14,8 @@ namespace Insound {
 
     /**
      * Compare text to a string that was encrypted via Insound::hash
+     * @param   text      - the text to compare
+     * @param   encrypted - the encrypted string
      * @returns true when text matches encrypted string, and false otherwise.
      */
     [[nodiscard]]
