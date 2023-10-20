@@ -17,6 +17,10 @@ else()
     message(FATAL_ERROR "Build type ${CMAKE_BUILD_TYPE} not recognized.")
 endif()
 
+if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" AND ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld")
+endif()
+
 # Include submodule libraries
 add_subdirectory (lib)
 add_subdirectory (insound)
