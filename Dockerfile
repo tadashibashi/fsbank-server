@@ -5,7 +5,7 @@ RUN apt-get update -y && apt-get install -y cmake ninja-build clang git \
     openssl zlib1g libmongoc-dev python3.9 python-is-python3 libasio-dev
 
 # Clone repo
-RUN git clone --recursive https://github.com/tadashibashi/insound-cpp /app
+# RUN git clone --recursive https://github.com/tadashibashi/insound-cpp /app
 
 WORKDIR /app
 
@@ -29,4 +29,4 @@ RUN apt-get remove -y python3.9 python-is-python3 git clang ninja-build cmake
 RUN rm -rf /app/lib /app/tests /app/main.cpp /app/.git/ /app/.gitignore \
     /app/.gitmodules /app/Dockerfile /app/CMakeLists.txt
 
-CMD ./build/insound-server
+CMD ./build/relwithdebinfo/insound-server
