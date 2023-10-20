@@ -1,8 +1,8 @@
-#include "UserContext.hpp"
+#include "UserAuth.hpp"
 #include "insound/log.h"
 #include <insound/jwt.h>
 
-void Insound::UserContext::before_handle(crow::request &req,
+void Insound::UserAuth::before_handle(crow::request &req,
                                           crow::response &res, context &ctx)
 {
     auto auth = req.get_header_value("Authorization");
@@ -26,7 +26,7 @@ void Insound::UserContext::before_handle(crow::request &req,
 
 }
 
-void Insound::UserContext::after_handle(crow::request &req,
+void Insound::UserAuth::after_handle(crow::request &req,
                                          crow::response &res, context &ctx)
 {
     IN_LOG("User type: {}", ctx.user.type);

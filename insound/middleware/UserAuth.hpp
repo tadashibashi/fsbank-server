@@ -6,7 +6,7 @@
 
 namespace Insound {
 
-    class UserContext : crow::ILocalMiddleware
+    class UserAuth : crow::ILocalMiddleware
     {
     public:
         struct context {
