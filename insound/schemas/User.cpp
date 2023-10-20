@@ -34,7 +34,7 @@ int Insound::User::getTypeLevel(const std::string &type)
     for (int i = 0; i < userTypes.size(); ++i)
         if (userTypes[i] == type) return i;
 
-    throw std::runtime_error("Insound::User::getTypeLevel: invalid user type: "
-        + type);
+    throw std::runtime_error( f("Insound::User::getTypeLevel: invalid user "
+        "type: {}", type) );
 }
 

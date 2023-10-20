@@ -40,7 +40,7 @@ namespace Insound::Jwt
         }>(res, std::forward<const std::string>(payloadStr), ctx);
 
         if (error != glz::error_code::none)
-            throw "Glaze Error: " + std::to_string((int)error);
+            throw f("Glaze Error: {}", error);
 
         return res;
     }

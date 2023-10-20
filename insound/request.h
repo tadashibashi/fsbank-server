@@ -49,7 +49,7 @@ namespace Insound {
         }> (res, std::forward<std::string>(body), ctx);
 
         if (error.ec != glz::error_code::none)
-            throw "Glaze error: " + std::to_string((int)error.ec);
+            throw f("Glaze error: {}", (int)error.ec);
 
         return res;
     }

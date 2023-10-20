@@ -48,7 +48,8 @@ std::string Insound::request(const std::string &url, const std::string &method, 
     auto status = res.getStatus();
     if (status != 200)
     {
-        throw "HTTPError code: " + std::to_string(status) + ": " + res.getReasonForStatus(status);
+        throw f("HTTPError code: {}: {}", status,
+            res.getReasonForStatus(status));
     }
 
     std::ostringstream stream;

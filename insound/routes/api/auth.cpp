@@ -65,7 +65,9 @@ namespace Insound {
             }
         }
 
-        return crow::response("Password: " + password + ", Email: " + email + ", File: " + (files.empty() ? "" : files[0]) );
+        return crow::response(
+            f("Password: {}, Email: {}, File: {}", password, email,
+                (files.empty() ? "" : files[0])));
     }
 
 } // namespace Insound
