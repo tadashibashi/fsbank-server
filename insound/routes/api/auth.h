@@ -1,10 +1,17 @@
 #pragma once
-#include <crow.h>
-#include <insound/app.h>
 #include <insound/App.h>
 
-namespace Insound::Auth {
-    crow:: Blueprint &config();
+#include <insound/routes/Router.h>
 
-    crow::response post_login(const crow::request &req);
+namespace Insound {
+    class Auth : public Router {
+    public:
+        Auth();
+
+        crow::Blueprint &config();
+
+        static crow::response post_login(const crow::request &req);
+    };
+
+
 }

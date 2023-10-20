@@ -1,29 +1,27 @@
 #include "auth.h"
 #include "crow/common.h"
 #include "insound/log.h"
-#include <insound/app.h>
 #include <insound/App.h>
 
 using crow::HTTPMethod;
 
-namespace Insound::Auth {
-    static auto auth = crow::Blueprint("api/auth");
+namespace Insound {
+    Auth::Auth() : Router("api/auth") {}
 
-    crow::Blueprint &config()
+    crow::Blueprint &Auth::config()
     {
-        CROW_BP_ROUTE(auth, "/login/email")
+        CROW_BP_ROUTE(bp, "/login/email")
             .methods(HTTPMethod::POST)
-            (post_login);
+            (Auth::post_login);
 
-        return auth;
+        return bp;
     }
 
-    crow::response post_login(const crow::request &req)
+    crow::response Auth::post_login(const crow::request &req)
     {
-        // testing getContext
-        auto &userCtx = getContext<UserAuth>(req);
+        auto &user = App::getContext<UserAuth>(req).user;
 
-        IN_LOG("User type in post route: {}", userCtx.user.type);
+        IN_LOG("User type in post route: {}", user.type);
 
         auto msg = crow::multipart::message(req);
 
@@ -69,4 +67,5 @@ namespace Insound::Auth {
 
         return crow::response("Password: " + password + ", Email: " + email + ", File: " + (files.empty() ? "" : files[0]) );
     }
-}
+
+} // namespace Insound
