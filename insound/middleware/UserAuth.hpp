@@ -9,7 +9,8 @@ namespace Insound {
     class UserAuth : crow::ILocalMiddleware
     {
     public:
-        struct context {
+        struct context
+        {
             User user;
         };
 

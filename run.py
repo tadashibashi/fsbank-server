@@ -52,8 +52,8 @@ def config(type: str = "Debug"):
 
     if not os.path.isfile(compile_commands_orig):
         print(
-            f"Error: compile_commands.json was not generated at expected"
-            f"location \"{compile_commands_orig}\""
+            f"Error: compile_commands.json was not generated at expected "
+            f"location -> \"{compile_commands_orig}\""
         )
         exit()
 
