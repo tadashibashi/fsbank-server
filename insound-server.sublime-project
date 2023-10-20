@@ -17,22 +17,22 @@
 	"build_systems": [
 		{
 			"name": "Config",
-			"shell_cmd": "python3 run.py config",
+			"shell_cmd": "python3 run config",
 			"working_dir": "$project_path"
 		},
 		{
 			"name": "Build",
-			"shell_cmd": "python3 run.py build",
+			"shell_cmd": "python3 run build",
 			"working_dir": "$project_path"
 		},
 		{
 			"name": "Run",
-			"shell_cmd": "python3 run.py serve",
+			"shell_cmd": "python3 run serve",
 			"working_dir": "$project_path"
 		},
 		{
 			"name": "Run Tests",
-			"shell_cmd": "python3 run.py test",
+			"shell_cmd": "python3 run test",
 			"working_dir": "$project_path"
 		},
 	],
