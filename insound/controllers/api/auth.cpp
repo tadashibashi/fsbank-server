@@ -7,7 +7,6 @@ using crow::HTTPMethod;
 
 namespace Insound::Auth {
     static auto auth = crow::Blueprint("api/auth");
-    static App *app;
 
     crow::Blueprint &config()
     {
