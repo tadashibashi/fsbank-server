@@ -1,6 +1,4 @@
 #include <insound/App.h>
-#include <iostream>
-#include <cstdlib>
 
 int main()
 {
