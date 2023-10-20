@@ -1,6 +1,5 @@
 #pragma once
 
-#include "common.h"
 #include <vector>
 #include <cstdint>
 
@@ -8,6 +7,9 @@ namespace Insound {
 
     class BankBuilder {
     public:
+        using Result = const char *;
+        static const Result OK;
+
         BankBuilder();
         ~BankBuilder();
 
@@ -46,6 +48,7 @@ namespace Insound {
          * Get the data of the built file. Only available after a successful
          * call to BankBuilder::build.
          */
+        [[nodiscard]]
         const std::vector<uint8_t> &data() const noexcept { return builtFile; }
 
     private:

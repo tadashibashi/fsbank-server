@@ -1,6 +1,6 @@
 #include "BankBuilder.h"
 
-#include <fsbank.h>
+#include <insound/thirdparty/fsbank.hpp>
 
 #include <cassert>
 #include <thread>
@@ -17,6 +17,8 @@ namespace Insound {
 
     static bool wasInit;
 
+    const BankBuilder::Result BankBuilder::OK = nullptr;
+
     BankBuilder::BankBuilder()
     {
 
@@ -26,7 +28,7 @@ namespace Insound {
     {
     }
 
-    Result BankBuilder::initLibrary() noexcept
+    BankBuilder::Result BankBuilder::initLibrary() noexcept
     {
         if (!wasInit)
         {
@@ -45,7 +47,7 @@ namespace Insound {
         return OK;
     }
 
-    Result BankBuilder::closeLibrary() noexcept
+    BankBuilder::Result BankBuilder::closeLibrary() noexcept
     {
         if (wasInit)
         {
@@ -56,7 +58,7 @@ namespace Insound {
         return OK;
     }
 
-    Result BankBuilder::addFile(void *file, unsigned byteLength) noexcept
+    BankBuilder::Result BankBuilder::addFile(void *file, unsigned byteLength) noexcept
     {
         try {
             // ensure file is not null or empty
@@ -76,7 +78,7 @@ namespace Insound {
         }
     }
 
-    Result BankBuilder::build(float samplerate) noexcept
+    BankBuilder::Result BankBuilder::build(float samplerate) noexcept
     {
         try {
             if (files.size() != fileSizes.size())
@@ -109,7 +111,7 @@ namespace Insound {
         }
     }
 
-    Result BankBuilder::clear() noexcept
+    BankBuilder::Result BankBuilder::clear() noexcept
     {
         try {
             builtFile.clear();
