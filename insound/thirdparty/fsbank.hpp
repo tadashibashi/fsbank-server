@@ -1,9 +1,14 @@
 #pragma once
-#include <fsbank.h>
-#include <fsbank_errors.h>
-#include "platform.h"
 #include <insound/log.h>
 
+#include <fsbank.h>
+#include <fsbank_errors.h>
+
+/**
+ * Macro that checks an FSBank function. It causes a return on error with a
+ * cstring containing the error message. Inspired by blargg gme.
+ * @param  result Result of the FSBank function
+ */
 #define FSB_CHECK(result) do { \
         const FSBANK_RESULT res = (result); \
         const char *message = res ? FSBank_ErrorString(res) : nullptr; \
@@ -12,9 +17,3 @@
             return message; \
         } \
     } while(0)
-
-namespace Insound {
-    using Result = const char *;
-
-    const Result OK = nullptr;
-}
