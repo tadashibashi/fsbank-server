@@ -1,6 +1,6 @@
 #include "app.h"
 
-#include <insound/controllers/api/auth.h>
+#include <insound/routes/api/auth.h>
 
 #include <insound/env.h>
 #include <insound/log.h>
