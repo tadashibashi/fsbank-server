@@ -1,9 +1,9 @@
-#include <insound/app.h>
+#include <insound/App.h>
 #include <iostream>
 #include <cstdlib>
 
 int main()
 {
-    Insound::initApp();
+    Insound::App::instance().run();
     return 0;
 }
