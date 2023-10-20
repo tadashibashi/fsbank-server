@@ -8,7 +8,7 @@ file (GLOB_RECURSE INSOUND_SRC ./*.cpp ./*.h ./*.hpp)
 add_library (${PROJECT_NAME} STATIC ${INSOUND_SRC})
 
 target_link_libraries (${PROJECT_NAME} PUBLIC
-    fmod fsbank Poco::JWT Poco::Net Poco::NetSSL z glaze::glaze
+    fmod fsbank Poco::JWT Poco::Net Poco::NetSSL Poco::Crypto z glaze::glaze
     mongocxx_shared spdlog::spdlog Crow::Crow
 )
 
