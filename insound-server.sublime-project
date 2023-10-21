@@ -52,7 +52,7 @@
 	"debugger_tasks": [
 		{
 			"name": "Build & Kill",
-			"shell_cmd": "python3 run.py kill_server && python3 run.py build",
+			"shell_cmd": "python3 run kill_server && python3 run build",
 			"working_dir": "${project_path}"
 		},
 	]
