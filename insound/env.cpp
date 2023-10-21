@@ -60,7 +60,7 @@ namespace Insound {
             }
 
             // skip empty lines
-            if (line.empty()) continue;
+            if (line.empty() || line[0] == '#') continue;
 
             // read name and value
             auto eqPos = line.find_first_of('=');
