@@ -19,3 +19,6 @@
 [submodule "lib/curl"]
 	path = lib/curl
 	url = https://github.com/curl/curl
+[submodule "lib/bcrypt"]
+	path = lib/bcrypt
+	url = https://github.com/tadashibashi/bcrypt
