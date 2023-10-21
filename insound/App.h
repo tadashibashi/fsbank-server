@@ -19,17 +19,17 @@ namespace Insound {
         ~App();
 
         /**
-         * Mount a router to the App
+         * Mount a router to the App.
+         * Forwards arguments to `T` router's constructor.
          *
          * @example
-         *     `app.mount<RouterType>();`
+         *     `app.mount<T>();`
          *
          */
-        template <typename T> requires std::is_base_of_v<Router, T>
-        void mount()
+        template <typename T, typename ...TArgs> requires std::is_base_of_v<Router, T>
+        void mount(TArgs &&...args)
         {
-            auto t = T();
-            mount(t);
+            mount(new T(std::forward<TArgs>(args)...));
         }
 
         template <typename MiddlewareType>
@@ -47,10 +47,10 @@ namespace Insound {
 
     private:
         App();
-        void mount(Router &router);
+        void mount(Router *router);
 
         bool m_wasInit;
         CrowApp m_app;
-        std::vector<crow::Blueprint> m_bps;
+        std::vector<Router *> m_routers;
     };
 }

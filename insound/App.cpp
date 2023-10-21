@@ -1,4 +1,5 @@
 #include "App.h"
+#include "insound/mongo.h"
 
 #include <insound/routes/api/auth.h>
 
@@ -16,21 +17,22 @@ namespace Insound {
     }
 
 
-    App::App() : m_app(), m_bps(), m_wasInit(false)
+    App::App() : m_app(), m_routers(), m_wasInit(false)
     {
 
+    }
+
+    App::~App()
+    {
+        for (auto router : m_routers)
+            delete router;
     }
 
 
     std::string catch_all(const crow::request &req)
     {
         IN_LOG("Reached catchall route.");
-        auto &user = App::getContext<UserAuth>(req);
-
-        if (user.user.isAuthorized())
-            return f("hello {}!", user.user.username);
-        else
-            return f("hello {}!", "guest");
+        return "catchall";
     }
 
 
@@ -41,15 +43,18 @@ namespace Insound {
             // Configure .env variables
             configureEnv();
 
-            // Initialize app
-            CROW_ROUTE(internal(), "/")
-            (catch_all);
-
             // Mount blueprints
             mount<Auth>();
 
+            // Initialize app
+            CROW_CATCHALL_ROUTE(m_app)
+            (catch_all);
+
             // Get the PORT from environment
             auto PORT = getEnvType<int>("PORT", 3000);
+
+            // Connect to database
+            Mongo::connect();
 
             m_app.loglevel(crow::LogLevel::Warning);
 
@@ -66,9 +71,9 @@ namespace Insound {
     }
 
 
-    void App::mount(Router &router)
+    void App::mount(Router *router)
     {
-        auto &bp = m_bps.emplace_back(std::move(router.config())) ;
-        m_app.register_blueprint(bp);
+        m_routers.emplace_back(router);
+        m_app.register_blueprint(router->config());
     }
 }
