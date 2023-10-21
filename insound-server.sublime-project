@@ -48,12 +48,25 @@
 			"cwd": "${project_path}",
 			"pre_debug_task": "Build & Kill"
 		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Launch Tests",
+			"program": "${project_path}/build/debug/tests/insound-tests",
+			"args": [],
+			"cwd": "${project_path}",
+			"pre_debug_task": "Build Tests"
+		},
 	],
 	"debugger_tasks": [
 		{
 			"name": "Build & Kill",
 			"shell_cmd": "python3 run kill_server && python3 run build",
 			"working_dir": "${project_path}"
+		},
+		{
+			"name": "Build Tests",
+			"shell_cmd": "python3 run build debug insound-tests"
 		},
 	]
 }
