@@ -22,3 +22,6 @@
 [submodule "lib/bcrypt"]
 	path = lib/bcrypt
 	url = https://github.com/tadashibashi/bcrypt
+[submodule "lib/cpp-jwt"]
+	path = lib/cpp-jwt
+	url = https://github.com/arun11299/cpp-jwt
