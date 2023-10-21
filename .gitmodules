@@ -25,3 +25,6 @@
 [submodule "lib/cpp-jwt"]
 	path = lib/cpp-jwt
 	url = https://github.com/arun11299/cpp-jwt
+[submodule "lib/jwt-cpp"]
+	path = lib/jwt-cpp
+	url = https://github.com/Thalhammer/jwt-cpp
