@@ -38,13 +38,16 @@ def config(type: str = "Debug"):
         Configure server CMake project and submodule libs
     """
     target_build_dir = os.path.join(BUILD_PATH, type.lower())
-    os.system(
+    result = os.system(
         f"cmake -E make_directory {target_build_dir} && "
         f"cmake -G Ninja -S {PROJECT_PATH} -B {target_build_dir} "
         f"-DCMAKE_BUILD_TYPE={type} "
         f"-DCMAKE_EXPORT_COMPILE_COMMANDS=1 "
         f"-DCROW_BUILD_TESTS=OFF -DCROW_BUILD_EXAMPLES=OFF "
     )
+
+    if result != 0:
+        exit()
 
     # move the current compile_commands.json to the build directory
     compile_commands_dest = os.path.join(BUILD_PATH, "compile_commands.json")
@@ -68,9 +71,11 @@ def build(type: str = "Debug", target: str = PROJECT_NAME):
         Build a Cmake project, default is the server
     """
     config(type)
-    os.system(
+    result = os.system(
         f"cmake --build {os.path.join(BUILD_PATH, type.lower())} "
         f"--target {target}")
+    if result != 0:
+        exit()
 
 
 def kill_server():
