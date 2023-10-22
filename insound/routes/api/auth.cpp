@@ -1,4 +1,5 @@
 #include "auth.h"
+#include "crow/app.h"
 #include <crow/common.h>
 #include <crow/middlewares/cookie_parser.h>
 
@@ -9,7 +10,7 @@ using SameSitePolicy = crow::CookieParser::Cookie::SameSitePolicy;
 namespace Insound {
     Auth::Auth() : Router("api/auth") {}
 
-    crow::Blueprint &Auth::config()
+    void Auth::configImpl()
     {
         CROW_BP_ROUTE(bp, "/login/email")
             .methods("POST"_method)
@@ -19,7 +20,7 @@ namespace Insound {
             .methods("GET"_method)
             (Auth::get_check);
 
-        return bp;
+        CROW_BP_CATCHALL_ROUTE(bp)([]() {return "hey";});
     }
 
     crow::response Auth::get_check(const crow::request &req)
@@ -27,7 +28,7 @@ namespace Insound {
         auto &cookies = App::getContext<crow::CookieParser>(req);
         auto &user = App::getContext<UserAuth>(req).user;
 
-        
+
 
         auto lastTestVal = cookies.get_cookie("test");
         IN_LOG("current test cookie val: {}", lastTestVal);

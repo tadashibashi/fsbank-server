@@ -8,7 +8,7 @@ namespace Insound {
     public:
         Auth();
 
-        crow::Blueprint &config();
+        void configImpl();
 
         static crow::response get_check(const crow::request &req);
         static crow::response post_login(const crow::request &req);
