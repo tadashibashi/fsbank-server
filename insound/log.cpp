@@ -10,7 +10,8 @@ namespace Insound::Log {
     {
         if (!sAppLogger)
         {
-            sAppLogger = spdlog::stdout_color_mt("Insound");
+            sAppLogger = spdlog::stdout_color_mt("Insound",
+                spdlog::color_mode::always);
             sAppLogger->set_pattern("[%n] [%l] %v");
         }
 
