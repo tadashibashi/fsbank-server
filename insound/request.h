@@ -34,6 +34,8 @@ namespace Insound {
      * @param  method  http method, use constants in Insound::HttpMethod namespace
      * @param  payload optional Json payload to set
      * @return         body of the response as a Json object
+     *
+     * @throws CurlError if an error occurred during the request
      */
     template <typename T, typename Payload = int>
     T request(const std::string &url, const std::string &method = HttpMethod::Get, const Payload *payload = nullptr)
@@ -53,7 +55,4 @@ namespace Insound {
 
         return res;
     }
-
-
-
 }

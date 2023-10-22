@@ -1,58 +1,84 @@
 #include "request.h"
-#include "Poco/URI.h"
-#include <Poco/Net/HTTPSClientSession.h>
-#include <Poco/Net/HTTPRequest.h>
-#include <Poco/Net/HTTPResponse.h>
-#include <Poco/StreamCopier.h>
-#include <Poco/JSON/Parser.h>
-#include <Poco/Net/HTTPClientSession.h>
+#include "insound/errors/CurlError.h"
 #include <sstream>
+#include <curl/curl.h>
+#include <cassert>
 
 namespace Insound::HttpMethod {
-    const std::string Get = Poco::Net::HTTPRequest::HTTP_GET;
-    const std::string Post = Poco::Net::HTTPRequest::HTTP_POST;
-    const std::string Put = Poco::Net::HTTPRequest::HTTP_PUT;
-    const std::string Patch = Poco::Net::HTTPRequest::HTTP_PATCH;
-    const std::string Delete = Poco::Net::HTTPRequest::HTTP_DELETE;
+    const std::string Get = "GET";
+    const std::string Post = "POST";
+    const std::string Put = "PUT";
+    const std::string Patch = "PATCH";
+    const std::string Delete = "DELETE";
 }
+
+static auto InitOk = curl_global_init(CURL_GLOBAL_ALL);
+
+static size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
+{
+    auto bytes = size * nmemb;
+    std::string &file = *static_cast<std::string *>(userp);
+    file = std::string{(char *)buffer, (char *)buffer + bytes};
+
+    return bytes;
+}
+
+class CurlHeaders {
+public:
+    CurlHeaders() : list() { }
+    ~CurlHeaders()
+    {
+        if (list)
+            curl_slist_free_all(list);
+    }
+
+    void append(const std::string &name, const std::string &value)
+    {
+        auto header = f("{}: {}", name, value);
+        list = curl_slist_append(list, header.c_str());
+        if (!list)
+            throw "Error occurred while appending header to curl_slist";
+    }
+
+    auto getList() { return list; }
+private:
+    curl_slist *list;
+};
+
 
 std::string Insound::request(const std::string &url, const std::string &method, const std::string &payload)
 {
-    Poco::URI uri(url);
-    auto path = uri.getPathAndQuery();
-    if (path.empty()) path = "/";
+    assert(InitOk == CURLE_OK);
 
-    auto session = Poco::Net::HTTPSClientSession(uri.getHost(), uri.getPort());
-    auto req = Poco::Net::HTTPRequest(method, path, Poco::Net::HTTPMessage::HTTP_1_1);
+    auto curl = curl_easy_init();
 
-    auto res = Poco::Net::HTTPResponse();
+    if (!curl) throw "Error initializaing curl";
 
-    if (!payload.empty())
-    {
-        // Add JSON payload if user provided it
-        // Set request headers for json object
-        req.setContentType("application/json");
-        req.setContentLength(payload.size());
+    try {
+        CurlHeaders headers;
+        headers.append("Content-Type", "application/json");
+        std::string resBody;
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &resBody);
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers.getList());
+        curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "br, gzip, deflate");
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload.c_str());
 
-        // send the request and pipe the payload body
-        auto &reqStream = session.sendRequest(req);
-        reqStream << payload;
+        auto result = curl_easy_perform(curl);
+        if (result != CURLE_OK)
+        {
+            curl_easy_cleanup(curl);
+            throw CurlError(result);
+        }
+
+        curl_easy_cleanup(curl);
+        return resBody;
     }
-    else
+    catch (...)
     {
-        // send the request
-        session.sendRequest(req);
+        curl_easy_cleanup(curl);
+        throw;
     }
-
-    auto &resStream = session.receiveResponse(res);
-    auto status = res.getStatus();
-    if (status != 200)
-    {
-        throw f("HTTPError code: {}: {}", status,
-            res.getReasonForStatus(status));
-    }
-
-    std::ostringstream stream;
-    stream << resStream.rdbuf();
-    return stream.str();
 }
