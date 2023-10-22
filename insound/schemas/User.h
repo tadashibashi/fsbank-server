@@ -3,6 +3,9 @@
 #include <string>
 
 namespace Insound {
+    /**
+     * User model stored in the database
+     */
     class User {
     public:
         /**
@@ -19,11 +22,6 @@ namespace Insound {
          * User email address
          */
         std::string email;
-
-        /**
-         * Encrypted fingerprint
-         */
-        std::string fingerprint;
 
         /**
          * Encrypted password, hidden from the frontend
@@ -70,7 +68,20 @@ namespace Insound {
          */
         static int getTypeLevel(const std::string &type);
     };
+
+    /**
+     * Token passed to the frontend
+     */
+    class UserToken : public User {
+    public:
+        /**
+         * Encrypted fingerprint
+         */
+        std::string fingerprint;
+    };
 }
+
+// ----- Glaze Metadata ------------------------------------------------------
 
 template<>
 struct glz::meta<Insound::User> {
@@ -83,3 +94,17 @@ struct glz::meta<Insound::User> {
         "password", glz::hide{&T::password}
     );
 };
+
+template<>
+struct glz::meta<Insound::UserToken> {
+    using T = Insound::UserToken;
+    static constexpr auto value = glz::object(
+        "username", &T::username,
+        "displayName", &T::displayName,
+        "email", &T::email,
+        "type", &T::type,
+        "password", glz::hide{&T::password},
+        "fingerprint", &T::fingerprint
+    );
+};
+
