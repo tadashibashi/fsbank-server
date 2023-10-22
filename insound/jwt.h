@@ -1,5 +1,4 @@
 #pragma once
-#include <Poco/JWT/Serializer.h>
 #include <glaze/glaze.hpp>
 #include <string>
 
@@ -7,9 +6,6 @@ namespace Insound::Jwt
 {
     /**
      * Attempts to decode and verify a JSON web token.
-     * Throws a Poco::SignatureVerificationException, on verification failure,
-     * based on token validity, and a Insound::ExpiredTokenError if the token
-     * was expired.
      * @param  jwt - the base64-encoded token string
      * @returns json string of the payload
      */
