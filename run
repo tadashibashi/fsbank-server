@@ -20,6 +20,7 @@ Pre-install requirements:
 """
 import os
 import sys
+import platform
 
 # Name of the server project file
 PROJECT_NAME: str = "insound-server"
@@ -78,6 +79,26 @@ def build(type: str = "Debug", target: str = PROJECT_NAME):
         exit()
 
 
+def _get_binary_dir(type: str, target: str):
+    """
+        Get the binary directory for a project from CMake cache
+    """
+    cache_path = os.path.join(BUILD_PATH, type.lower(), "CMakeCache.txt")
+    if not os.path.exists(cache_path):
+        print("Error, could not find CMake cache at expected location: " +
+              cache_path)
+        exit()
+    file = open(cache_path)
+
+    var_name = target + "_BINARY_DIR"
+    lines = file.readlines()
+    for line in lines:
+        if line.startswith(var_name):
+            return line.rstrip().split("=")[1]
+
+    return os.path.join(BUILD_PATH, type.lower())
+
+
 def kill_server():
     """
         Kill the server if it's currently running.
@@ -87,6 +108,25 @@ def kill_server():
         os.system(f"if pgrep {PROJECT_NAME}; then pkill {PROJECT_NAME}; fi")
     else:
         print("Windows kill_server() is unimplemented")
+
+
+def memcheck(type: str = "Debug", target: str = PROJECT_NAME):
+    """
+        On macOS, use `leaks` to detect memory leaks in the program
+    """
+    if platform.system() != "Darwin":
+        print("Sorry, memcheck only supports macOS via leaks")
+    build(type, target)
+    result = os.system("export MallocStackLogging")
+    if result != 0:
+        exit()
+
+    exec_path = os.path.join(_get_binary_dir(type, target), target)
+
+    if target == PROJECT_NAME:
+        kill_server()
+
+    result = os.system(f"leaks --list -q --atExit -- {exec_path}")
 
 
 def serve(type: str = "Debug"):
