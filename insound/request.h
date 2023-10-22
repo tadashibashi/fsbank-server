@@ -1,5 +1,6 @@
 #pragma once
 
+#include "insound/errors/GlazeError.h"
 #include <glaze/glaze.hpp>
 
 namespace Insound {
@@ -49,8 +50,8 @@ namespace Insound {
             .error_on_missing_keys=true
         }> (res, std::forward<std::string>(body), ctx);
 
-        if (error.ec != glz::error_code::none)
-            throw f("Glaze error: {}", (int)error.ec);
+        if (error)
+            throw GlazeError(error, body);
 
         return res;
     }
