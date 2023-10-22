@@ -32,11 +32,11 @@ RUN chmod +x run && ./run build $BUILD_TYPE && \
     mv ./lib/fmod/lib/linux/libfmod.so.13 /usr/lib/libfmod.so.13 && \
     mv ./lib/fsbank/lib/linux/libfsbank.so.13 /usr/lib/libfsbank.so.13 && \
     mv ./lib/fsbank/lib/linux/libfsbvorbis.so /usr/lib/libfsbvorbis.so && \
-    mv ./lib/fsbank/lib/linux/libopus.so /usr/lib/libopus.so.0 \
+    mv ./lib/fsbank/lib/linux/libopus.so /usr/lib/libopus.so.0 && \
     apt-get remove -y python3.9 python-is-python3 git clang ninja-build cmake \
     lld && \
-    apt-get clean autoclean \
-    apt-get autoremove -y \
+    apt-get clean autoclean && \
+    apt-get autoremove -y && \
     rm -rf /var/lib/{apt,dpkg,cache,log}/ ./lib ./insound ./tests ./main.cpp \
         ./.git/ ./.gitignore ./.gitmodules ./Dockerfile ./CMakeLists.txt
 
