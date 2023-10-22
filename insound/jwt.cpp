@@ -1,7 +1,6 @@
 #include "jwt.h"
 
 #include <insound/env.h>
-#include <insound/errors/ExpiredTokenError.h>
 
 #include <glaze/glaze.hpp>
 
