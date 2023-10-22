@@ -99,15 +99,19 @@ def _get_binary_dir(type: str, target: str):
     return os.path.join(BUILD_PATH, type.lower())
 
 
+def kill_process(name: str):
+    if os.name != "nt":
+        os.system(f"if pgrep {name}; then pkill {name}; fi")
+    else:
+        print("Windows kill_server() is unimplemented")
+
+
 def kill_server():
     """
         Kill the server if it's currently running.
         Only available on macOS and Linux
     """
-    if os.name != "nt":
-        os.system(f"if pgrep {PROJECT_NAME}; then pkill {PROJECT_NAME}; fi")
-    else:
-        print("Windows kill_server() is unimplemented")
+    kill_process(PROJECT_NAME)
 
 
 def memcheck(type: str = "Debug", target: str = PROJECT_NAME):
