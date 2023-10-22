@@ -108,3 +108,4 @@ struct glz::meta<Insound::UserToken> {
     );
 };
 
+GLZ_FORMAT(Insound::User::Type);
