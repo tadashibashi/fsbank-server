@@ -35,7 +35,7 @@ RUN chmod +x run && ./run build $BUILD_TYPE && \
     mv ./lib/fsbank/lib/linux/libfsbvorbis.so /usr/lib/libfsbvorbis.so && \
     mv ./lib/fsbank/lib/linux/libopus.so /usr/lib/libopus.so.0 && \
     apt-get remove -y python3.9 python-is-python3 git clang ninja-build cmake \
-    lld libcurl4-openssl-dev && \
+    lld && \
     apt-get clean autoclean && \
     apt-get autoremove -y && \
     rm -rf /var/lib/{apt,dpkg,cache,log}/ ./lib ./insound ./tests ./main.cpp \
