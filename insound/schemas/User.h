@@ -1,4 +1,5 @@
 #pragma once
+#include "insound/format.h"
 #include <insound/thirdparty/glaze.hpp>
 #include <string>
 
@@ -8,6 +9,10 @@ namespace Insound {
      */
     class User {
     public:
+        enum class Type : unsigned int {
+            Guest, User, Staff, Admin
+        };
+
         /**
          * Username that can be used as a link to one's profile
          */
@@ -32,24 +37,14 @@ namespace Insound {
          * A value from the Type struct representing user type. Get permission
          * level via Insound::User::getTypeLevel.
          */
-        std::string type;
-
-        /**
-         * Struct containing static constant strings enumerating user types.
-         */
-        struct Type {
-            static const std::string Guest;
-            static const std::string User;
-            static const std::string Staff;
-            static const std::string Admin;
-        };
+        Type type;
 
         /**
          * Whether user is authorized at the level of `userType`.
          * User a string constant from Insound::User::Type.
          */
         [[nodiscard]]
-        bool isAuthorized(const std::string &userType = User::Type::User) const;
+        bool isAuthorized(Type userType = Type::User) const;
 
         /**
          * Whether user is authorized at the level of staff or higher.
@@ -59,14 +54,6 @@ namespace Insound {
 
         [[nodiscard]]
         bool isAdmin() const;
-
-        /**
-         * Get the permission level number. Higher means higher permission
-         * level.
-         * @param  type - a string from Insound::User::Type
-         * @return        Permission level.
-         */
-        static int getTypeLevel(const std::string &type);
     };
 
     /**
@@ -82,6 +69,19 @@ namespace Insound {
 }
 
 // ----- Glaze Metadata ------------------------------------------------------
+
+template<>
+struct glz::meta<Insound::User::Type> {
+    using enum Insound::User::Type;
+
+    // Name must match precisely to enum, and once set, don't change it
+    static constexpr auto value = glz::enumerate(
+        "Guest", Guest,
+        "User", User,
+        "Staff", Staff,
+        "Admin", Admin
+    );
+};
 
 template<>
 struct glz::meta<Insound::User> {
