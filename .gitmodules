@@ -18,4 +18,4 @@
 	url = https://github.com/tadashibashi/bcrypt
 [submodule "lib/jwt-cpp"]
 	path = lib/jwt-cpp
-	url = https://github.com/Thalhammer/jwt-cpp
+	url = https://github.com/tadashibashi/jwt-cpp
