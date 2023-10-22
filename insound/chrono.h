@@ -1,7 +1,5 @@
 /**
- * This file contains literals for converting time-spans into microseconds.
- * This is intended to be used with Poco::Timestamp, to easily convert
- * between microsecond literals and Poco time objects.
+ * This file contains literals for converting units of time into microseconds.
  */
 #pragma once
 

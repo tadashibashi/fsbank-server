@@ -2,8 +2,8 @@
 #include <insound/jwt.h>
 #include <catch2/catch_test_macros.hpp>
 
+// Use insound's chrono literals
 #include <insound/chrono.h>
-
 using namespace Insound::ChronoLiterals;
 
 #include <insound/thirdparty/glaze.hpp>
