@@ -25,7 +25,8 @@ namespace Insound::Mongo {
 
             auto users = sDB.collection("users");
             auto user = users.find_one({});
-            IN_LOG(bsoncxx::to_json(user.value()));
+            if (user.has_value())
+                IN_LOG(bsoncxx::to_json(user.value()));
 
             return true;
         }
