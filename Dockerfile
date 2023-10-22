@@ -2,7 +2,8 @@ FROM ubuntu:22.04
 
 # Install dependency libraries
 RUN apt-get update -y && apt-get install -y cmake ninja-build clang git \
-    openssl zlib1g libmongoc-dev python3.9 python-is-python3 libasio-dev lld
+    openssl zlib1g libmongoc-dev python3.9 python-is-python3 libasio-dev lld \
+    curl
 
 ENV APP_DIR=/app
 ENV BUILD_TYPE=release
