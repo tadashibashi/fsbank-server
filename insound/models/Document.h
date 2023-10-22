@@ -4,6 +4,7 @@
 #include <insound/mongo.h>
 #include <insound/thirdparty/glaze.hpp>
 
+#include <bsoncxx/builder/list.hpp>
 #include <bsoncxx/json.hpp>
 
 #include <glaze/core/common.hpp>
@@ -11,6 +12,7 @@
 #include <glaze/util/expected.hpp>
 
 #include <string>
+#include <string_view>
 
 namespace Insound::Mongo {
     struct Id {
@@ -28,37 +30,39 @@ namespace Insound::Mongo {
     class Document
     {
     private:
-        static void ensureCollectionExists(const std::string &name) {
+        static void ensureCollectionExists(std::string_view name) {
             if (!db().has_collection(name))
                 throw std::runtime_error(f("Mongo::Document error: "
                     "Collection {} doesn't exist in the database",
                     name));
         }
     public:
-        explicit Document(const std::string &collection) : id(), body(),
+        explicit Document(std::string_view collection) : id(), body(),
             cName(collection) {
                 ensureCollectionExists(collection);
         }
 
-        Document(const std::string &collection, const T &body) : id(),
+        Document(std::string_view collection, const T &body) : id(),
             body(body), cName(collection)
         {
             ensureCollectionExists(collection);
         }
 
-        static Document fromBson(const std::string &name,
+        static Document<T> fromBson(std::string_view name,
             const bsoncxx::document::view_or_value &bson)
         {
-            Document doc;
-            auto json = bsoncxx::to_json(bson);
+            T obj;
+            auto json = bsoncxx::to_json(bson.view());
             auto err = glz::read<glz::opts{
                 .error_on_unknown_keys=false,
                 .error_on_missing_keys=true
-            }>(doc.body, json);
+            }>(obj, json);
 
             if (err)
                 throw GlazeError(err, json);
-
+            
+            auto doc = Document<T>(name, obj);
+            doc.id = bson.view()["_id"].get_oid().value.to_string();
             return doc;
         }
 
@@ -71,21 +75,21 @@ namespace Insound::Mongo {
 
             if (id.empty()) // new document, generate new id
             {
-                auto newId = bsoncxx::oid{};
-                bson["_id"] = newId;
-                auto result = collection.insert_one(bson);
-                if (!result) return false;
-
-                id = newId.to_string();
-                return true;
+                auto result = collection.insert_one(bson.view());
+                if (result && result.value().result().inserted_count())
+                {
+                    id = result.value().inserted_id().get_oid().value.to_string();
+                    return true;
+                }
+                return false;
             }
             else
             {
-                bson["_id"] = bsoncxx::oid{id};
                 auto opts = mongocxx::options::find_one_and_update();
                 opts.upsert(true);
+                auto query = bsoncxx::builder::list({"_id", id});
                 auto result = collection.find_one_and_update(
-                    {"_id", bson["_id"]}, bson, opts);
+                   query.view().get_document().value, bson.view(), opts);
                 return static_cast<bool>(result);
             }
         }
@@ -94,7 +98,7 @@ namespace Insound::Mongo {
         T body;
 
     private:
-        std::string cName;
+        std::string_view cName;
     };
 }
 
