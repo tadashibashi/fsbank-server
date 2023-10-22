@@ -24,11 +24,12 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
 # Invalidate cache every commit
 ADD https://api.github.com/repos/tadashibashi/insound-cpp/git/refs/heads/main \
     /version.json
-RUN git clone --recursive https://github.com/tadashibashi/insound-cpp $APP_DIR
+RUN git clone --recursive https://github.com/tadashibashi/insound-cpp $APP_DIR \
+    && mv run run.py
 
 # Build project & clean up
 RUN \
-    python3 run build $BUILD_TYPE && \
+    python3 run.py build $BUILD_TYPE && \
     mv ./lib/fmod/lib/linux/libfmod.so.13 /usr/lib/libfmod.so.13 && \
     mv ./lib/fsbank/lib/linux/libfsbank.so.13 /usr/lib/libfsbank.so.13 && \
     mv ./lib/fsbank/lib/linux/libfsbvorbis.so /usr/lib/libfsbvorbis.so && \
