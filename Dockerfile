@@ -17,7 +17,8 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     openssl \
     python3.9 \
     python-is-python3 \
-    zlib1g
+    zlib1g && \
+    pip install psutils
 
 # Clone repo
 # Invalidate cache every commit

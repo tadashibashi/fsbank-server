@@ -17,10 +17,15 @@ Pre-install requirements:
     - cmake
     - ninja
 
+Pip install:
+    - psutil, handles killing processes cross-platform
+
 """
 import os
 import sys
 import platform
+import psutil
+import signal
 
 # Name of the server project file
 PROJECT_NAME: str = "insound-server"
@@ -34,21 +39,77 @@ PROJECT_PATH: str = os.path.dirname(__file__)
 BUILD_PATH: str = os.path.join(PROJECT_PATH, "build")
 
 
-def config(type: str = "Debug"):
+def config_env(path: str = os.path.join(PROJECT_PATH, ".env")):
     """
-        Configure server CMake project and submodule libs
+        Configure executable's environment variables
     """
-    target_build_dir = os.path.join(BUILD_PATH, type.lower())
+    if not os.path.exists(path):
+        return
+    print("Environment set")
+    try:
+        file = open(path)
+        lines: list[str] = file.readlines()
+        for line in lines:
+            line = line.strip()
+
+            # skip comments and empty lines
+            if line.startswith('#') or not line:
+                continue
+
+            # find assignment operator
+            assign_op = line.find('=')
+            if assign_op == -1:
+                continue
+
+            # get & set variable namd and value
+            var_name = line[:assign_op]
+            var_value = line[assign_op + 1:]
+            os.environ[var_name] = var_value
+            print(f"    {var_name} = {var_value}")
+
+        print("\n")
+    except Exception as e:
+        print("Error occured during config_env: ", e)
+        exit(1)
+
+
+def config(build_type: str = "Debug", env_path: str =
+           os.path.join(PROJECT_PATH, ".env")):
+    """
+        Configure server CMake project and submodule libs.
+        Calls config_env() to load an .env in project root if it exists.
+
+        Args:
+            build_type (str): CMake build type. Defaults to `"Debug"`
+            env_path (str): path to env file to open. Defaults to .env in
+                project path.
+    """
+    print(
+        "\n"
+        f"----- config ----------------------------------------------------\n")
+    print(
+        f"System   {platform.system()} {platform.uname()[4]}")
+    print(f"Build    {build_type.title()}")
+
+    # Try configuring env file, can safely fail if it doesn't exist.
+    config_env(env_path)
+
+    print(f"Configuring CMake Project...\n")
+
+    target_build_dir = os.path.join(BUILD_PATH, build_type.lower())
     result = os.system(
         f"cmake -E make_directory {target_build_dir} && "
         f"cmake -G Ninja -S {PROJECT_PATH} -B {target_build_dir} "
-        f"-DCMAKE_BUILD_TYPE={type} "
+        f"-DCMAKE_BUILD_TYPE={build_type} "
         f"-DCMAKE_EXPORT_COMPILE_COMMANDS=1 "
         f"-DCROW_BUILD_TESTS=OFF -DCROW_BUILD_EXAMPLES=OFF "
+        f"-DCMAKE_RULE_MESSAGES=ON "
     )
 
     if result != 0:
-        exit()
+        exit(result)
+
+    print("\nCMake config succeeded.\n")
 
     # move the current compile_commands.json to the build directory
     compile_commands_dest = os.path.join(BUILD_PATH, "compile_commands.json")
@@ -66,28 +127,46 @@ def config(type: str = "Debug"):
 
         os.rename(compile_commands_orig, compile_commands_dest)
 
+    print("Project configured.\n")
 
-def build(type: str = "Debug", target: str = PROJECT_NAME):
+
+def build(build_type: str = "Debug", target: str = PROJECT_NAME):
     """
-        Build a Cmake project, default is the server
+        Configure and build a Cmake project.
+        Args:
+            build_type (str, optional): CMake build type. Defaults to `"Debug"`
+            target (str, optional): CMake target to build. Defaults to main
+                server project.
     """
-    config(type)
+    config(build_type)
+    print(
+        "\n"
+        f"----- build -----------------------------------------------------\n")
     result = os.system(
-        f"cmake --build {os.path.join(BUILD_PATH, type.lower())} "
+        f"cmake --build {os.path.join(BUILD_PATH, build_type.lower())} "
         f"--target {target}")
     if result != 0:
-        exit()
+        exit(result)
+    print("\nBuild succeeded.\n")
 
 
-def _get_binary_dir(type: str, target: str):
+def _get_binary_dir(build_type: str, target: str):
     """
-        Get the binary directory for a project from CMake cache
+        Get the binary directory for a project from its CMakeCache.txt
+        Args:
+            build_type (str): CMake build type
+            target (str):     CMake target name
+
+        Returns:
+            (str): the path to the target's binary dir. If one is not found,
+                it returns the build path. Make sure that the target name is
+                spelled correctly.
     """
-    cache_path = os.path.join(BUILD_PATH, type.lower(), "CMakeCache.txt")
+    cache_path = os.path.join(BUILD_PATH, build_type.lower(), "CMakeCache.txt")
     if not os.path.exists(cache_path):
         print("Error, could not find CMake cache at expected location: " +
               cache_path)
-        exit()
+        exit(1)
     file = open(cache_path)
 
     var_name = target + "_BINARY_DIR"
@@ -96,14 +175,59 @@ def _get_binary_dir(type: str, target: str):
         if line.startswith(var_name):
             return line.rstrip().split("=")[1]
 
-    return os.path.join(BUILD_PATH, type.lower())
+    return os.path.join(BUILD_PATH, build_type.lower())
+
+
+def _kill_proc_tree(pid: int, sig: int = signal.SIGTERM, timeout: int = None,
+                    on_terminate=None):
+    """
+        Kill a process and all of its children
+        Args:
+            pid (int):     the process id
+            sig (int):     the signal to call on the process
+            timeout (int): number of seconds to allow for process to finish
+
+        Returns:
+            (list[Process], list[Process]): A tuple with two list of processes
+                that were targeted that are:
+                    0: terminated
+                    1: stil alive
+    """
+    # don't kill own process
+    if pid == os.getpid():
+        return (list(), list())
+    parent = psutil.Process(pid)
+    processes = parent.children(recursive=True)
+    processes.append(parent)
+
+    for p in processes:
+        try:
+            p.send_signal(sig)
+        except psutil.NoSuchProcess:
+            pass
+    gone, alive = psutil.wait_procs(processes, timeout=timeout,
+                                    callback=on_terminate)
+    return (gone, alive)
 
 
 def kill_process(name: str):
-    if os.name != "nt":
-        os.system(f"if pgrep {name}; then pkill {name}; fi")
-    else:
-        print("Windows kill_server() is unimplemented")
+    """
+        Kill a process by `name`.
+    """
+    for proc in psutil.process_iter():
+        if name.lower() == proc.name().lower():
+            print(f"Ending pre-existing process {proc.pid}: {proc.name()}")
+            gone, alive = _kill_proc_tree(proc.pid, sig=signal.SIGTERM,
+                                          timeout=1)
+            if len(alive) > 0:
+                gone, alive = _kill_proc_tree(proc.pid, sig=signal.SIGKILL,
+                                              timeout=1)
+                if len(alive) > 0:
+                    print(f"Failed to kill process \"{name}\"")
+                else:
+                    print(f"Process {proc.pid} killed.\n")
+            else:
+                print(f"Process {proc.pid} terminated.\n")
 
 
 def kill_server():
@@ -114,41 +238,72 @@ def kill_server():
     kill_process(PROJECT_NAME)
 
 
-def memcheck(type: str = "Debug", target: str = PROJECT_NAME):
+def _leaks(build_type: str = "Debug", target: str = PROJECT_NAME):
     """
         On macOS, use `leaks` to detect memory leaks in the program
     """
     if platform.system() != "Darwin":
         print("Sorry, memcheck only supports macOS via leaks")
-    build(type, target)
+        return "unsupported"
     result = os.system("export MallocStackLogging")
     if result != 0:
-        exit()
+        exit(result)
 
-    exec_path = os.path.join(_get_binary_dir(type, target), target)
+    print("Using macOS leaks\n")
+    exec_path = os.path.join(_get_binary_dir(build_type, target), target)
 
-    if target == PROJECT_NAME:
-        kill_server()
-
-    result = os.system(f"leaks --list -q --atExit -- {exec_path}")
+    return os.system(f"leaks --list -q --atExit -- {exec_path}")
 
 
-def serve(type: str = "Debug"):
+def run(build_type: str = "Debug", target: str = PROJECT_NAME, kill=True,
+        check_leaks: bool = True):
+    """
+        Configure, build, and run a CMake target.
+        Args:
+            build_type (str, optional): the CMake build type.
+                Defaults to `"Debug"`
+
+            target (str, optional): the CMake target. Defaults to main server.
+
+            kill (bool, optional): whether to kill process of the same target
+                name. Defautls to `True`.
+
+            check_leaks (bool, optional): whether to run leak checking
+                software.
+    """
+    build(build_type, target)
+
+    print(
+        "\n"
+        f"----- run -------------------------------------------------------\n")
+    if kill:
+        if check_leaks:
+            kill_process("leaks")
+        kill_process(target)
+
+    if check_leaks:
+        result = _leaks(build_type, target)
+        if result != "unsupported":
+            exit(result)
+
+        print("Attempting run without leak checks")
+
+    exec_path = os.path.join(_get_binary_dir(build_type, target), target)
+    result = os.system(exec_path)
+
+
+def serve(build_type: str = "Debug"):
     """
         Build & run the server
     """
-    kill_server()
-    build(type, PROJECT_NAME)
-    os.system(f"{os.path.join(BUILD_PATH, type.lower(), PROJECT_NAME)}")
+    run(target=PROJECT_NAME, build_type=build_type)
 
 
-def test(type: str = "Debug"):
+def test(build_type: str = "Debug"):
     """
         Build & run the tests
     """
-    build(type, TEST_NAME)
-    target = os.path.join(BUILD_PATH, type.lower(), 'tests', TEST_NAME)
-    os.system(target)
+    run(target=TEST_NAME, build_type=build_type)
 
 
 def help():
