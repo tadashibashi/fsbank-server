@@ -18,7 +18,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     python3.9 \
     python-is-python3 \
     zlib1g && \
-    pip install psutils
+    pip3 install psutils
 
 # Clone repo
 # Invalidate cache every commit
