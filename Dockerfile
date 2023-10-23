@@ -15,10 +15,12 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     lld \
     ninja-build \
     openssl \
-    python3.9 \
+    gcc \
+    python3-dev \
+    python3-pip \
     python-is-python3 \
     zlib1g && \
-    pip3 install psutils
+    python -m pip install psutil
 
 # Clone repo
 # Invalidate cache every commit
@@ -30,12 +32,12 @@ RUN git config --global http.sslverify false && \
 WORKDIR $APP_DIR
 
 # Build project & clean up
-RUN chmod +x run && ./run build $BUILD_TYPE && \
+RUN chmod +x run && ./run build $BUILD_TYPE insound-server && \
     mv ./lib/fmod/lib/linux/libfmod.so.13 /usr/lib/libfmod.so.13 && \
     mv ./lib/fsbank/lib/linux/libfsbank.so.13 /usr/lib/libfsbank.so.13 && \
     mv ./lib/fsbank/lib/linux/libfsbvorbis.so /usr/lib/libfsbvorbis.so && \
     mv ./lib/fsbank/lib/linux/libopus.so /usr/lib/libopus.so.0 && \
-    apt-get remove -y python3.9 python-is-python3 git clang ninja-build cmake \
+    apt-get remove -y gcc python3-dev python-is-python3 git clang ninja-build cmake \
     lld && \
     apt-get clean autoclean && \
     apt-get autoremove -y && \
