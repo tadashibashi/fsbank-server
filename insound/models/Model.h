@@ -40,7 +40,7 @@ namespace Insound::Mongo {
 
         std::optional<Document<Schema>> insertOne(const Schema &obj)
         {
-            auto doc = Document<Schema>(m_collection.name(), obj);
+            auto doc = Document(obj);
             if (doc.save())
                 return doc;
             return {};

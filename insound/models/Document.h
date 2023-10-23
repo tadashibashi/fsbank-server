@@ -15,14 +15,6 @@
 #include <string_view>
 
 namespace Insound::Mongo {
-    struct Id {
-        std::string id;
-
-        // Should automatically resolve to its internal id
-        // when needed
-        operator std::string() { return id; }
-    };
-
     /**
      * @tname T - must be registered with glz::meta
      */
@@ -37,15 +29,14 @@ namespace Insound::Mongo {
                     name));
         }
     public:
-        explicit Document(std::string_view collection) : id(), body(),
-            cName(collection) {
-                ensureCollectionExists(collection);
+        Document() : id(), body()
+        {
+                ensureCollectionExists(glz::meta<T>::name);
         }
 
-        Document(std::string_view collection, const T &body) : id(),
-            body(body), cName(collection)
+        explicit Document(const T &body) : id(), body(body)
         {
-            ensureCollectionExists(collection);
+            ensureCollectionExists(glz::meta<T>::name);
         }
 
         static Document<T> fromBson(std::string_view name,
@@ -61,14 +52,14 @@ namespace Insound::Mongo {
             if (err)
                 throw GlazeError(err, json);
             
-            auto doc = Document<T>(name, obj);
+            auto doc = Document(obj);
             doc.id = bson.view()["_id"].get_oid().value.to_string();
             return doc;
         }
 
         bool save()
         {
-            auto collection = db().collection(cName);
+            auto collection = db().collection(glz::meta<T>::name);
 
             auto json = glz::write_json(body);
             auto bson = bsoncxx::from_json(json);
@@ -96,16 +87,5 @@ namespace Insound::Mongo {
 
         std::string id;
         T body;
-
-    private:
-        std::string_view cName;
     };
 }
-
-template<>
-struct glz::meta<Insound::Mongo::Id> {
-    using T = Insound::Mongo::Id;
-    static constexpr auto value = glz::object(
-        "$oid", &T::id
-    );
-};
