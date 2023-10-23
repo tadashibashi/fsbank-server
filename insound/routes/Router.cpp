@@ -7,13 +7,11 @@ crow::Blueprint &Insound::Router::config()
 
     if (opts.useCatchAll)
     {
-        // bp.catchall_rule()(
-        // [this](const crow::request &req, crow::response &res) {
-        //     this->catchAll(req, res);
-        // });
+        bp.catchall_rule()(
+        [this](const crow::request &req, crow::response &res) {
+            this->catchAll(req, res);
+        });
     }
-
-    IN_LOG("BP has catchall route: {}", bp.catchall_rule().has_handler());
 
     return bp;
 }

@@ -42,8 +42,6 @@ TEST_CASE ("Mongodb tests")
         REQUIRE (result.value().body.name == "Bob");
         REQUIRE (result.value().body.age == 30);
 
-        IN_LOG(result.value().id);
-
         auto delResult = PersonModel.deleteOne({"_id", bsoncxx::oid{result.value().id} });
         REQUIRE(delResult);
     }
