@@ -4,14 +4,34 @@
 #include <insound/routes/api/auth.h>
 
 #include <insound/env.h>
+#include <csignal>
 
 namespace Insound {
     static App *app;
-
+    static void gracefulShutdown(int sig)
+    {
+        switch (sig)
+        {
+        case SIGTERM:
+        case SIGKILL:
+        case SIGINT:
+        case SIGSTOP:
+            IN_LOG("Gracefully shutting down Insound server. Code {}", sig);
+            delete app;
+            exit(sig);
+            break;
+        }
+    }
 
     App &App::instance() {
         if (!app)
+        {
             app = new App();
+            signal(SIGKILL, gracefulShutdown);
+            signal(SIGTERM, gracefulShutdown);
+            signal(SIGINT, gracefulShutdown);
+            signal(SIGSTOP, gracefulShutdown);
+        }
 
         return *app;
     }
@@ -40,15 +60,12 @@ namespace Insound {
     {
         if (!m_wasInit) // make sure this function is only called once
         {
-            // Configure .env variables
-            configureEnv();
+            // Initialize Catchall
+            CROW_CATCHALL_ROUTE(m_app)
+            (catch_all);
 
             // Mount blueprints
             mount<Auth>();
-
-            // Initialize app
-            CROW_CATCHALL_ROUTE(m_app)
-            (catch_all);
 
             // Get the PORT from environment
             auto PORT = getEnvType<int>("PORT", 3000);
@@ -59,9 +76,9 @@ namespace Insound {
             m_app.loglevel(crow::LogLevel::Warning);
 
             try {
-                IN_LOG("Insound server listening at http://localhost:{}", PORT);
+                auto result = m_app.port(PORT).multithreaded().run_async();
+                std::cout << f("Serving at: http://localhost:{}\n", PORT);
                 m_wasInit = true;
-                m_app.port(PORT).multithreaded().run();
             }
             catch (const std::exception &e)
             {
