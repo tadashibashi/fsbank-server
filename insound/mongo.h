@@ -3,7 +3,16 @@
 
 namespace Insound::Mongo
 {
-    bool connect();
+    /**
+     * Get Mongo database object. Thread-safe.
+     */
+    mongocxx::database db();
 
-    mongocxx::database &db();
+    /**
+     * Connect to MongoDB. Must be called successfully before any Client is
+     * created. Safe to call if already connected, will simply return true.
+     *
+     * @returns whether call was successful.
+     */
+    bool connect();
 }
