@@ -28,16 +28,17 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     python -m pip install psutil && \
     git config --global http.sslverify false && \
     git clone --recursive https://github.com/tadashibashi/insound-cpp $APP_DIR \
-    && chmod +x run && ./run build $BUILD_TYPE insound-server && \
+    && chmod +x run && ./run install $BUILD_TYPE insound-server && \
     mv ./lib/fmod/lib/linux/libfmod.so.13 /usr/lib/libfmod.so.13 && \
     mv ./lib/fsbank/lib/linux/libfsbank.so.13 /usr/lib/libfsbank.so.13 && \
     mv ./lib/fsbank/lib/linux/libfsbvorbis.so /usr/lib/libfsbvorbis.so && \
     mv ./lib/fsbank/lib/linux/libopus.so /usr/lib/libopus.so.0 && \
+    python -m pip uninstall --yes psutil && \
     apt-get remove -y gcc python3-dev python-is-python3 git clang ninja-build \
-    cmake lld && \
+        cmake lld && \
     apt-get clean autoclean && \
     apt-get autoremove -y && \
-    rm -rf /var/lib/{apt,dpkg,cache,log}/ ./lib ./insound ./tests ./main.cpp \
-        ./.git/ ./.gitignore ./.gitmodules ./Dockerfile ./CMakeLists.txt
+    for dir in $APP_DIR/*; do [ "$dir" = "public" ] && continue rm -rf "$dir"; done &&\
+    rm -rf /var/lib/{apt,dpkg,cache,log}/
 
-CMD ./build/$BUILD_TYPE/insound-server
+CMD insound-server

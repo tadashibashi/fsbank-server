@@ -103,7 +103,6 @@ def config(build_type: str = "Debug", env_path: str =
         f"-DCMAKE_BUILD_TYPE={build_type} "
         f"-DCMAKE_EXPORT_COMPILE_COMMANDS=1 "
         f"-DCROW_BUILD_TESTS=OFF -DCROW_BUILD_EXAMPLES=OFF "
-        f"-DCMAKE_RULE_MESSAGES=ON "
     )
 
     if result != 0:
@@ -148,6 +147,26 @@ def build(build_type: str = "Debug", target: str = PROJECT_NAME):
     if result != 0:
         exit(result)
     print("\nBuild succeeded.\n")
+
+
+def install(build_type: str = "Debug", target: str = PROJECT_NAME):
+    """
+        Configure and build a Cmake project.
+        Args:
+            build_type (str, optional): CMake build type. Defaults to `"Debug"`
+            target (str, optional): CMake target to build. Defaults to main
+                server project.
+    """
+    build(build_type, target)
+    print(
+        "\n"
+        f"----- install ---------------------------------------------------\n")
+    result = os.system(
+        f"cmake --install {os.path.join(BUILD_PATH, build_type.lower())} "
+        f"--config {build_type.title()}")
+    if result != 0:
+        exit(result)
+    print("\nInstall succeeded.\n")
 
 
 def _get_binary_dir(build_type: str, target: str):

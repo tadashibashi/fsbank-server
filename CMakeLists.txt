@@ -18,6 +18,16 @@ add_subdirectory(insound)
 add_executable(${PROJECT_NAME}-server main.cpp)
 target_link_libraries(${PROJECT_NAME}-server insound)
 
+# Installation
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set(CMAKE_INSTALL_PREFIX "/usr/")
+    install(TARGETS ${PROJECT_NAME}-server
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+    )
+endif()
+
 enable_testing()
 
 # Tests

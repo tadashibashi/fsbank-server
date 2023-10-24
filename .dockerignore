@@ -1,1 +1,3 @@
+# Don't add the repo itself to the image
+# git clone is called from the container's Build step
 *
