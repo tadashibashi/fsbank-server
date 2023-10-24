@@ -81,7 +81,7 @@ def config_env(path: str = os.path.join(PROJECT_PATH, ".env")):
 
 
 def config(build_type: str = "Debug", env_path: str =
-           os.path.join(PROJECT_PATH, ".env")):
+           os.path.join(PROJECT_PATH, ".env"), args: str = ""):
     """
         Configure server CMake project and submodule libs.
         Calls config_env() to load an .env in project root if it exists.
@@ -90,6 +90,7 @@ def config(build_type: str = "Debug", env_path: str =
             build_type (str): CMake build type. Defaults to `"Debug"`
             env_path (str): path to env file to open. Defaults to .env in
                 project path.
+            args (str, optional): Appends args to CMake config call.
     """
     print(
         "\n"
@@ -109,7 +110,7 @@ def config(build_type: str = "Debug", env_path: str =
         f"cmake -G Ninja -S {PROJECT_PATH} -B {target_build_dir} "
         f"-DCMAKE_BUILD_TYPE={build_type} "
         f"-DCMAKE_EXPORT_COMPILE_COMMANDS=1 "
-        f"-DCROW_BUILD_TESTS=OFF -DCROW_BUILD_EXAMPLES=OFF "
+        f"-DCROW_BUILD_TESTS=OFF -DCROW_BUILD_EXAMPLES=OFF {args}"
     )
 
     if result != 0:
@@ -136,15 +137,17 @@ def config(build_type: str = "Debug", env_path: str =
     print("Project configured.\n")
 
 
-def build(build_type: str = "Debug", target: str = PROJECT_NAME):
+def build(build_type: str = "Debug", target: str = PROJECT_NAME,
+          args: str = ""):
     """
         Configure and build a Cmake project.
         Args:
             build_type (str, optional): CMake build type. Defaults to `"Debug"`
             target (str, optional): CMake target to build. Defaults to main
                 server project.
+            args (str, optional): Appends args to CMake config call.
     """
-    config(build_type)
+    config(build_type, args)
     print(
         "\n"
         f"----- build -----------------------------------------------------\n")
@@ -156,15 +159,21 @@ def build(build_type: str = "Debug", target: str = PROJECT_NAME):
     print("\nBuild succeeded.\n")
 
 
-def install(build_type: str = "Debug", target: str = PROJECT_NAME):
+def install(build_type: str = "Debug", target: str = PROJECT_NAME,
+            prefix: str = "", args: str = ""):
     """
         Configure and build a Cmake project.
         Args:
             build_type (str, optional): CMake build type. Defaults to `"Debug"`
             target (str, optional): CMake target to build. Defaults to main
                 server project.
+            args (str, optional): Appends args to CMake config call.
     """
-    build(build_type, target)
+    if prefix == "":
+        prefix = os.path.join(BUILD_PATH, build_type.lower(), "install")
+    args += "-DCMAKE_INSTALL_PREFIX=" + prefix
+
+    build(build_type, target, args)
     print(
         "\n"
         f"----- install ---------------------------------------------------\n")
@@ -332,6 +341,17 @@ def test(build_type: str = "Debug"):
         Build & run the tests
     """
     run(target=TEST_NAME, build_type=build_type)
+
+
+def clean(build_type="Debug"):
+    """
+        Clean the build folder of cmake-built files
+    """
+    result = os.system(
+        f"cmake --build {os.path.join(BUILD_PATH, build_type.lower())} "
+        "--target clean")
+    if result:
+        exit(result)
 
 
 def help():

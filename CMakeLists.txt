@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 20)
 # Set module path
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
 
-include(ConfigMessages)
+# include(ConfigMessages)
 include(FormatBuildType)
 
 # Include submodule libraries
@@ -20,11 +20,14 @@ target_link_libraries(${PROJECT_NAME}-server insound)
 
 # Installation
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set(CMAKE_INSTALL_PREFIX "/usr/")
     install(TARGETS ${PROJECT_NAME}-server
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
+    )
+    file (GLOB_RECURSE PUBLIC_FILES ${CMAKE_SOURCE_DIR}/public/*)
+    install(FILES ${PUBLIC_FILES}
+        DESTINATION ${CMAKE_INSTALL_PREFIX}
     )
 endif()
 
