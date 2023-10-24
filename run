@@ -144,7 +144,7 @@ def build(build_type: str = "Debug", target: str = PROJECT_NAME):
             target (str, optional): CMake target to build. Defaults to main
                 server project.
     """
-    config(build_type)
+    config(build_type, args=args)
     print(
         "\n"
         f"----- build -----------------------------------------------------\n")
@@ -164,7 +164,11 @@ def install(build_type: str = "Debug", target: str = PROJECT_NAME):
             target (str, optional): CMake target to build. Defaults to main
                 server project.
     """
-    build(build_type, target)
+    if prefix == "":
+        prefix = os.path.join(BUILD_PATH, build_type.lower(), "install")
+    args += " -DCMAKE_INSTALL_PREFIX=" + prefix
+
+    build(build_type, target, args)
     print(
         "\n"
         f"----- install ---------------------------------------------------\n")

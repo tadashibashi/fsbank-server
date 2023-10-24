@@ -25,7 +25,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     zlib1g && \
     git config --global http.sslverify false && \
     git clone --recursive https://github.com/tadashibashi/insound-cpp $APP_DIR \
-    && chmod +x run && ./run install $BUILD_TYPE insound-server && \
+    && chmod +x run && ./run install $BUILD_TYPE insound-server "/usr/" && \
     mv ./lib/fmod/lib/linux/libfmod.so.13 /usr/lib/libfmod.so.13 && \
     mv ./lib/fsbank/lib/linux/libfsbank.so.13 /usr/lib/libfsbank.so.13 && \
     mv ./lib/fsbank/lib/linux/libfsbvorbis.so /usr/lib/libfsbvorbis.so && \
@@ -35,6 +35,6 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     apt-get clean autoclean && \
     apt-get autoremove -y && \
     for dir in $APP_DIR/*; do [ "$dir" = "public" ] && continue rm -rf "$dir"; done &&\
-    rm -rf /var/lib/{apt,dpkg,cache,log}/
+    rm -rf /var/lib/{apt,dpkg,cache,log}/ $APP_DIR
 
 CMD insound-server
