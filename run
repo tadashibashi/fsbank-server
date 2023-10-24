@@ -81,7 +81,7 @@ def config_env(path: str = os.path.join(PROJECT_PATH, ".env")):
 
 
 def config(build_type: str = "Debug", env_path: str =
-           os.path.join(PROJECT_PATH, ".env")):
+           os.path.join(PROJECT_PATH, ".env"), args=""):
     """
         Configure server CMake project and submodule libs.
         Calls config_env() to load an .env in project root if it exists.
@@ -109,7 +109,7 @@ def config(build_type: str = "Debug", env_path: str =
         f"cmake -G Ninja -S {PROJECT_PATH} -B {target_build_dir} "
         f"-DCMAKE_BUILD_TYPE={build_type} "
         f"-DCMAKE_EXPORT_COMPILE_COMMANDS=1 "
-        f"-DCROW_BUILD_TESTS=OFF -DCROW_BUILD_EXAMPLES=OFF "
+        f"-DCROW_BUILD_TESTS=OFF -DCROW_BUILD_EXAMPLES=OFF " + args
     )
 
     if result != 0:
@@ -136,7 +136,7 @@ def config(build_type: str = "Debug", env_path: str =
     print("Project configured.\n")
 
 
-def build(build_type: str = "Debug", target: str = PROJECT_NAME):
+def build(build_type: str = "Debug", target: str = PROJECT_NAME, args=""):
     """
         Configure and build a Cmake project.
         Args:
@@ -156,7 +156,8 @@ def build(build_type: str = "Debug", target: str = PROJECT_NAME):
     print("\nBuild succeeded.\n")
 
 
-def install(build_type: str = "Debug", target: str = PROJECT_NAME):
+def install(build_type: str = "Debug", target: str = PROJECT_NAME,
+            prefix: str = "", args: str = ""):
     """
         Configure and build a Cmake project.
         Args:

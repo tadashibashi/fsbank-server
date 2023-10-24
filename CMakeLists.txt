@@ -20,7 +20,6 @@ target_link_libraries(${PROJECT_NAME}-server insound)
 
 # Installation
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set(CMAKE_INSTALL_PREFIX "/usr/")
     install(TARGETS ${PROJECT_NAME}-server
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
