@@ -7,38 +7,45 @@ ENV BUILD_TYPE=release
 ADD https://api.github.com/repos/tadashibashi/insound-cpp/git/refs/heads/main \
     /version.json
 
-# Install dependency libraries
-RUN apt-get update -y && apt-get install -y --no-install-recommends \
-    clang \
-    cmake \
-    curl \
-    git \
-    libasio-dev \
-    libcurl4-openssl-dev \
-    lld \
-    ninja-build \
-    libssl-dev \
-    python3.9 \
-    python-is-python3 \
-    zlib1g-dev && \
-    git config --global http.sslverify false && \
-    git clone https://github.com/mongodb/mongo-c-driver.git && \
-    mkdir -p mongo-c-driver/cmake-build && \
-    cd mongo-c-driver/cmake-build && \
-    cmake -DCMAKE_INSTALL_PREFIX=/usr/ -DCMAKE_INSTALL_FULL_BINDIR=/usr/bin/ \
-        -DCMAKE_INSTALL_FULL_LIBDIR=/usr/lib/ -DCMAKE_INSTALL_FULL_INCLUDEDIR=/usr/include/ \
-        -DCMAKE_C_COMPILER=clang -DCMAKE_PREFIX_PATH=.. -G Ninja .. && \
-    cmake --build . && \
-    cmake --install . && \
-    cd ../.. && \
-    rm -rf mongo-c-driver && \
-    git clone --recursive https://github.com/tadashibashi/insound-cpp $APP_DIR && \
-    cd $APP_DIR && \
-    chmod +x run && ./run install $BUILD_TYPE insound-server "/usr/" && \
-    apt-get remove -y python3.9 python-is-python3 git clang ninja-build \
-        cmake lld && \
-    apt-get clean autoclean && \
-    apt-get autoremove -y && \
-    rm -rf /var/lib/{apt,dpkg,cache,log}/ $APP_DIR
+# Install dependencies, build, clean up
+RUN \
+    # Install dependencies
+        apt-get update -y && apt-get install -y --no-install-recommends \
+        # Build tools
+            clang \
+            cmake \
+            git \
+            python3.9 \
+            python-is-python3 \
+            lld \
+            ninja-build \
+        # Runtime libraries
+            curl \
+            libasio-dev \
+            libcurl4-openssl-dev \
+            libssl-dev \
+            zlib1g-dev && \
+    # Build, install & clean-up mongo-c-driver (until package updated to v1.24)
+        git config --global http.sslverify false && \
+        git clone https://github.com/mongodb/mongo-c-driver.git && \
+        mkdir -p mongo-c-driver/cmake-build && \
+        cd mongo-c-driver/cmake-build && \
+        cmake -DCMAKE_INSTALL_PREFIX=/usr/ -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_PREFIX_PATH=.. -G Ninja .. && \
+        cmake --build . && \
+        cmake --install . && \
+        cd ../.. && \
+        rm -rf mongo-c-driver && \
+    # Build, install & clean-up server
+        git clone --recursive https://github.com/tadashibashi/insound-cpp $APP_DIR && \
+        cd $APP_DIR && \
+        chmod +x run && ./run install $BUILD_TYPE insound-server "/usr/" && \
+        rm -rf $APP_DIR && \
+    # Clean up build tools
+        apt-get remove -y python3.9 python-is-python3 git clang ninja-build \
+            cmake lld && \
+        apt-get clean autoclean && \
+        apt-get autoremove -y && \
+        rm -rf /var/lib/{apt,dpkg,cache,log}/
 
 CMD insound-server
