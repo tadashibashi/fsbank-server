@@ -41,7 +41,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR ${CMAKE_SYSTEM_NAME} MATCHES "Linux
     endif()
 
     install (DIRECTORY ${CMAKE_SOURCE_DIR}/public/
-        DESTINATION ${CMAKE_INSTALL_PREFIX})
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/public)
     install (FILES ${FMOD_LIBS}
         DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 endif()
