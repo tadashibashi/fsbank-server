@@ -14,7 +14,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     cmake \
     curl \
     git \
-    libmongoc-1.0-0 \
+    libmongoc-dev \
     libasio-dev \
     libcurl4-openssl-dev \
     lld \
