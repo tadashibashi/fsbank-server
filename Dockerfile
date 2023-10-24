@@ -30,7 +30,8 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     cmake --install . && \
     cd ../.. && \
     rm -rf mongo-c-driver && \
-    git clone --recursive https://github.com/tadashibashi/insound-cpp $APP_DIR \
+    git clone --recursive https://github.com/tadashibashi/insound-cpp $APP_DIR && \
+    cd $APP_DIR && \
     && chmod +x run && ./run install $BUILD_TYPE insound-server "/usr/" && \
     apt-get remove -y python3.9 python-is-python3 git clang ninja-build \
         cmake lld && \
