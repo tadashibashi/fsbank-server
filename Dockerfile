@@ -15,6 +15,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     curl \
     git \
     libmongoc-dev \
+    libmongoc-1.0-0 \
     libasio-dev \
     libcurl4-openssl-dev \
     lld \
