@@ -24,8 +24,15 @@ Pip install:
 import os
 import sys
 import platform
-import psutil
 import signal
+
+try:
+    import psutil
+    no_kill = False
+except ImportError:
+    print("Warning psutil is not available, process termination feature "
+          "turned off")
+    no_kill = True
 
 # Name of the server project file
 PROJECT_NAME: str = "insound-server"
@@ -233,6 +240,8 @@ def kill_process(name: str):
     """
         Kill a process by `name`.
     """
+    if no_kill:
+        return
     for proc in psutil.process_iter():
         if name.lower() == proc.name().lower():
             print(f"Ending pre-existing process {proc.pid}: {proc.name()}")
