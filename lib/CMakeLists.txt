@@ -8,6 +8,7 @@ add_subdirectory (jwt-cpp)
 add_subdirectory (mongo-cxx-driver)
 set_target_properties(mongocxx_shared PROPERTIES
     MONGOCXX_OVERRIDE_DEFAULT_INSTALL_PREFIX ON
+    BUILD_SHARED_LIBS_WITH_STATIC_MONGOC OFF
 )
 
 add_subdirectory (spdlog)
