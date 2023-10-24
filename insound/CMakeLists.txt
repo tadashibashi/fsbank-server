@@ -7,8 +7,10 @@ set (CROW_FEATURES compression)
 file (GLOB_RECURSE INSOUND_SRC ./*.cpp ./*.h ./*.hpp)
 add_library (${PROJECT_NAME} STATIC ${INSOUND_SRC})
 
+find_package(ZLIB REQUIRED)
+
 target_link_libraries (${PROJECT_NAME} PUBLIC
-    fmod fsbank z glaze::glaze curl Crow bcrypt jwt-cpp mongocxx_shared
+    fmod fsbank ZLIB::ZLIB glaze::glaze curl Crow bcrypt jwt-cpp mongocxx_shared
     spdlog::spdlog
 )
 
