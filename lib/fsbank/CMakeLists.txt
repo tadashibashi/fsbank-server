@@ -35,7 +35,7 @@ if (NOT EMSCRIPTEN)
             ${CMAKE_CURRENT_SOURCE_DIR}/../fmod/lib/linux/libfmod.so.13
             ${LIB_DIR}/libfsbank.so.13
             ${LIB_DIR}/libfsbvorbis.so
-            ${LIB_DIR}/libopus.so
+            ${LIB_DIR}/libopus.so.0
         )
     else()
         # Platform not supported
