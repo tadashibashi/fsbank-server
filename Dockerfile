@@ -25,7 +25,9 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     git clone https://github.com/mongodb/mongo-c-driver.git && \
     mkdir -p mongo-c-driver/cmake-build && \
     cd mongo-c-driver/cmake-build && \
-    cmake -DCMAKE_INSTALL_PREFIX=/usr/ -DCMAKE_PREFIX_PATH=.. -G Ninja .. && \
+    cmake -DCMAKE_INSTALL_PREFIX=/usr/ -DCMAKE_INSTALL_FULL_BINDIR=/usr/bin/ \
+        -DCMAKE_INSTALL_FULL_LIBDIR=/usr/lib/ -DCMAKE_INSTALL_FULL_INCLUDEDIR=/usr/include/ \
+        -DCMAKE_C_COMPILER=clang -DCMAKE_PREFIX_PATH=.. -G Ninja .. && \
     cmake --build . && \
     cmake --install . && \
     cd ../.. && \
