@@ -23,7 +23,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     python-is-python3 \
     zlib1g-dev && \
     git config --global http.sslverify false && \
-    git clone https://https://github.com/mongodb/mongo-c-driver.git && \
+    git clone https://github.com/mongodb/mongo-c-driver.git && \
     mkdir -p mongo-c-driver/cmake-build && \
     cmake -S mongo-c-driver -B mongo-c-driver/cmake-build -DCMAKE_INSTALL_PREFIX=/usr/ -G Ninja && \
     cmake --build mongo-c-driver/cmake-build && \
