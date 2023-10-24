@@ -19,7 +19,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     libcurl4-openssl-dev \
     lld \
     ninja-build \
-    openssl \
+    libssl-dev \
     python3.9 \
     python-is-python3 \
     zlib1g && \
