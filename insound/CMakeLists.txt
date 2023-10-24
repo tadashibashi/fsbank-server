@@ -9,7 +9,7 @@ add_library (${PROJECT_NAME} STATIC ${INSOUND_SRC})
 
 target_link_libraries (${PROJECT_NAME} PUBLIC
     fmod fsbank z glaze::glaze curl Crow bcrypt jwt-cpp mongocxx_shared
-    bsoncxx_shared spdlog::spdlog
+    spdlog::spdlog
 )
 
 target_include_directories(${PROJECT_NAME}
