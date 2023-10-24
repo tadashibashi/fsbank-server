@@ -20,3 +20,4 @@ Testing/
 insound/definitions.h
 build/
 cmake-build*/
+*install_manifest.txt
