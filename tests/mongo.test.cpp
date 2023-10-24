@@ -1,6 +1,6 @@
 #include "insound/env.h"
 #include <glaze/core/macros.hpp>
-#include <insound/models/Model.h>
+#include <insound/mongo/Model.h>
 #include <insound/mongo.h>
 #include <catch2/catch_test_macros.hpp>
 
