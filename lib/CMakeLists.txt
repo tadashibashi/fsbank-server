@@ -6,7 +6,10 @@ add_subdirectory (fsbank)
 add_subdirectory (glaze)
 add_subdirectory (jwt-cpp)
 
+set (MONGOCXX_BUILD_STATIC ON)
 set (BSONCXX_BUILD_STATIC ON)
+set (MONGOCXX_BUILD_SHARED ON)
+set (BSONCXX_BUILD_SHARED ON)
 set (MONGOCXX_OVERRIDE_DEFAULT_INSTALL_PREFIX ON)
 add_subdirectory (mongo-cxx-driver)
 
