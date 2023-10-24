@@ -22,7 +22,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     libssl-dev \
     python3.9 \
     python-is-python3 \
-    zlib1g && \
+    zlib1g-dev && \
     git config --global http.sslverify false && \
     git clone --recursive https://github.com/tadashibashi/insound-cpp $APP_DIR \
     && chmod +x run && ./run install $BUILD_TYPE insound-server "/usr/" && \
