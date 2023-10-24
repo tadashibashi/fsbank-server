@@ -25,6 +25,24 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR ${CMAKE_SYSTEM_NAME} MATCHES "Linux
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
     )
+    file (GLOB_RECURSE PUBLIC_FILES ${CMAKE_SOURCE_DIR}/public/*)
+
+    if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+        set (FMOD_LIBS
+            ${CMAKE_SOURCE_DIR}/lib/fmod/lib/macos/libfmod.dylib
+            ${CMAKE_SOURCE_DIR}/lib/fsbank/lib/macos/libfsbank.dylib
+        )
+    else()
+        set (FMOD_LIBS
+            ${CMAKE_SOURCE_DIR}/lib/fmod/lib/macos/libfmod.so
+            ${CMAKE_SOURCE_DIR}/lib/fsbank/lib/macos/libfsbank.so.13
+            ${CMAKE_SOURCE_DIR}/lib/fsbank/lib/macos/libfsbvorbis.so
+            ${CMAKE_SOURCE_DIR}/lib/fsbank/lib/macos/libopus.so.0
+        )
+    endif()
+
+    install (FILES ${PUBLIC_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX})
+    install (FILES ${FMOD_LIBS} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 endif()
 
 enable_testing()
