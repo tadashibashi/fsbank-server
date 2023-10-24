@@ -1,3 +1,4 @@
 #pragma once
 
 #define PROJECT_ROOT "@CMAKE_SOURCE_DIR@"
+#define PUBLIC_DIR "@PUBLIC_DIR@"

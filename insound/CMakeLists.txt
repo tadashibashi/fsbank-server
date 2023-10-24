@@ -18,6 +18,12 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC ${CMAKE_SOURCE_DIR}
 )
 
+if (CMAKE_INSTALL_PREFIX)
+    set (PUBLIC_DIR ${CMAKE_INSTALL_PREFIX}/public)
+else()
+    set (PUBLIC_DIR ${CMAKE_SOURCE_DIR}/public)
+endif()
+
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/definitions.h.in
     ${CMAKE_CURRENT_SOURCE_DIR}/definitions.h
