@@ -24,7 +24,9 @@ RUN \
             libasio-dev \
             libcurl4-openssl-dev \
             libssl-dev \
-            zlib1g-dev && \
+            zlib1g-dev \
+        # Settings packages
+            ca-certificates && \
     # Build, install & clean-up mongo-c-driver (until package updated to v1.24)
         git config --global http.sslverify false && \
         git clone https://github.com/mongodb/mongo-c-driver.git && \
@@ -42,6 +44,7 @@ RUN \
         cd aws-sdk-cpp/cmake-build && \
         cmake -G Ninja -DCMAKE_INSTALL_PREFIX=/usr/ -DCMAKE_C_COMPILER=clang \
             -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release \
+            -DENABLE_TESTING=OFF \
             -DBUILD_ONLY="s3" .. && \
         cmake --build . --config=Release && \
         cmake --install . --config=Release && \
