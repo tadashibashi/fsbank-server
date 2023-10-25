@@ -42,7 +42,7 @@ RUN \
         cd aws-sdk-cpp/cmake-build && \
         cmake -DCMAKE_INSTALL_PREFIX=/usr/ -DCMAKE_C_COMPILER=clang \
             -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release \
-            -DBUILD_ONLY="s3" && \
+            -DBUILD_ONLY="s3" .. && \
         cmake --build . --config=Release && \
         cmake --install . --config=Release && \
         cd ../.. && rm -rf aws-sdk-cpp && \
