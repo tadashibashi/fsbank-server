@@ -15,15 +15,13 @@ namespace Insound {
         };
 
         explicit Router(const std::string &route, const RouterOpt &opts = {.useCatchAll=true});
-        virtual ~Router();
+        virtual ~Router() = default;
 
         crow::Blueprint &config();
 
       protected:
         crow::Blueprint bp;
         RouterOpt opts;
-
-
 
     private:
         virtual void init() = 0;

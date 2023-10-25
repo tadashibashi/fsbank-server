@@ -24,7 +24,7 @@ namespace Insound {
     template <typename ...Middlewares>
     class App
     {
-        inline static std::shared_ptr<App> s_instance = nullptr;
+        inline static std::shared_ptr<App<Middlewares...>> s_instance = nullptr;
     public:
         using Server = crow::App<crow::CookieParser, UserAuth, Middlewares...>;
 
@@ -39,14 +39,15 @@ namespace Insound {
         static App &instance()
         {
             return s_instance ? *s_instance :
-                *(s_instance = std::make_shared(new App));
+                *(s_instance = std::make_shared<App<Middlewares...>>());
         }
 
         ~App() { for (auto router : m_routers) delete router; }
 
         /**
          * Mount a router to the App.
-         * @tparam T     - type of the router - it must extend `Routef`
+         * @tparam T     - type of the router - it must extend
+         *                 `Insound::Router`
          * @tparam TArgs - variadic parameter pack typing args passed to
          *                 type `T` Router's constructor
          * @param args - args to pass to the `T` Router's constructor
@@ -137,6 +138,8 @@ namespace Insound {
             }
 
             m_routers.emplace_back(router);
+
+            return *this;
         }
 
         /**
@@ -146,8 +149,6 @@ namespace Insound {
 
     private:
         virtual bool init() { return true; };
-
-        App();
 
         bool m_wasInit;
 

@@ -1,9 +1,9 @@
 #include "auth.h"
-#include "crow/app.h"
 #include <crow/common.h>
 #include <crow/middlewares/cookie_parser.h>
 
-#include <insound/core/App.h>
+#include <insound/server/Server.h>
+
 #include <insound/core/util.h>
 
 using SameSitePolicy = crow::CookieParser::Cookie::SameSitePolicy;
@@ -25,10 +25,8 @@ namespace Insound {
 
     crow::response Auth::get_check(const crow::request &req)
     {
-        auto &cookies = App::getContext<crow::CookieParser>(req);
-        auto &user = App::getContext<UserAuth>(req).user;
-
-
+        auto &cookies = Server::getContext<crow::CookieParser>(req);
+        auto &user = Server::getContext<UserAuth>(req).user;
 
         auto lastTestVal = cookies.get_cookie("test");
         IN_LOG("current test cookie val: {}", lastTestVal);
@@ -44,8 +42,8 @@ namespace Insound {
 
     crow::response Auth::post_login(const crow::request &req)
     {
-        auto &user = App::getContext<UserAuth>(req).user;
-        auto &cookies = App::getContext<crow::CookieParser>(req);
+        auto &user = Server::getContext<UserAuth>(req).user;
+        auto &cookies = Server::getContext<crow::CookieParser>(req);
 
         const auto fingerprint = genHexString();
         cookies.set_cookie("fingerprint", fingerprint)

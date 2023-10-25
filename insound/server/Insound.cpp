@@ -1,10 +1,7 @@
-#include <insound/core/entrypoint.h>
+#include "Server.h"
 
-class Server : public Insound::App<> {
-
-};
-
-namespace Insound {
-    template<>
-    App<> *getApp() { return new Server();  }
+int main(int argc, char *argv[])
+{
+    Insound::Server().run();
+    return 0;
 }

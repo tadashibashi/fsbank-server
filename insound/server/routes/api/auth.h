@@ -1,7 +1,7 @@
 #pragma once
 #include <insound/core/App.h>
 
-#include <insound/core/routes/Router.h>
+#include <insound/core/Router.h>
 
 namespace Insound {
     class Auth : public Router {

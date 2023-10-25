@@ -1,4 +1,4 @@
-project (insound)
+project (insound-core)
 
 # Enable zlib compression
 set (CROW_FEATURES compression)
