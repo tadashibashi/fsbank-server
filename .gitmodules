@@ -19,6 +19,3 @@
 [submodule "lib/jwt-cpp"]
 	path = lib/jwt-cpp
 	url = https://github.com/tadashibashi/jwt-cpp
-[submodule "lib/aws-sdk-cpp"]
-	path = lib/aws-sdk-cpp
-	url = https://github.com/aws/aws-sdk-cpp
