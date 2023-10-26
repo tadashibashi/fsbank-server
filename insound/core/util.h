@@ -7,4 +7,6 @@ namespace Insound {
      * @param  length - the number of chars
      */
     std::string genHexString(unsigned int length=16);
+
+    std::vector<unsigned char> genBytes(unsigned int length=16);
 }

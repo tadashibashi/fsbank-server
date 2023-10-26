@@ -17,4 +17,13 @@ namespace Insound {
 
         return str;
     }
+
+    std::vector<unsigned char> genBytes(unsigned int length)
+    {
+        std::vector<unsigned char> res;
+        res.reserve(length);
+        for (unsigned i = 0; i < length; ++i)
+            res.emplace_back(rand() % UCHAR_MAX);
+        return res;
+    }
 }
