@@ -134,4 +134,24 @@ namespace Insound::S3 {
         stream << res.GetResult().GetBody().rdbuf();
         return stream.str();
     }
+
+    bool deleteFile(const std::string_view &key)
+    {
+        auto client = getClient();
+
+        auto request = Aws::S3::Model::DeleteObjectRequest();
+        request.SetBucket(S3_BUCKET);
+        request.SetKey(key.data());
+
+        auto result = client.DeleteObject(request);
+        if (!result.IsSuccess())
+        {
+            IN_ERR("S3 Delete Object Error: {}: {}",
+                result.GetError().GetExceptionName(),
+                result.GetError().GetMessage());
+            return false;
+        }
+
+        return true;
+    }
 }

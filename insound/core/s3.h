@@ -37,6 +37,23 @@ namespace Insound::S3 {
     bool uploadFile(const std::string_view &key,
         const std::string &file);
 
+    /**
+     * Download a file and get its data encapsulated in a string.
+     * Binary files are permitted, but string functionality will be limited.
+     *
+     * @param key - the key of the file to download
+     *
+     * @return      the file as a string (easy to return via crow)
+     */
     std::optional<std::string> downloadFile(const std::string_view &key);
+
+    /**
+     * Delete a file in the project's S3 bucket.
+     *
+     * @param  key - key of the file to delete
+     *
+     * @return       whether deletion was a success
+     */
+    bool deleteFile(const std::string_view &key);
 
 }
