@@ -35,6 +35,7 @@ namespace Insound::S3 {
      */
     bool uploadFile(const std::string_view &key,
         const std::string &file);
-    // std::vector<uint8_t> downloadFile(const std::string_view &key);
+
+    std::optional<std::string> downloadFile(const std::string_view &key);
 
 }

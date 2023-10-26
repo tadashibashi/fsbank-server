@@ -6,6 +6,7 @@
 #include <aws/core/Aws.h>
 #include <aws/s3/S3Client.h>
 #include <aws/s3/model/ChecksumAlgorithm.h>
+#include <aws/s3/model/GetObjectRequest.h>
 #include <aws/s3/model/ListObjectsV2Request.h>
 #include <aws/s3/model/PutObjectRequest.h>
 
@@ -107,5 +108,30 @@ namespace Insound::S3 {
         }
 
         return true;
+    }
+
+    std::optional<std::string> downloadFile(const std::string_view &key)
+    {
+        auto client = getClient();
+
+        // Make the request
+        auto request = Aws::S3::Model::GetObjectRequest{};
+        request.SetBucket(S3_BUCKET);
+        request.SetKey(key.data());
+
+        auto res = client.GetObject(request);
+
+        if (!res.IsSuccess())
+        {
+            IN_ERR("S3 Download Error: {}: {}",
+                res.GetError().GetExceptionName(),
+                res.GetError().GetMessage());
+            return {};
+        }
+
+        std::stringstream stream;
+
+        stream << res.GetResult().GetBody().rdbuf();
+        return stream.str();
     }
 }
