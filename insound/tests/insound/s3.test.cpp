@@ -33,3 +33,9 @@ TEST_CASE_METHOD(S3Tests, "S3::downloadFile gets file")
     REQUIRE(file);
     REQUIRE(file.value() == FileContent);
 }
+
+TEST_CASE_METHOD(S3Tests, "S3::deleteFile deletes file")
+{
+    REQUIRE(S3::deleteFile("test"));
+    REQUIRE(!S3::downloadFile("test"));
+}
