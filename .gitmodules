@@ -19,3 +19,6 @@
 [submodule "lib/jwt-cpp"]
 	path = lib/jwt-cpp
 	url = https://github.com/tadashibashi/jwt-cpp
+[submodule "lib/zip"]
+	path = lib/zip
+	url = https://github.com/kuba--/zip
