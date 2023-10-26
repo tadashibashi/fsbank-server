@@ -13,6 +13,7 @@ find_package(AWSSDK REQUIRED COMPONENTS ${SERVICE_COMPONENTS})
 target_link_libraries (${PROJECT_NAME} PUBLIC
     fmod fsbank ZLIB::ZLIB glaze::glaze curl Crow bcrypt jwt-cpp
     mongocxx_shared spdlog::spdlog ${AWSSDK_LINK_LIBRARIES}
+    zip
 )
 
 target_include_directories(${PROJECT_NAME}
