@@ -1,15 +1,37 @@
 #include "s3.h"
 #include <insound/core/env.h>
 #include <insound/core/errors/AwsS3Error.h>
+#include <insound/core/util.h>
 
 #include <aws/core/Aws.h>
 #include <aws/s3/S3Client.h>
+#include <aws/s3/model/ChecksumAlgorithm.h>
 #include <aws/s3/model/ListObjectsV2Request.h>
+#include <aws/s3/model/PutObjectRequest.h>
+
+#include <sstream>
 
 namespace Insound::S3 {
+    // Global SDK options. May move config/close with its options elsewhere if
+    // we end up using more than one AWS SDK.
     static const auto options = Aws::SDKOptions{};
+
     static std::string S3_BUCKET;
-    static std::string AWS_ENDPOINT_URL;;
+    static std::string AWS_ENDPOINT_URL;
+
+    /**
+     * Helper to create and return a new s3 client object.
+     */
+    static Aws::S3::S3Client getClient()
+    {
+        Aws::Client::ClientConfiguration config {};
+        config.endpointOverride = AWS_ENDPOINT_URL;
+
+        Aws::S3::S3Client client{config};
+
+        return client;
+    }
+
     bool config()
     {
         try {
@@ -25,22 +47,11 @@ namespace Insound::S3 {
             IN_ERR("Failed to initialize AWS sdk");
             return false;
         }
-
     }
 
     void close()
     {
         Aws::ShutdownAPI(options);
-    }
-
-    static Aws::S3::S3Client getClient()
-    {
-        Aws::Client::ClientConfiguration config {};
-        config.endpointOverride = AWS_ENDPOINT_URL;
-
-        Aws::S3::S3Client client{config};
-
-        return client;
     }
 
     std::vector<std::string> listObjects(const std::string_view &prefix)
@@ -55,10 +66,7 @@ namespace Insound::S3 {
 
         std::cout << result.GetError().GetMessage() << '\n';
         if (!result.IsSuccess())
-        {
             throw AwsS3Error(result.GetError());
-            return {};
-        }
 
         std::vector<std::string> res;
         res.reserve(objects.size());
@@ -69,5 +77,35 @@ namespace Insound::S3 {
         }
 
         return res;
+    }
+
+    bool uploadFile(const std::string_view &key,
+        const std::string &file)
+    {
+        auto client = getClient();
+
+        // Make the request
+        auto request = Aws::S3::Model::PutObjectRequest{};
+        request.SetBucket(S3_BUCKET);
+        request.SetKey(key.data());
+
+        std::shared_ptr<Aws::IOStream> inputData =
+            Aws::MakeShared<Aws::StringStream>("");
+        *inputData << file;
+
+        request.SetContentLength(file.length());
+        request.SetBody(inputData);
+
+        // Send request
+        auto res = client.PutObject(request);
+
+        if (!res.IsSuccess())
+        {
+            IN_ERR("S3 Upload Error: {}: {}",res.GetError().GetExceptionName(),
+                res.GetError().GetMessage());
+            return false;
+        }
+
+        return true;
     }
 }
