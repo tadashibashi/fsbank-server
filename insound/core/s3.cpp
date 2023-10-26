@@ -6,9 +6,12 @@
 #include <aws/core/Aws.h>
 #include <aws/s3/S3Client.h>
 #include <aws/s3/model/ChecksumAlgorithm.h>
+#include <aws/s3/model/CreateBucketRequest.h>
+#include <aws/s3/model/DeleteObjectRequest.h>
 #include <aws/s3/model/GetObjectRequest.h>
 #include <aws/s3/model/ListObjectsV2Request.h>
 #include <aws/s3/model/PutObjectRequest.h>
+
 
 #include <sstream>
 
@@ -33,12 +36,45 @@ namespace Insound::S3 {
         return client;
     }
 
+    /**
+     * Create a bucket if it doesn't exist yet.
+     * @param name bucket name
+     */
+    static void createBucket(const std::string &name)
+    {
+        // Check if bucket exists, add if not
+        auto client = getClient();
+        auto buckets = client.ListBuckets();
+        if (!buckets.IsSuccess())
+            throw AwsS3Error(buckets.GetError());
+        bool bucketExists = false;
+        for (auto &bucket : buckets.GetResult().GetBuckets())
+        {
+            if (bucket.GetName() == S3_BUCKET)
+            {
+                bucketExists = true;
+                break;
+            }
+        }
+
+        if (!bucketExists)
+        {
+            Aws::S3::Model::CreateBucketRequest request;
+            request.SetBucket(S3_BUCKET.c_str());
+            auto createResult = client.CreateBucket(request);
+            if (!createResult.IsSuccess())
+                throw AwsS3Error(createResult.GetError());
+        }
+    }
+
     bool config()
     {
         try {
             Aws::InitAPI(options);
             S3_BUCKET = requireEnv("S3_BUCKET");
             AWS_ENDPOINT_URL = requireEnv("AWS_ENDPOINT_URL");
+
+            createBucket(S3_BUCKET);
 
             return true;
         } catch(const std::exception &e) {
