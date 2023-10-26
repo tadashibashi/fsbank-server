@@ -4,7 +4,7 @@
 #include <insound/core/log.h>
 
 void Insound::UserAuth::before_handle(crow::request &req,
-                                          crow::response &res, context &ctx)
+    crow::response &res, context &ctx)
 {
     auto auth = req.get_header_value("Authorization");
     if (!auth.starts_with("Bearer "))
@@ -27,8 +27,8 @@ void Insound::UserAuth::before_handle(crow::request &req,
 
 }
 
-void Insound::UserAuth::after_handle(crow::request &req,
-                                         crow::response &res, context &ctx)
+void Insound::UserAuth::after_handle(crow::request &req, crow::response &res,
+    context &ctx)
 {
-    IN_LOG("User type: {}", ctx.user.type);
+
 }
