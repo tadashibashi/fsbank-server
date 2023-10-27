@@ -1,4 +1,6 @@
 #include "auth.h"
+#include "insound/core/mongo/Model.h"
+#include "insound/core/password.h"
 #include <crow/common.h>
 #include <crow/middlewares/cookie_parser.h>
 
@@ -20,6 +22,10 @@ namespace Insound {
             .methods("GET"_method)
             (Auth::get_check);
 
+        CROW_BP_ROUTE(bp, "/create/email")
+            .methods("POST"_method)
+            (Auth::post_create);
+
         CROW_BP_CATCHALL_ROUTE(bp)([]() {return "hey";});
     }
 
@@ -28,29 +34,17 @@ namespace Insound {
         auto &cookies = Server::getContext<crow::CookieParser>(req);
         auto &user = Server::getContext<UserAuth>(req).user;
 
-        auto lastTestVal = cookies.get_cookie("test");
-        IN_LOG("current test cookie val: {}", lastTestVal);
+        auto fingerprint = cookies.get_cookie("fingerprint");
+        if (compare(fingerprint, user.fingerprint)) {
 
-        auto testVal = genHexString();
-        cookies.set_cookie("test", testVal)
-            .httponly()
-            .same_site(SameSitePolicy::Strict)
-            .max_age(60 * 60 * 24 * 14)
-            .path("/");
+        }
+
         return crow::response("Check auth GET!");
     }
 
-    crow::response Auth::post_login(const crow::request &req)
+    crow::response &Auth::post_login(const crow::request &req, crow::response &res)
     {
-        auto &user = Server::getContext<UserAuth>(req).user;
         auto &cookies = Server::getContext<crow::CookieParser>(req);
-
-        const auto fingerprint = genHexString();
-        cookies.set_cookie("fingerprint", fingerprint)
-            .httponly()
-            .same_site(SameSitePolicy::Strict)
-            .max_age(60 * 60 * 24 * 14)
-            .path("/");
 
         auto msg = crow::multipart::message(req);
 
@@ -68,7 +62,9 @@ namespace Insound {
             if (headers_it == part_value.headers.end())
             {
                 CROW_LOG_ERROR << "No Content-Disposition found";
-                return crow::response(400);
+                res.code = 400;
+                res.body = "Invalid header, no Content-Disposition found";
+                return res;
             }
 
             // check if part has a filename
@@ -94,9 +90,48 @@ namespace Insound {
             }
         }
 
-        return crow::response(
-            f("Password: {}, Email: {}, File: {}", password, email,
-                (files.empty() ? "" : files[0])));
+        // check for user
+
+        Mongo::Model<User> UserModel;
+        auto userRes = UserModel.findOne({"email", email});
+        if (!userRes)
+        {
+            res.code = 401;
+            res.body = "Could not find a user with that email.";
+            return res;
+        }
+
+        auto &user = userRes.value();
+
+        if (!compare(user.body.password, password))
+        {
+            res.code = 401;
+            res.body = "Invalid password.";
+            return res;
+        }
+
+        UserToken token;
+        token.username = user.body.username;
+        token.displayName = user.body.displayName;
+        token.email = user.body.email;
+        token.type = user.body.type;
+
+        const auto fingerprint = genHexString();
+        cookies.set_cookie("fingerprint", fingerprint)
+            .httponly()
+            .same_site(SameSitePolicy::Strict)
+            .max_age(60 * 60 * 24 * 14)
+            .path("/");
+        token.fingerprint = hash(fingerprint);
+
+        res.body = glz::write_json(token);
+        res.code = 200;
+        return res;
+    }
+
+    crow::response &Auth::post_create(const crow::request &req, crow::response &res)
+    {
+
     }
 
 } // namespace Insound

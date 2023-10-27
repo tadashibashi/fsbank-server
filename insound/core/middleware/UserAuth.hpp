@@ -11,7 +11,7 @@ namespace Insound {
     public:
         struct context
         {
-            User user;
+            UserToken user;
         };
 
         void before_handle(crow::request &req, crow::response &res, context &ctx);

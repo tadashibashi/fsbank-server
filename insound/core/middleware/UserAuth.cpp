@@ -16,7 +16,7 @@ void Insound::UserAuth::before_handle(crow::request &req,
     auto tokenStr = auth.substr(7);
 
     try {
-        auto user = Jwt::verify<User>(tokenStr);
+        auto user = Jwt::verify<UserToken>(tokenStr);
 
         ctx.user = user;
     } catch (...) {
