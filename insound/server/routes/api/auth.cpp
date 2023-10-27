@@ -1,4 +1,5 @@
 #include "auth.h"
+#include "insound/core/MultipartMap.h"
 #include "insound/core/mongo/Model.h"
 #include "insound/core/password.h"
 #include <crow/common.h>
@@ -51,59 +52,28 @@ namespace Insound {
     {
         auto &cookies = Server::getContext<crow::CookieParser>(req);
 
-        auto msg = crow::multipart::message(req);
+        auto data = MultipartMap::from(req);
 
-        std::string password;
         std::string email;
-        std::vector<std::string> files;
+        std::string password;
 
-        // visit each part
-        for (const auto &part : msg.part_map) {
-            const auto &part_name = part.first;
-            const auto &part_value = part.second;
-
-            // get content info
-            auto headers_it = part_value.headers.find("Content-Disposition");
-            if (headers_it == part_value.headers.end())
-            {
-                CROW_LOG_ERROR << "No Content-Disposition found";
-                res.code = 400;
-                res.body = "Invalid header, no Content-Disposition found";
-                res.end();
-                return;
-            }
-
-            // check if part has a filename
-            auto params_it = headers_it->second.params.find("filename");
-            if (params_it == headers_it->second.params.end())
-            {
-                // if not, it's a text part
-                IN_LOG("part: {}, value: {}", part_name, part_value.body);
-                if (part_name == "password")
-                {
-                    password = part_value.body;
-                }
-                else if (part_name == "email")
-                {
-                    email = part_value.body;
-                }
-            }
-            else
-            {
-                // otherwise it's a file
-                IN_LOG("part: {}, filename: {}", part_name, params_it->second);
-                files.emplace_back(part_value.body);
-            }
+        try {
+            auto email = data.fields.at("email");
+            auto password = data.fields.at("password");
+        } catch(...) {
+            res.code = 400;
+            res.body = "Missing fields";
+            return;
         }
 
-        // check for user
 
+        // check for user
         Mongo::Model<User> UserModel;
         auto userRes = UserModel.findOne({"email", email});
         if (!userRes)
         {
             res.code = 401;
-            res.body = "{\"error\": \"Could not find a user with that email.\"}";
+            res.body = "{\"error\":\"Could not find a user with that email.\"}";
             res.end();
             return;
         }
@@ -113,7 +83,7 @@ namespace Insound {
         if (!compare(user.body.password, password))
         {
             res.code = 401;
-            res.body = "{\"error\": \"Invalid password.\"}";
+            res.body = "{\"error\":\"Invalid password.\"}";
             res.end();
             return;
         }
