@@ -3,23 +3,35 @@
 #include <string>
 #include <vector>
 
+// Forward declaration
 struct zip_t;
 
 namespace Insound {
 
-    class ZipBuffer {
+    class ZipBuffer
+    {
     public:
         ZipBuffer() : m_buffer(), m_size() { }
+        ZipBuffer(const ZipBuffer &buf);
+        ZipBuffer(ZipBuffer &&buf);
+        ZipBuffer &operator=(const ZipBuffer &buf);
+        ZipBuffer &operator=(ZipBuffer &&buf);
+
         ~ZipBuffer();
 
         void *data() { return m_buffer; }
 
         size_t size() { return m_size; }
 
-        void *begin() { return m_buffer; }
-        void *end() { return m_buffer + m_size; }
+        char *begin() { return m_buffer; }
+        char *end() { return m_buffer + m_size; }
         const void *begin() const { return m_buffer; }
         const void *end() const { return m_buffer + m_size; }
+
+        /**
+         * Free the buffer in advance before object destructor is called.
+         */
+        void close();
     private:
         friend class ZipWriter;
         char *m_buffer;
