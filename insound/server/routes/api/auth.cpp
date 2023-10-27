@@ -29,20 +29,25 @@ namespace Insound {
         CROW_BP_CATCHALL_ROUTE(bp)([]() {return "hey";});
     }
 
-    crow::response Auth::get_check(const crow::request &req)
+    void Auth::get_check(const crow::request &req, crow::response &res)
     {
         auto &cookies = Server::getContext<crow::CookieParser>(req);
         auto &user = Server::getContext<UserAuth>(req).user;
 
+        res.add_header("Content-Type", "application/json");
+
         auto fingerprint = cookies.get_cookie("fingerprint");
-        if (compare(fingerprint, user.fingerprint)) {
-
+        if (compare(fingerprint, user.fingerprint))
+        {
+            res.body = "{\"auth\":true}";
         }
-
-        return crow::response("Check auth GET!");
+        else
+        {
+            res.body = "{\"auth\":false}";
+        }
     }
 
-    crow::response &Auth::post_login(const crow::request &req, crow::response &res)
+    void Auth::post_login(const crow::request &req, crow::response &res)
     {
         auto &cookies = Server::getContext<crow::CookieParser>(req);
 
@@ -64,7 +69,8 @@ namespace Insound {
                 CROW_LOG_ERROR << "No Content-Disposition found";
                 res.code = 400;
                 res.body = "Invalid header, no Content-Disposition found";
-                return res;
+                res.end();
+                return;
             }
 
             // check if part has a filename
@@ -97,8 +103,9 @@ namespace Insound {
         if (!userRes)
         {
             res.code = 401;
-            res.body = "Could not find a user with that email.";
-            return res;
+            res.body = "{\"error\": \"Could not find a user with that email.\"}";
+            res.end();
+            return;
         }
 
         auto &user = userRes.value();
@@ -106,8 +113,9 @@ namespace Insound {
         if (!compare(user.body.password, password))
         {
             res.code = 401;
-            res.body = "Invalid password.";
-            return res;
+            res.body = "{\"error\": \"Invalid password.\"}";
+            res.end();
+            return;
         }
 
         UserToken token;
@@ -126,10 +134,10 @@ namespace Insound {
 
         res.body = glz::write_json(token);
         res.code = 200;
-        return res;
+        res.end();
     }
 
-    crow::response &Auth::post_create(const crow::request &req, crow::response &res)
+    void Auth::post_create(const crow::request &req, crow::response &res)
     {
 
     }
