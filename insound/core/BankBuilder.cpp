@@ -1,5 +1,6 @@
 #include "BankBuilder.h"
 
+#include <insound/core/platform.h>
 #include <insound/core/thirdparty/fsbank.hpp>
 
 #include <cassert>
