@@ -43,7 +43,7 @@
 			"type": "lldb",
 			"request": "launch",
 			"name": "Launch Server",
-			"program": "${project_path}/build/debug/insound-server",
+			"program": "${project_path}/build/debug/insound/server/insound-server",
 			"args": [],
 			"cwd": "${project_path}",
 			"pre_debug_task": "Build & Kill"
@@ -52,7 +52,7 @@
 			"type": "lldb",
 			"request": "launch",
 			"name": "Launch Tests",
-			"program": "${project_path}/build/debug/tests/insound-tests",
+			"program": "${project_path}/build/debug/insound/tests/insound-tests",
 			"args": [],
 			"cwd": "${project_path}",
 			"pre_debug_task": "Build Tests"
