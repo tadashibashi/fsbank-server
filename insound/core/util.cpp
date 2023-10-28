@@ -30,18 +30,21 @@ namespace Insound {
 
     std::vector<uint8_t> openFile(const std::string &path)
     {
-        std::ifstream file(path);
+        // open file
+        std::ifstream file(path, std::ios::binary | std::ios::in);
         if (!file.is_open()) {
             throw std::runtime_error("Failed to open file at path " + path);
         }
 
+        // find file size
         file.seekg(0, std::ios::end);
         auto filesize = file.tellg();
-        std::vector<uint8_t> buffer(filesize, 0);
         file.seekg(0);
+
+        // read file into buffer
+        std::vector<uint8_t> buffer(filesize, 0);
         file.read((char *)buffer.data(), filesize);
 
-        file.close();
         return buffer;
     }
 
