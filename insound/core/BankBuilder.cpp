@@ -1,9 +1,14 @@
 #include "BankBuilder.h"
+#include "fsbank.h"
+#include "insound/core/definitions.h"
 
 #include <insound/core/platform.h>
 #include <insound/core/thirdparty/fsbank.hpp>
+#include <insound/core/util.h>
 
 #include <cassert>
+#include <filesystem>
+#include <fstream>
 #include <thread>
 
 static const char *CacheDirectory = ".fscache";
@@ -19,6 +24,9 @@ namespace Insound {
     static bool wasInit;
 
     const BankBuilder::Result BankBuilder::OK = nullptr;
+
+    static std::mutex build_lock;
+
 
     BankBuilder::BankBuilder()
     {
@@ -81,6 +89,7 @@ namespace Insound {
 
     BankBuilder::Result BankBuilder::build(float samplerate) noexcept
     {
+        build_lock.lock();
         try {
             if (files.size() != fileSizes.size())
                 return "files and fileSizes mismatch length";
@@ -95,19 +104,21 @@ namespace Insound {
             // Run build
             FSB_CHECK( FSBank_Build(&subsound, 1, BankFormat, FSBANK_BUILD_NOGUID, 100, nullptr, nullptr) );
 
-            // Get file data
-            const void *builtFilePtr;
-            unsigned int builtFileSize;
-            FSB_CHECK( FSBank_FetchFSBMemory(&builtFilePtr, &builtFileSize) );
+            const void *data;
+            unsigned int size;
+            FSB_CHECK( FSBank_FetchFSBMemory(&data, &size) );
 
-            auto tempBuiltFile = std::vector<uint8_t>((uint8_t *)builtFilePtr, (uint8_t *)builtFilePtr + builtFileSize);
+            auto retrieved = std::vector<uint8_t>((uint8_t *)data, (uint8_t *)data + size);
 
             // Done, commit changes
-            builtFile.swap(tempBuiltFile);
+            builtFile.swap(retrieved);
+            build_lock.unlock();
             return OK;
         } catch (const std::exception &e) {
+            build_lock.unlock();
             return e.what();
         } catch (...) {
+            build_lock.unlock();
             return "an unknown error occurred";
         }
     }
