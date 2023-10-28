@@ -12,12 +12,12 @@ RUN \
     # Install dependencies
         apt-get update -y && apt-get install -y --no-install-recommends \
         # Build tools
-            clang \
+            clang-16 \
             cmake \
             git \
             python3.9 \
             python-is-python3 \
-            lld \
+            lld-16 \
             ninja-build \
         # Runtime libraries
             curl \
@@ -49,14 +49,23 @@ RUN \
         cmake --build . --config=Release && \
         cmake --install . --config=Release && \
         cd ../.. && rm -rf aws-sdk-cpp && \
+    # Build, install & clean-up frontend
+        curl -fsSL https://bun.sh/install | bash && \
+        git clone --recursive https://github.com/tadashibashi/insound-frontend && \
+        cd insound-frontend \
+        bun init && \
+        bun run build && \
+        mv dist/static /usr && \
+        rm -rf ~/.bun && \
+        cd ../ && rm -rf insound-frontend && \
     # Build, install & clean-up server
         git clone --recursive https://github.com/tadashibashi/insound-cpp $APP_DIR && \
         cd $APP_DIR && \
         chmod +x run && ./run install $BUILD_TYPE insound-server "/usr/" && \
         rm -rf $APP_DIR && \
     # Clean up build tools
-        apt-get remove -y python3.9 python-is-python3 git clang ninja-build \
-            cmake lld && \
+        apt-get remove -y python3.9 python-is-python3 git clang-16 \
+            ninja-build cmake lld-16 && \
         apt-get clean autoclean && \
         apt-get autoremove -y && \
         rm -rf /var/lib/{apt,dpkg,cache,log}/
