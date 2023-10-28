@@ -53,8 +53,9 @@ RUN \
     # Build, install & clean-up frontend
         curl -fsSL https://bun.sh/install | bash && \
         git clone --recursive https://github.com/tadashibashi/insound-frontend && \
+        source /root/.bashrc && \
         cd insound-frontend \
-        bun init && \
+        bun install && \
         bun run build && \
         mv dist/static /usr && \
         rm -rf ~/.bun && \
