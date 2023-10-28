@@ -53,10 +53,9 @@ RUN \
     # Build, install & clean-up frontend
         curl -fsSL https://bun.sh/install | bash && \
         git clone --recursive https://github.com/tadashibashi/insound-frontend && \
-        export PATH="~/.bun/bin:$PATH" && \
-        cd insound-frontend \
-        bun install && \
-        bun run build && \
+        cd insound-frontend && \
+        ~/.bun/bin/bun install && \
+        ~/.bun/bin/bun run build && \
         mv dist/static /usr && \
         rm -rf ~/.bun && \
         cd ../ && rm -rf insound-frontend && \
