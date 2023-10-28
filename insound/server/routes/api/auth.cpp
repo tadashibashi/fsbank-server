@@ -40,11 +40,11 @@ namespace Insound {
         auto fingerprint = cookies.get_cookie("fingerprint");
         if (compare(fingerprint, user.fingerprint))
         {
-            res.body = "{\"auth\":true}";
+            res.body = R"({"auth":true})";
         }
         else
         {
-            res.body = "{\"auth\":false}";
+            res.body = R"({"auth":false})";
         }
     }
 
@@ -73,7 +73,7 @@ namespace Insound {
         if (!userRes)
         {
             res.code = 401;
-            res.body = "{\"error\":\"Could not find a user with that email.\"}";
+            res.body = R"({"error":"Could not find a user with that email."})";
             res.end();
             return;
         }
@@ -83,7 +83,7 @@ namespace Insound {
         if (!compare(user.body.password, password))
         {
             res.code = 401;
-            res.body = "{\"error\":\"Invalid password.\"}";
+            res.body = R"({"error":"Invalid password."})";
             res.end();
             return;
         }
@@ -109,7 +109,37 @@ namespace Insound {
 
     void Auth::post_create(const crow::request &req, crow::response &res)
     {
+        auto data = MultipartMap::from(req);
 
+        std::string email;
+        std::string password;
+
+        try {
+            if (data.fields.at("password") != data.fields.at("password2"))
+            {
+                res.code = 400;
+                res.body = R"({"error":"Passwords mismatch"})";
+                res.end();
+                return;
+            }
+
+            auto UserModel = Mongo::Model<User>();
+            auto user = UserModel.findOne({"email", email});
+            if (user)
+            {
+                res.code = 400;
+                res.body = R"({"error":"User with email account already exists."})";
+                res.end();
+                return;
+            }
+        }
+        catch (...)
+        {
+            res.code = 400;
+            res.body = R"({"error":"Missing field"})";
+            res.end();
+            return;
+        }
     }
 
 } // namespace Insound
