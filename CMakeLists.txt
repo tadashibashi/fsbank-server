@@ -12,6 +12,16 @@ include(ConfigMessages)
 include(FormatBuildType)
 enable_testing()
 
+
+if (INSOUND_INSTALL_PREFIX)
+    # install - use install template dir
+    set (CMAKE_INSTALL_PREFIX ${INSOUND_INSTALL_PREFIX})
+    set (INSOUND_TEMPLATE_DIR ${INSOUND_INSTALL_PREFIX}/templates)
+else ()
+    # local build, no install - use local template dir
+    set (INSOUND_TEMPLATE_DIR ${CMAKE_SOURCE_DIR}/insound/server/templates)
+endif()
+
 # Include projects
 add_subdirectory(lib)
 add_subdirectory(insound)

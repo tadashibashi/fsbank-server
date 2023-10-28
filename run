@@ -167,7 +167,7 @@ def install(build_type: str = "Debug", target: str = PROJECT_NAME,
     """
     if prefix == "":
         prefix = os.path.join(BUILD_PATH, build_type.lower(), "install")
-    args += " -DCMAKE_INSTALL_PREFIX=" + prefix
+    args += " -DINSOUND_INSTALL_PREFIX=" + prefix
 
     build(build_type, target, args)
     print(

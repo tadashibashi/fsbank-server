@@ -18,6 +18,11 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR
         ARCHIVE DESTINATION lib
     )
 
+    # Install templates directory
+    install (DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/templates
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/templates)
+
+    # Copy FMOD libraries to install folder
     if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
         set (FMOD_LIBS
             ${CMAKE_SOURCE_DIR}/lib/fmod/lib/macos/libfmod.dylib
@@ -32,8 +37,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR
         )
     endif()
 
-    install (DIRECTORY ${CMAKE_SOURCE_DIR}/public/
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/public)
     install (FILES ${FMOD_LIBS}
         DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+
 endif()
