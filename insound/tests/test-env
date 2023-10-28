@@ -16,5 +16,5 @@ MONGO_DBNAME=insound-test
 # S3 Storage
 AWS_ACCESS_KEY_ID=test-access-key
 AWS_SECRET_ACCESS_KEY=test-secret-key
-S3_BUCKET=test
+S3_BUCKET=insound-test-0123
 AWS_ENDPOINT_URL=http://127.0.0.1:9000
