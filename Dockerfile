@@ -19,6 +19,7 @@ RUN \
             python-is-python3 \
             lld \
             ninja-build \
+            unzip \
         # Runtime libraries
             curl \
             libasio-dev \
@@ -65,7 +66,7 @@ RUN \
         rm -rf $APP_DIR && \
     # Clean up build tools
         apt-get remove -y python3.9 python-is-python3 git clang \
-            ninja-build cmake lld && \
+            ninja-build cmake lld unzip && \
         apt-get clean autoclean && \
         apt-get autoremove -y && \
         rm -rf /var/lib/{apt,dpkg,cache,log}/
