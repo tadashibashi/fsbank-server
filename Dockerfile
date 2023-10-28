@@ -55,6 +55,7 @@ RUN \
         git clone --recursive https://github.com/tadashibashi/insound-frontend && \
         cd insound-frontend && \
         ~/.bun/bin/bun install && \
+        export NODE_ENV=production && \
         ~/.bun/bin/bun run build && \
         mv dist/static /usr && \
         rm -rf ~/.bun && \
