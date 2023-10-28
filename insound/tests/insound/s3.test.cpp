@@ -1,6 +1,3 @@
-#include <catch2/reporters/catch_reporter_event_listener.hpp>
-#include <catch2/reporters/catch_reporter_registrars.hpp>
-#include <catch2/catch_config.hpp>
 #include <insound/tests/env.h>
 #include <insound/tests/test.h>
 #include <insound/core/s3.h>

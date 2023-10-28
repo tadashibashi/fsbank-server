@@ -1,3 +1,5 @@
+#include "catch2/reporters/catch_reporter_event_listener.hpp"
+#include "catch2/reporters/catch_reporter_registrars.hpp"
 #include <insound/core/BankBuilder.h>
 #include <insound/tests/definitions.h>
 #include <insound/tests/test.h>
@@ -29,35 +31,39 @@ static void addToVector(std::vector<std::vector<uint8_t>> &files,
 
 // ===== Tests ================================================================
 
-class BankBuilderTest
+// Test file data
+static std::string file1{};
+static std::string file2{};
+static std::string file3{};
+
+class BankBuilderTest : public Catch::EventListenerBase
 {
 public:
-    // Test file data
-    inline static std::string file1{};
-    inline static std::string file2{};
-    inline static std::string file3{};
+
+    using Catch::EventListenerBase::EventListenerBase;
 
     // Setup
-    BankBuilderTest()
+    void testRunStarting(const Catch::TestRunInfo &) override
     {
-        REQUIRE(BankBuilder::initLibrary() == nullptr);
+        BankBuilder::initLibrary();
         file1 = openFile(PUBLIC_DIR "/audio/test.mp3");
         file2 = openFile(PUBLIC_DIR "/audio/test.ogg");
         file3 = openFile(PUBLIC_DIR "/audio/test.wav");
     }
 
     // Tear down
-    ~BankBuilderTest()
+    void testRunEnded(const Catch::TestRunStats &) override
     {
-        REQUIRE(BankBuilder::closeLibrary() == nullptr);
+        BankBuilder::closeLibrary();
         file1.clear();
         file2.clear();
         file3.clear();
     }
 };
+CATCH_REGISTER_LISTENER(BankBuilderTest);
 
 
-TEST_CASE_METHOD(BankBuilderTest, "Files have substance")
+TEST_CASE("Files have substance")
 {
     REQUIRE(!file1.empty());
     REQUIRE(!file2.empty());
@@ -65,7 +71,7 @@ TEST_CASE_METHOD(BankBuilderTest, "Files have substance")
 }
 
 
-TEST_CASE_METHOD(BankBuilderTest, "Bank can build")
+TEST_CASE("Bank can build")
 {
     BankBuilder bank;
     bank.addFile(file1.data(), file1.size());
@@ -76,7 +82,7 @@ TEST_CASE_METHOD(BankBuilderTest, "Bank can build")
 }
 
 
-TEST_CASE_METHOD(BankBuilderTest, "Bank can build in multithreaded context")
+TEST_CASE("Bank can build in multithreaded context")
 {
     const auto NumThreads = 100;
     std::vector<std::thread> threads;
