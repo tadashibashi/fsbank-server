@@ -24,7 +24,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR
 
     # Install templates directory
     install (DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/templates
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/templates)
+        DESTINATION ${CMAKE_INSTALL_PREFIX})
 
     # Copy FMOD libraries to install folder
     if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
