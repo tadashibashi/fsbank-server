@@ -13,6 +13,16 @@ namespace Insound::S3 {
     bool config();
 
     /**
+     * Warning: Permanently erases entire S3 bucket, so that it no longer
+     * exists. Used for testing and not advisable during production.
+     *
+     * @return    whether bucket erasure was successful.
+     */
+    bool dropBucket__permanent__(const std::string_view &bucket);
+
+    bool createBucket(const std::string_view &bucket);
+
+    /**
      * Clean up the S3 API.
      */
     void close();

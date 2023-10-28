@@ -7,6 +7,7 @@
 #include <aws/s3/S3Client.h>
 #include <aws/s3/model/ChecksumAlgorithm.h>
 #include <aws/s3/model/CreateBucketRequest.h>
+#include <aws/s3/model/DeleteBucketRequest.h>
 #include <aws/s3/model/DeleteObjectRequest.h>
 #include <aws/s3/model/DeleteObjectsRequest.h>
 #include <aws/s3/model/GetObjectRequest.h>
@@ -41,7 +42,7 @@ namespace Insound::S3 {
      * Create a bucket if it doesn't exist yet.
      * @param name bucket name
      */
-    static void createBucket(const std::string &name)
+    bool createBucket(const std::string_view &bucket)
     {
         // Check if bucket exists, add if not
         auto client = getClient();
@@ -64,8 +65,18 @@ namespace Insound::S3 {
             request.SetBucket(S3_BUCKET.c_str());
             auto createResult = client.CreateBucket(request);
             if (!createResult.IsSuccess())
-                throw AwsS3Error(createResult.GetError());
+            {
+                IN_ERR("S3 Download Error: {}: {}",
+                    createResult.GetError().GetExceptionName(),
+                    createResult.GetError().GetMessage());
+            }
+
+            return createResult.IsSuccess();
         }
+
+        IN_WARN("S3 Create Bucket Warning: Bucket \"{}\", already exists",
+            bucket);
+        return false;
     }
 
     bool config()
@@ -194,19 +205,19 @@ namespace Insound::S3 {
 
     bool deleteFiles(const std::vector<std::string> &keys)
     {
-        auto client = getClient();
+        if (keys.empty()) return false;
 
+        auto client = getClient();
         auto request = Aws::S3::Model::DeleteObjectsRequest();
-        request.SetBucket(S3_BUCKET);
 
         Aws::S3::Model::Delete del;
         for (auto &key : keys)
         {
-            Aws::S3::Model::ObjectIdentifier id;
-            id.SetKey(key.data());
-            del.AddObjects(id);
+            del.AddObjects(Aws::S3::Model::ObjectIdentifier().WithKey(key));
         }
+
         request.SetDelete(del);
+        request.SetBucket(S3_BUCKET);
 
         auto result = client.DeleteObjects(request);
 
@@ -232,5 +243,54 @@ namespace Insound::S3 {
             key += '/';
 
         return deleteFiles( listObjects(key) );
+    }
+
+    bool dropBucket__permanent__(const std::string_view &bucket)
+    {
+        auto client = getClient();
+        // Delete all files in bucket
+        {
+            auto result = Aws::S3::Model::ListObjectsV2Outcome{};
+            auto request = Aws::S3::Model::ListObjectsV2Request{};
+            request.SetBucket(S3_BUCKET);
+            std::vector<std::string> list;
+            do {
+                result = client.ListObjectsV2(request);
+
+                if (!result.IsSuccess())
+                {
+                    IN_ERR("Failed to list objects in dropBucket: {}",
+                        result.GetError().GetMessage());
+                    break;
+                }
+                if (result.GetResult().GetContents().empty())
+                    break;
+
+                for (auto &obj : result.GetResult().GetContents())
+                    list.emplace_back(obj.GetKey());
+
+                if (!deleteFiles(list))
+                {
+                    IN_ERR("Failed to delete files in dropBucket");
+                    break;
+                }
+
+                list.clear();
+            } while (result.GetResult().GetIsTruncated());
+        }
+
+        // Delete bucket
+        auto request = Aws::S3::Model::DeleteBucketRequest();
+        request.SetBucket(bucket.data());
+
+        auto result = client.DeleteBucket(request);
+        if (!result.IsSuccess())
+        {
+            IN_ERR("S3 Delete Bucket Error: {}: {}",
+                result.GetError().GetExceptionName(),
+                result.GetError().GetMessage());
+        }
+
+        return result.IsSuccess();
     }
 }
