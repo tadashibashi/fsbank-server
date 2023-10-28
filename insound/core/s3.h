@@ -12,6 +12,13 @@ namespace Insound::S3 {
      */
     bool config();
 
+
+    /**
+     * Clean up the S3 API.
+     */
+    void close();
+
+
     /**
      * Warning: Permanently erases entire S3 bucket, so that it no longer
      * exists. Used for testing and not advisable during production.
@@ -20,12 +27,16 @@ namespace Insound::S3 {
      */
     bool dropBucket__permanent__(const std::string_view &bucket);
 
-    bool createBucket(const std::string_view &bucket);
 
     /**
-     * Clean up the S3 API.
+     * Create an S3 bucket.
+     *
+     * @param  bucket - name of the bucket
+     *
+     * @return          whether request was successful
      */
-    void close();
+    bool createBucket(const std::string_view &bucket);
+
 
     /**
      * Get a list of object keys in the store, stemming from `prefix`
@@ -35,6 +46,7 @@ namespace Insound::S3 {
      * @returns              the list of key names
      */
     std::vector<std::string> listObjects(const std::string_view &prefix = "");
+
 
     /**
      * Upload a file to the project's s3 bucket
@@ -47,6 +59,7 @@ namespace Insound::S3 {
     bool uploadFile(const std::string_view &key,
         const std::string &file);
 
+
     /**
      * Download a file and get its data encapsulated in a string.
      * Binary files are permitted, but string functionality will be limited.
@@ -57,6 +70,7 @@ namespace Insound::S3 {
      */
     std::optional<std::string> downloadFile(const std::string_view &key);
 
+
     /**
      * Delete a file in the project's S3 bucket
      *
@@ -65,6 +79,7 @@ namespace Insound::S3 {
      * @return            whether deletion was a success.
      */
     bool deleteFile(const std::string_view &key);
+
 
     /**
      * Delete a list of files n the project's S3 bucket
@@ -75,6 +90,7 @@ namespace Insound::S3 {
      */
     bool deleteFiles(const std::vector<std::string> &keys);
 
+
     /**
      * Delete S3 objects inside of a folder
      *
@@ -83,6 +99,7 @@ namespace Insound::S3 {
      * @return                  whether the deletion was a success.
      */
     bool deleteFolder(const std::string_view &folderKey);
+
 
     /**
      * Compress files in an S3 folder for download
