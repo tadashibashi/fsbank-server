@@ -290,8 +290,8 @@ def _leaks(build_type: str = "Debug", target: str = PROJECT_NAME):
     return os.system(f"leaks --list -q --atExit -- {exec_path}")
 
 
-def run(build_type: str = "Debug", target: str = PROJECT_NAME, kill=True,
-        check_leaks: bool = True):
+def run(build_type: str = "Debug", target: str = PROJECT_NAME, kill="True",
+        check_leaks: str = "True"):
     """
         Configure, build, and run a CMake target.
         Args:
@@ -311,12 +311,12 @@ def run(build_type: str = "Debug", target: str = PROJECT_NAME, kill=True,
     print(
         "\n"
         f"----- run -------------------------------------------------------\n")
-    if kill:
+    if kill == "True":
         if check_leaks:
             kill_process("leaks")
         kill_process(target)
 
-    if check_leaks:
+    if check_leaks == "True":
         result = _leaks(build_type, target)
         if result != "unsupported":
             exit(result)
