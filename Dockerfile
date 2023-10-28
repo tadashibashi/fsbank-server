@@ -62,7 +62,7 @@ RUN \
     # Build, install & clean-up server
         git clone --recursive https://github.com/tadashibashi/insound-cpp $APP_DIR && \
         cd $APP_DIR && \
-        chmod +x run && ./run install $BUILD_TYPE insound-server "/usr/" && \
+        chmod +x run && ./run install $BUILD_TYPE insound-server /usr/ && \
         rm -rf $APP_DIR && \
     # Clean up build tools
         apt-get remove -y python3.9 python-is-python3 git clang \

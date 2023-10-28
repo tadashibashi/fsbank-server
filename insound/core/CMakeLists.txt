@@ -20,8 +20,8 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC ${CMAKE_SOURCE_DIR}
 )
 
-if (CMAKE_INSTALL_PREFIX)
-    set (STATIC_DIR ${CMAKE_INSTALL_PREFIX}/static)
+if (INSOUND_INSTALL_PREFIX)
+    set (STATIC_DIR ${INSOUND_INSTALL_PREFIX}/static)
 else()
     set (STATIC_DIR ${CMAKE_SOURCE_DIR}/static)
 endif()

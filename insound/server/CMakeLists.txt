@@ -16,6 +16,10 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
+        PUBLIC_HEADER DESTINATION include
+        PRIVATE_HEADER DESTINATION include
+        RESOURCE DESTINATION res
+        FRAMEWORK DESTINATION Frameworks
     )
 
     # Install templates directory
