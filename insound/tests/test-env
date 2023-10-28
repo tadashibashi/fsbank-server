@@ -1,11 +1,13 @@
+# This file contains test environment variables for Insound's test suites
+# Do not include any private keys here
 APPLES=1
 GRAPES=2
 ORANGES=three
 
-JWT_SECRET=ApNoQi94ABCdEfGhPa52444gggaaabbbRW
+JWT_SECRET=test-test-test-test-test-test
 
-PASSWORD_SECRET=2iNv!Cgnw$!DrF89zPD9CEJav32Rp53
-PASSWORD_SALT=DB4o5o2R2WPdi*oxH88W
+PASSWORD_SECRET=test-test-test-test-test-test
+PASSWORD_SALT=test-test-test-test-test
 
 # MongoDB
 MONGO_URL=mongodb://localhost:27017
