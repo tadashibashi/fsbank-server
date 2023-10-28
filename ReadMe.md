@@ -1,18 +1,28 @@
 # Insound
 
 ## External Dependencies
-- C++ 20 compiler (tested with clang only)
+- C++ 20 compiler (currently tested with clang 16)
+- cmake
 
-Libraries
+### External Libraries
 - aws-sdk-cpp
-- cmake 3.24+
+- ca-certificates
 - curl + libcurl
 - libasio
 - libmongoc 1.24+
 - libssl
 - zlib
 
-- readable ca certificates to make ssl requests
+### Included Submodules
+- bcrypt
+- catch2
+- crow
+- glaze
+- jwt-cpp
+- mongo-cxx-driver
+- spdlog
+- zip
+
 
 Optional, for python build scripts
 - ninja
