@@ -109,7 +109,9 @@ def config(build_type: str = "Debug", env_path: str =
         f"cmake -G Ninja -S {PROJECT_PATH} -B {target_build_dir} "
         f"-DCMAKE_BUILD_TYPE={build_type} "
         f"-DCMAKE_EXPORT_COMPILE_COMMANDS=1 "
-        f"-DCROW_BUILD_TESTS=OFF -DCROW_BUILD_EXAMPLES=OFF " + args
+        f"-DCROW_BUILD_TESTS=OFF -DCROW_BUILD_EXAMPLES=OFF "
+        f"-DMONGOCXX_OVERRIDE_DEFAULT_INSTALL_PREFIX=ON "
+        + args
     )
 
     if result != 0:
