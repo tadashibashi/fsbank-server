@@ -21,9 +21,9 @@ target_include_directories(${PROJECT_NAME}
 )
 
 if (CMAKE_INSTALL_PREFIX)
-    set (PUBLIC_DIR ${CMAKE_INSTALL_PREFIX}/public)
+    set (STATIC_DIR ${CMAKE_INSTALL_PREFIX}/static)
 else()
-    set (PUBLIC_DIR ${CMAKE_SOURCE_DIR}/public)
+    set (STATIC_DIR ${CMAKE_SOURCE_DIR}/static)
 endif()
 
 configure_file(

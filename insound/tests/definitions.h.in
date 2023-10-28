@@ -4,9 +4,9 @@
 #undef PROJECT_ROOT
 #endif
 
-#ifdef PUBLIC_DIR
-#undef PUBLIC_DIR
+#ifdef STATIC_DIR
+#undef STATIC_DIR
 #endif
 
 #define TEST_ROOT "@TEST_ROOT@"
-#define PUBLIC_DIR "@PUBLIC_DIR@"
+#define STATIC_DIR "@STATIC_DIR@"

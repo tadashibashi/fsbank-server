@@ -8,6 +8,6 @@ target_link_libraries (${PROJECT_NAME} PRIVATE insound-core Catch2::Catch2)
 add_test(${PROJECT_NAME} ${PROJECT_NAME})
 
 set(TEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
-set(PUBLIC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/public)
+set(STATIC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/static)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/definitions.h.in
     ${CMAKE_CURRENT_SOURCE_DIR}/definitions.h)

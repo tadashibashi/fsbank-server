@@ -1,4 +1,5 @@
 #pragma once
 
 #define PROJECT_ROOT "@CMAKE_SOURCE_DIR@"
-#define PUBLIC_DIR "@PUBLIC_DIR@"
+#define STATIC_DIR "@STATIC_DIR@"
+#define TEMPLATE_DIR "@INSOUND_TEMPLATE_DIR@"

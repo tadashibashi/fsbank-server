@@ -46,9 +46,9 @@ public:
     void testRunStarting(const Catch::TestRunInfo &) override
     {
         BankBuilder::initLibrary();
-        file1 = openFile(PUBLIC_DIR "/audio/test.mp3");
-        file2 = openFile(PUBLIC_DIR "/audio/test.ogg");
-        file3 = openFile(PUBLIC_DIR "/audio/test.wav");
+        file1 = openFile(STATIC_DIR "/audio/test.mp3");
+        file2 = openFile(STATIC_DIR "/audio/test.ogg");
+        file3 = openFile(STATIC_DIR "/audio/test.wav");
     }
 
     // Tear down
