@@ -1,4 +1,5 @@
 #include "s3.h"
+#include "insound/core/ZipWriter.h"
 #include <insound/core/env.h>
 #include <insound/core/errors/AwsS3Error.h>
 #include <insound/core/util.h>
@@ -292,5 +293,49 @@ namespace Insound::S3 {
         }
 
         return result.IsSuccess();
+    }
+
+
+    std::optional<std::string> zipFolder(const std::string_view &folderKey)
+    {
+        std::string key = folderKey.data();
+        if (!folderKey.ends_with('/'))
+            key += '/';
+
+        auto list = listObjects(key);
+
+        if (list.empty()) // no files to zip
+            return {};
+        try
+        {
+            ZipWriter writer;
+
+            for (auto &key : list)
+            {
+                auto file = downloadFile(key);
+                if (file)
+                {
+                    auto shortenedKey = key.substr(folderKey.length());
+                    writer.addFile(shortenedKey, file.value());
+                }
+            }
+
+            if (writer.numEntries() == 0)
+                return {};
+
+            auto copy = writer.copy();
+            return std::string(copy.begin(), copy.end());
+        }
+        catch (const std::exception &e)
+        {
+            IN_ERR("Error while zipping file: {}", e.what());
+            return {};
+        }
+        catch(...)
+        {
+            IN_ERR("Unknown error while zipping file.");
+            return {};
+        }
+
     }
 }

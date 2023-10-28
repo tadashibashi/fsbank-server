@@ -83,4 +83,13 @@ namespace Insound::S3 {
      * @return                  whether the deletion was a success.
      */
     bool deleteFolder(const std::string_view &folderKey);
+
+    /**
+     * Compress files in an S3 folder for download
+     *
+     * @param   folderKey     - key of the folder to zip
+     *
+     * @return                  buffer string containing the binary zip file.
+     */
+    std::optional<std::string> zipFolder(const std::string_view &folderKey);
 }
