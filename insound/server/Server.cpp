@@ -9,13 +9,14 @@
 namespace Insound {
     bool Server::init()
     {
-        crow::mustache::set_global_base(TEMPLATE_DIR);
+
         S3::config();
         Mongo::connect();
 
         mount<Auth>();
 
         CROW_CATCHALL_ROUTE(this->internal())([](const crow::request &req, crow::response &res) {
+            crow::mustache::set_base(TEMPLATE_DIR "/");
             auto page = crow::mustache::load("index.html");
 
             // set nonce
