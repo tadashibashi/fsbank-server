@@ -75,3 +75,17 @@ TEST_CASE("S3::deleteFolder works")
     REQUIRE(S3::deleteFolder("deleteFolder"));
     REQUIRE(S3::listObjects("deleteFolder/").empty());
 }
+
+TEST_CASE("S3::zipFolder works")
+{
+    REQUIRE(S3::uploadFile("deleteFolder/file0", FileContent));
+    REQUIRE(S3::uploadFile("deleteFolder/file1", FileContent));
+    REQUIRE(S3::uploadFile("deleteFolder/file2", FileContent));
+    REQUIRE(S3::listObjects("deleteFolder/").size() == 3);
+
+    auto zip = S3::zipFolder("deleteFolder/");
+    REQUIRE(zip);
+    REQUIRE(!zip.value().empty());
+
+    // TODO create ZipReader to check the contents of the binary
+}
