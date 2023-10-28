@@ -20,19 +20,19 @@ namespace Insound::S3 {
     /**
      * Get a list of object keys in the store, stemming from `prefix`
      *
-     * @param   prefix - the prefix from which to stem the search for objects
+     * @param     prefix   - the prefix from which to stem the search for objects
      *
-     * @returns the list of key names
+     * @returns              the list of key names
      */
     std::vector<std::string> listObjects(const std::string_view &prefix = "");
 
     /**
      * Upload a file to the project's s3 bucket
      *
-     * @param    key       the key path to store the object at
-     * @param    file      data to store
+     * @param    key       - the key path to store the object at
+     * @param    file      - data to store
      *
-     * @return   whether upload was successful
+     * @return             whether upload was successful
      */
     bool uploadFile(const std::string_view &key,
         const std::string &file);
@@ -41,19 +41,36 @@ namespace Insound::S3 {
      * Download a file and get its data encapsulated in a string.
      * Binary files are permitted, but string functionality will be limited.
      *
-     * @param key - the key of the file to download
+     * @param   key     - the key of the file to download
      *
-     * @return      the file as a string (easy to return via crow)
+     * @return            the file as a string (easy to return via crow).
      */
     std::optional<std::string> downloadFile(const std::string_view &key);
 
     /**
-     * Delete a file in the project's S3 bucket.
+     * Delete a file in the project's S3 bucket
      *
-     * @param  key - key of the file to delete
+     * @param   key     - key of the file to delete
      *
-     * @return       whether deletion was a success
+     * @return            whether deletion was a success.
      */
     bool deleteFile(const std::string_view &key);
 
+    /**
+     * Delete a list of files n the project's S3 bucket
+     *
+     * @param   keys     - list of keys to delete
+     *
+     * @return             whether the deletion was a success.
+     */
+    bool deleteFiles(const std::vector<std::string> &keys);
+
+    /**
+     * Delete S3 objects inside of a folder
+     *
+     * @param   folderKey     - key of the folder to delete
+     * 
+     * @return                  whether the deletion was a success.
+     */
+    bool deleteFolder(const std::string_view &folderKey);
 }

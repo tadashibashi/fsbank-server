@@ -8,6 +8,7 @@
 #include <aws/s3/model/ChecksumAlgorithm.h>
 #include <aws/s3/model/CreateBucketRequest.h>
 #include <aws/s3/model/DeleteObjectRequest.h>
+#include <aws/s3/model/DeleteObjectsRequest.h>
 #include <aws/s3/model/GetObjectRequest.h>
 #include <aws/s3/model/ListObjectsV2Request.h>
 #include <aws/s3/model/PutObjectRequest.h>
@@ -189,5 +190,47 @@ namespace Insound::S3 {
         }
 
         return true;
+    }
+
+    bool deleteFiles(const std::vector<std::string> &keys)
+    {
+        auto client = getClient();
+
+        auto request = Aws::S3::Model::DeleteObjectsRequest();
+        request.SetBucket(S3_BUCKET);
+
+        Aws::S3::Model::Delete del;
+        for (auto &key : keys)
+        {
+            Aws::S3::Model::ObjectIdentifier id;
+            id.SetKey(key.data());
+            del.AddObjects(id);
+        }
+        request.SetDelete(del);
+
+        auto result = client.DeleteObjects(request);
+
+        if (!result.IsSuccess())
+        {
+            IN_ERR("S3 Delete Objects Error: {}: {}",
+                result.GetError().GetExceptionName(),
+                result.GetError().GetMessage());
+            return false;
+        }
+
+        return result.GetResult().GetDeleted().size() == keys.size();
+    }
+
+    bool deleteFolder(const std::string_view &folderKey)
+    {
+        if (folderKey.empty()) return false; // no folder to delete
+
+        // Ensure the key ends with a slash, indicating a folder (not other
+        // keys with the same prefix, but outside of that folder)
+        std::string key = folderKey.data();
+        if (!key.ends_with('/'))
+            key += '/';
+
+        return deleteFiles( listObjects(key) );
     }
 }
