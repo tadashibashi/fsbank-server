@@ -29,7 +29,7 @@ static void addToVector(std::vector<std::vector<uint8_t>> &files,
 
 // ===== Tests ================================================================
 
-class BankTest
+class BankBuilderTest
 {
 public:
     // Test file data
@@ -38,7 +38,7 @@ public:
     inline static std::string file3{};
 
     // Setup
-    BankTest()
+    BankBuilderTest()
     {
         REQUIRE(BankBuilder::initLibrary() == nullptr);
         file1 = openFile(PUBLIC_DIR "/audio/test.mp3");
@@ -47,7 +47,7 @@ public:
     }
 
     // Tear down
-    ~BankTest()
+    ~BankBuilderTest()
     {
         REQUIRE(BankBuilder::closeLibrary() == nullptr);
         file1.clear();
@@ -57,7 +57,7 @@ public:
 };
 
 
-TEST_CASE_METHOD(BankTest, "Files have substance")
+TEST_CASE_METHOD(BankBuilderTest, "Files have substance")
 {
     REQUIRE(!file1.empty());
     REQUIRE(!file2.empty());
@@ -65,7 +65,7 @@ TEST_CASE_METHOD(BankTest, "Files have substance")
 }
 
 
-TEST_CASE_METHOD(BankTest, "Bank can build")
+TEST_CASE_METHOD(BankBuilderTest, "Bank can build")
 {
     BankBuilder bank;
     bank.addFile(file1.data(), file1.size());
@@ -76,24 +76,32 @@ TEST_CASE_METHOD(BankTest, "Bank can build")
 }
 
 
-TEST_CASE_METHOD(BankTest, "Bank can build in multithreaded context")
+TEST_CASE_METHOD(BankBuilderTest, "Bank can build in multithreaded context")
 {
     const auto NumThreads = 100;
     std::vector<std::thread> threads;
     std::vector<std::vector<uint8_t>> files;
 
-    // Build 100 banks simultaneously
+    // Build 100 banks in 100 threads
     for (int i = 0; i < NumThreads; ++i)
     {
-        threads.emplace_back([&files]() {
-            BankBuilder bank;
-            bank.addFile(file1.data(), file1.size());
-            bank.addFile(file2.data(), file2.size());
-            bank.addFile(file3.data(), file3.size());
-            REQUIRE(bank.build() == nullptr);
-            REQUIRE(!bank.data().empty());
-            addToVector(files, bank.data());
-        });
+        threads.emplace_back(
+            [&files]()
+            {
+                // create bank, add files
+                BankBuilder bank;
+                bank.addFile(file1.data(), file1.size());
+                bank.addFile(file2.data(), file2.size());
+                bank.addFile(file3.data(), file3.size());
+
+                // build
+                REQUIRE(bank.build() == nullptr);
+                REQUIRE(!bank.data().empty());
+
+                // collect files
+                addToVector(files, bank.data());
+            }
+        );
     }
 
     // await threads
@@ -102,12 +110,12 @@ TEST_CASE_METHOD(BankTest, "Bank can build in multithreaded context")
         threads[i].join();
     }
 
+    // check collected files
     REQUIRE(!files.empty());
     REQUIRE(files.size() == NumThreads);
 
     bool allFilesMatch = true;
-    // check if collected data matches
-    for (int i = 0; i < NumThreads; ++i)
+    for (int i = 1; i < NumThreads; ++i)
     {
         if (files[0] != files[i])
         {
