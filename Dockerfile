@@ -12,12 +12,12 @@ RUN \
     # Install dependencies
         apt-get update -y && apt-get install -y --no-install-recommends \
         # Build tools
-            clang-16 \
+            clang \
             cmake \
             git \
             python3.9 \
             python-is-python3 \
-            lld-16 \
+            lld \
             ninja-build \
         # Runtime libraries
             curl \
@@ -64,8 +64,8 @@ RUN \
         chmod +x run && ./run install $BUILD_TYPE insound-server "/usr/" && \
         rm -rf $APP_DIR && \
     # Clean up build tools
-        apt-get remove -y python3.9 python-is-python3 git clang-16 \
-            ninja-build cmake lld-16 && \
+        apt-get remove -y python3.9 python-is-python3 git clang \
+            ninja-build cmake lld && \
         apt-get clean autoclean && \
         apt-get autoremove -y && \
         rm -rf /var/lib/{apt,dpkg,cache,log}/
