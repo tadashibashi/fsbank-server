@@ -25,18 +25,29 @@ namespace Insound::S3 {
 
     static std::string S3_BUCKET;
     static std::string AWS_ENDPOINT_URL;
+    static std::optional<Aws::S3::S3Client> sClient{};
 
     /**
      * Helper to create and return a new s3 client object.
      */
-    static Aws::S3::S3Client getClient()
+    static Aws::S3::S3Client &getClient()
     {
-        Aws::Client::ClientConfiguration config {};
-        config.endpointOverride = AWS_ENDPOINT_URL;
+        if (!sClient)
+        {
+            Aws::Client::ClientConfiguration config {};
+            config.endpointOverride = AWS_ENDPOINT_URL;
 
-        Aws::S3::S3Client client{config};
+            try {
+                sClient = Aws::S3::S3Client{config};
+            }
+            catch(...)
+            {
+                IN_ERR("Failed to get S3 client");
+                throw;
+            }
+        }
 
-        return client;
+        return sClient.value();
     }
 
     /**
@@ -46,7 +57,7 @@ namespace Insound::S3 {
     bool createBucket(const std::string_view &bucket)
     {
         // Check if bucket exists, add if not
-        auto client = getClient();
+        auto &client = getClient();
         auto buckets = client.ListBuckets();
         if (!buckets.IsSuccess())
             throw AwsS3Error(buckets.GetError());
@@ -104,7 +115,7 @@ namespace Insound::S3 {
 
     std::vector<std::string> listObjects(const std::string_view &prefix)
     {
-        auto client = getClient();
+        auto &client = getClient();
         auto request = Aws::S3::Model::ListObjectsV2Request();
         request.SetBucket(S3_BUCKET);
         request.SetPrefix(prefix.data());
@@ -130,7 +141,7 @@ namespace Insound::S3 {
     bool uploadFile(const std::string_view &key,
         const std::string &file)
     {
-        auto client = getClient();
+        auto &client = getClient();
 
         // Make the request
         auto request = Aws::S3::Model::PutObjectRequest{};
@@ -159,7 +170,7 @@ namespace Insound::S3 {
 
     std::optional<std::string> downloadFile(const std::string_view &key)
     {
-        auto client = getClient();
+        auto &client = getClient();
 
         // Make the request
         auto request = Aws::S3::Model::GetObjectRequest{};
@@ -184,7 +195,7 @@ namespace Insound::S3 {
 
     bool deleteFile(const std::string_view &key)
     {
-        auto client = getClient();
+        auto &client = getClient();
 
         auto request = Aws::S3::Model::DeleteObjectRequest();
         request.SetBucket(S3_BUCKET);
@@ -206,7 +217,7 @@ namespace Insound::S3 {
     {
         if (keys.empty()) return false;
 
-        auto client = getClient();
+        auto &client = getClient();
         auto request = Aws::S3::Model::DeleteObjectsRequest();
 
         Aws::S3::Model::Delete del;
@@ -246,7 +257,7 @@ namespace Insound::S3 {
 
     bool dropBucket__permanent__(const std::string_view &bucket)
     {
-        auto client = getClient();
+        auto &client = getClient();
         // Delete all files in bucket
         {
             auto result = Aws::S3::Model::ListObjectsV2Outcome{};
