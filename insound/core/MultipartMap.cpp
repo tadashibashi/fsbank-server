@@ -1,5 +1,8 @@
 #include "MultipartMap.h"
+#include "crow/json.h"
 #include <crow/multipart.h>
+
+#include <string_view>
 #include <utility>
 
 namespace Insound {
@@ -17,11 +20,28 @@ namespace Insound {
             if (contenttype_it == req.headers.end())
                 throw std::runtime_error("MultipartMap::from: no content-type "
                     "in crow::request headers");
-            if (!contenttype_it->second.starts_with("multipart/form-data"))
-                throw std::runtime_error("MultipartMap::from: content-type is "
-                    "not \"multipart/form-data\"");
+
+            // Handle application/json data
+            if (contenttype_it->second.starts_with("application/json"))
+            {
+                MultipartMap map;
+                auto json = crow::json::load(req.body);
+                for (auto &value : json)
+                {
+                    map.fields[value.key()] = value.s();
+                }
+
+                return map;
+            }
+            else if (!contenttype_it->second.starts_with("multipart/form-data"))
+            {
+                throw std::runtime_error(f("MultipartMap::from: invalid "
+                    "content-type: \"{}\". Must be \"multipart/form-data\" "
+                    "or \"application/json\"", contenttype_it->second));
+            }
         }
 
+        // Handle multipart data
         auto message = crow::multipart::message(req);
         MultipartMap map;
 
