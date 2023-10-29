@@ -4,7 +4,6 @@
 
 #include <glaze/glaze.hpp>
 
-#define JWT_DISABLE_PICOJSON
 #include <jwt-cpp/jwt.h>
 
 #include <cstdint>
