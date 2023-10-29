@@ -6,6 +6,7 @@
 #include <mongocxx/instance.hpp>
 #include <mongocxx/pool.hpp>
 
+#include <cassert>
 #include <memory>
 #include <utility>
 
@@ -20,11 +21,10 @@ namespace Insound::Mongo {
 
         ~AppClient()
         {
-            delete pool;
         }
 
         mongocxx::instance instance;
-        mongocxx::pool *pool;
+        std::optional<mongocxx::pool> pool;
 
         bool connect()
         {
@@ -36,7 +36,7 @@ namespace Insound::Mongo {
                     MONGO_DBNAME = requireEnv("MONGO_DBNAME");
                 auto uri = mongocxx::uri{requireEnv("MONGO_URL")};
 
-                pool = new mongocxx::pool{uri};
+                pool.emplace(uri);
 
                 return true;
             }
@@ -54,12 +54,13 @@ namespace Insound::Mongo {
 
         void disconnect()
         {
-            delete pool;
-            pool = nullptr;
+            pool.reset();
         }
 
         mongocxx::database db()
         {
+            assert(pool);
+
             if (!entry)
                 entry.emplace(pool->acquire());
 
