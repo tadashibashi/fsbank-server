@@ -1,5 +1,3 @@
-#include "catch2/reporters/catch_reporter_event_listener.hpp"
-#include "catch2/reporters/catch_reporter_registrars.hpp"
 #include <insound/core/BankBuilder.h>
 #include <insound/tests/definitions.h>
 #include <insound/tests/test.h>
