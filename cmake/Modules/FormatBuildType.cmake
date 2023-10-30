@@ -1,5 +1,6 @@
-
-# Format cmake build type
+# Format cmake build type to title-case
+# Only permits "Release", "Debug", "RelWithDebInfo", & "MinSizeRel"
+# but with any casing where e.g. "rElEAse" is okay.
 string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE_UPPER)
 if ( ${BUILD_TYPE_UPPER} MATCHES "DEBUG" )
     set(CMAKE_BUILD_TYPE "Debug")
