@@ -1,10 +1,13 @@
-# Insound
+# [Insound Server](https://github.com/tadashibashi/insound-cpp)
 
-A music and sound hosting service for professional audio presentations
-(in development)
+Server powering Insound, the music and sound hosting service for professional
+audio presentations (in development)
 
 Gives composers and sound designers an approachable and
 customizable way to present interactive audio to their clients
+
+For the frontend repository please visit
+[here](https://github.com/tadashibashi/insound-frontend)
 
 ## Technologies Used
 
