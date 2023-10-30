@@ -14,19 +14,39 @@ For the frontend repository please visit
 ![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white)
 ![CMake](https://img.shields.io/badge/CMake-%23008FBA.svg?style=for-the-badge&logo=cmake&logoColor=white)
 ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
-![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 ![FMOD](https://img.shields.io/badge/FMOD-212121?style=for-the-badge)
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 
 ## Getting Started
 
-### Contributing Development
+Eventually a public link will be provided at which the website will be hosted.
+For now, you will need to build the project locally.
+
+When cloning this repository, please make sure to recursively initialize
+the submodules via
+`git clone --recursive https://github.com/tadashibashi/insound-cpp` or if it is
+already cloned, run `git submodule update --init --recursive` in the project
+root.
+
+
+### Docker Build
+
+Docker should be installed on your system. Then in the root of this repository
+run `docker build . --platform=linux/amd64`. This is our current method of
+deployment.
+
+
+### Manual Build
+
+Currently, only Linux Ubuntu 22.04 amd64 and macOS 14 arm (M1) are tested and
+supported.
 
 Before attempting to build the project, please make sure the following
 are available on your system.
 
 #### System dependencies
+
 - C++ 20 compiler (tested with clang 14-16)
 - cmake 3.24+
 - aws-sdk-cpp
@@ -39,6 +59,7 @@ are available on your system.
 
 
 Optional, for python build scripts
+
 - ninja
 - python 3.9+
 - psutil (optional)
@@ -46,14 +67,36 @@ Optional, for python build scripts
 Some Linux package distributors do not have recent enough versions of libmongoc
 or aws-sdk-cpp so you may need to compile and install them from source.
 
-For a comprehensive installation command list, please check Dockerfile, which
-demonstrates a complete installation on Ubuntu Linux amd64.
+For a comprehensive installation command list, please check the Dockerfile in
+the repository root, which demonstrates a complete installation on Ubuntu Linux
+amd64.
+
+#### External dependencies
+
+- MongoDB storage access with read/write rights
+- S3 storage key with read/write admin rights over all buckets
+
+#### Server Environment Variables
+
+| Name                  | Description                                         |
+| --------------------- | --------------------------------------------------- |
+| JWT_SECRET            | String signing for JSON web tokens                  |
+| PASSWORD_SECRET       | String for hashing passwords                        |
+| PASSWORD_SALT         | String for salting password hashes                  |
+| MONGO_URL             | MongoDB url, including password & port number       |
+| MONGO_DBNAME          | Name of server's mongo database                     |
+| AWS_ENDPOINT_URL      | AWS Endpoint URL, including port if applicable      |
+| AWS_ACCESS_KEY_ID     | AWS Access ID string                                |
+| AWS_SECRET_ACCESS_KEY | AWS Secret Key string                               |
+| S3_BUCKET             | Name of the server's S3 bucket                      |
+
+For local builds, you may create a .env file in the root of this
+repo, which will automatically load and populate the environment.
+(All .env are gitignored)
 
 #### Build
 
-Currently, only Linux amd64 and Mac arm are tested and supported.
-
-Build via Python script helper (Python 3.9+ should be installed)
+Via Python script helper (Python 3.9+ should be installed):
 ```shell
 # In the root directory of this repo:
 
@@ -67,7 +110,7 @@ chmod +x run
 ./run test
 ```
 
-Build without helper script:
+Without helper script:
 ```shell
 # In the root directory of this repo:
 
@@ -84,13 +127,36 @@ cmake --build build --config Debug --target insound-tests
 build/insound/tests/insound-tests
 ```
 
+To build the frontend:
 
-TODO: Windows compatibility. CMakeLists files need to be updated to move dll's
-to binary dir, amongst other unknown compatibility issues.
+- [Bun](https://bun.sh/docs/installation) should be installed
 
-### Credits
+```shell
+# In a working directory where you want to create the frontend repo, call:
+git clone https://github.com/tadashibashi/insound-frontend
 
-#### Included as submodules
+cd insound-frontend
+bun install
+bun run dev
+```
+
+If the script ran successfully, a dev server has started at which you may
+visit the frontend at http://localhost:5173, or where the terminal message
+indicates.
+
+
+#### Running Tests
+
+The server test suite provides and populates its own envionment variables, so
+regarding env variables no setup on your part is necessary. However, you will
+need:
+- MongoDB server running on your machine at `mongodb://localhost:27017`
+- AWS S3-compatible storage server running on your machine at
+`http://localhost:9000`
+
+## Credits
+
+### Included as submodules
 
 | Library                                                         | License   |
 | --------------------------------------------------------------- | --------- |
@@ -102,3 +168,32 @@ to binary dir, amongst other unknown compatibility issues.
 | [mongo-cxx-driver](https://github.com/mongodb/mongo-cxx-driver) | Apache    |
 | [spdlog](https://github.com/gabime/spdlog)                      | MIT       |
 | [zip](https://github.com/kuba--/zip)                            | Unlicense |
+
+## Roadmap
+
+- [ ] Email API
+    - [ ] Send emails
+
+- [ ] User API
+    - [ ] Authorization on private routes
+    - [ ] Create Account (email confirmation with activation token)
+    - [ ] Read Profile Page (private / public settings)
+    - [ ] Patch profile info
+    - [ ] Delete Account
+
+- [ ] Track API
+    - [ ] Uploads include converted fsb
+    - [ ] Download raw audio as ZIP
+    - [ ] Patch
+        - [ ] New audio tracks
+        - [ ] Replace existing audio
+        - [ ] Remove existing audio
+        - [ ] All patches replace with new fsb
+    - [ ] Delete
+        - [ ] Ensure cascading deletion of all files on S3 + fsb
+
+- [ ] Test suites for all server routes
+
+- Future:
+    - Admin routing
+    - Windows dev support, if necessary
