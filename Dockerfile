@@ -1,7 +1,7 @@
 FROM ubuntu:22.04
 
 ENV APP_DIR=/app
-ENV BUILD_TYPE=release
+ENV BUILD_TYPE=minsizerel
 
 # Invalidate cache every commit
 ADD https://api.github.com/repos/tadashibashi/insound-cpp/git/refs/heads/main \
@@ -34,7 +34,7 @@ RUN \
         mkdir -p mongo-c-driver/cmake-build && \
         cd mongo-c-driver/cmake-build && \
         cmake -DCMAKE_INSTALL_PREFIX=/usr/ -DCMAKE_C_COMPILER=clang \
-            -DCMAKE_PREFIX_PATH=.. -G Ninja .. && \
+            -DCMAKE_PREFIX_PATH=.. -G Ninja -DCMAKE_BUILD_TYPE=$BUILD_TYPE .. && \
         cmake --build . && \
         cmake --install . && \
         cd ../.. && \
@@ -44,11 +44,11 @@ RUN \
         mkdir -p aws-sdk-cpp/cmake-build && \
         cd aws-sdk-cpp/cmake-build && \
         cmake -G Ninja -DCMAKE_INSTALL_PREFIX=/usr/ -DCMAKE_C_COMPILER=clang \
-            -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
             -DENABLE_TESTING=OFF \
             -DBUILD_ONLY="s3" .. && \
-        cmake --build . --config=Release && \
-        cmake --install . --config=Release && \
+        cmake --build . --config=$BUILD_TYPE && \
+        cmake --install . --config=$BUILD_TYPE && \
         cd ../.. && rm -rf aws-sdk-cpp && \
     # Build, install & clean-up frontend
         curl -fsSL https://bun.sh/install | bash && \
