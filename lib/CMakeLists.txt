@@ -1,3 +1,5 @@
+set (ALLOW_DUPLICATE_CUSTOM_TARGETS ON)
+
 add_subdirectory (bcrypt)
 add_subdirectory (Catch2)
 add_subdirectory (Crow)
