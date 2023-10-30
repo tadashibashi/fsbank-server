@@ -1,10 +1,31 @@
 # Insound
 
-## External Dependencies
-- C++ 20 compiler (currently tested with clang 16)
-- cmake
+A music and sound hosting service for professional audio presentations
+(in development)
 
-### External Libraries
+Gives composers and sound designers an approachable and
+customizable way to present interactive audio to their clients
+
+## Technologies Used
+
+![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white)
+![CMake](https://img.shields.io/badge/CMake-%23008FBA.svg?style=for-the-badge&logo=cmake&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
+![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
+![FMOD](https://img.shields.io/badge/FMOD-212121?style=for-the-badge)
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+
+## Getting Started
+
+### Contributing Development
+
+Before attempting to build the project, please make sure the following
+are available on your system.
+
+#### System dependencies
+- C++ 20 compiler (tested with clang 14-16)
+- cmake 3.24+
 - aws-sdk-cpp
 - ca-certificates
 - curl + libcurl
@@ -13,24 +34,32 @@
 - libssl
 - zlib
 
-### Included Submodules
-- bcrypt
-- catch2
-- crow
-- glaze
-- jwt-cpp
-- mongo-cxx-driver
-- spdlog
-- zip
-
 
 Optional, for python build scripts
 - ninja
 - python 3.9+
-- psutil (python library for killing processes, optional)
+- psutil (optional)
 
-Please check Dockerfile for explicit installation commands for
-Ubuntu Linux amd64
+Some Linux package distributors do not have recent enough versions of libmongoc
+or aws-sdk-cpp so you may need to compile and install them from source.
+
+For a comprehensive installation command list, please check Dockerfile, which
+demonstrates a complete installation on Ubuntu Linux amd64.
 
 TODO: Windows compatibility. CMakeLists files need to be updated to move dll's
 to binary dir, amongst other unknown compatibility issues.
+
+### Credits
+
+#### Included as submodules
+
+| Library                                                         | License   |
+| --------------------------------------------------------------- | --------- |
+| [bcrypt](https://github.com/hilch/Bcrypt.cpp)                   | BSD 4     |
+| [catch2](https://github.com/catchorg/Catch2)                    | Boost     |
+| [crow](https://github.com/CrowCpp/Crow)                         | BSD 3     |
+| [glaze](https://github.com/stephenberry/glaze)                  | MIT       |
+| [jwt-cpp](https://github.com/Thalhammer/jwt-cpp)                | MIT       |
+| [mongo-cxx-driver](https://github.com/mongodb/mongo-cxx-driver) | Apache    |
+| [spdlog](https://github.com/gabime/spdlog)                      | MIT       |
+| [zip](https://github.com/kuba--/zip)                            | Unlicense |
