@@ -32,9 +32,11 @@ root.
 
 ### Docker Build
 
-Docker should be installed on your system. Then in the root of this repository
-run `docker build . --platform=linux/amd64`. This is our current method of
-deployment.
+First please read the section below for a list of external dependencies and
+the environment variables that will need to be set.
+
+Then in the root of this repository
+run `docker build . --platform=linux/amd64`.
 
 
 ### Manual Build
