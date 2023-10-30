@@ -46,6 +46,42 @@ or aws-sdk-cpp so you may need to compile and install them from source.
 For a comprehensive installation command list, please check Dockerfile, which
 demonstrates a complete installation on Ubuntu Linux amd64.
 
+#### Build
+
+Currently, only Linux amd64 and Mac arm are tested and supported.
+
+Build via Python script helper (Python 3.9+ should be installed)
+```shell
+# In the root directory of this repo:
+
+# Grant executable permissions to python script file
+chmod +x run
+
+# Configure, build & run server
+./run serve
+
+# Configure, build & run tests
+./run test
+```
+
+Build without helper script:
+```shell
+# In the root directory of this repo:
+
+# Configure build
+mkdir build
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+
+# Build & run server
+cmake --build build --config Debug --target insound-server
+build/insound/server/insound-server
+
+# Build & run test executable
+cmake --build build --config Debug --target insound-tests
+build/insound/tests/insound-tests
+```
+
+
 TODO: Windows compatibility. CMakeLists files need to be updated to move dll's
 to binary dir, amongst other unknown compatibility issues.
 
