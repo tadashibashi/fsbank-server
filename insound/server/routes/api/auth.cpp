@@ -10,8 +10,9 @@
 #include <insound/core/util.h>
 
 using SameSitePolicy = crow::CookieParser::Cookie::SameSitePolicy;
+
 namespace Insound {
-    Auth::Auth() : Router("api/auth") {}
+    Auth::Auth() : Router("auth") {}
 
     void Auth::init()
     {
@@ -26,8 +27,12 @@ namespace Insound {
         CROW_BP_ROUTE(bp, "/create/email")
             .methods("POST"_method)
             (Auth::post_create);
+    }
 
-        CROW_BP_CATCHALL_ROUTE(bp)([]() {return "hey";});
+    void Auth::catchAll(const crow::request &req, crow::response &res)
+    {
+        IN_LOG("Auth catchall was hit!");
+        res.end("Auth catchall!");
     }
 
     void Auth::get_check(const crow::request &req, crow::response &res)
@@ -38,6 +43,7 @@ namespace Insound {
         res.add_header("Content-Type", "application/json");
 
         auto fingerprint = cookies.get_cookie("fingerprint");
+
         if (compare(fingerprint, user.fingerprint))
         {
             res.body = R"({"auth":true})";
@@ -46,6 +52,8 @@ namespace Insound {
         {
             res.body = R"({"auth":false})";
         }
+
+        res.end();
     }
 
     void Auth::post_login(const crow::request &req, crow::response &res)
