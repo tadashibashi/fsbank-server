@@ -11,8 +11,8 @@ namespace Insound {
     };
 
     /**
-     * Class that stores multipart form data from a request via
-     * crow::multipart::message, for quick access in a route.
+     * Container class that stores a map of parsed multi-part form data from
+     * a request. Supports application/json but not urlencoded form format.
      */
     class MultipartMap {
     public:
