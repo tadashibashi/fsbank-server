@@ -12,7 +12,7 @@
 using SameSitePolicy = crow::CookieParser::Cookie::SameSitePolicy;
 
 namespace Insound {
-    Auth::Auth() : Router("auth") {}
+    Auth::Auth() : Router("api/auth") {}
 
     void Auth::init()
     {
@@ -64,16 +64,24 @@ namespace Insound {
 
         std::string email;
         std::string password;
+        std::string password2;
 
         try {
-            auto email = data.fields.at("email");
-            auto password = data.fields.at("password");
+            email = data.fields.at("email");
+            password = data.fields.at("password");
+            password2 = data.fields["password2"];
         } catch(...) {
             res.code = 400;
-            res.body = "Missing fields";
+            res.end("Missing fields");
             return;
         }
 
+        // Protect from over-querying database
+        if (!password2.empty())
+        {
+            res.code = 400;
+            return res.end("Invalid response.");
+        }
 
         // check for user
         Mongo::Model<User> UserModel;
@@ -81,9 +89,7 @@ namespace Insound {
         if (!userRes)
         {
             res.code = 401;
-            res.body = R"({"error":"Could not find a user with that email."})";
-            res.end();
-            return;
+            return res.end(R"({"error":"Could not find a user with that email."})");
         }
 
         auto &user = userRes.value();
@@ -91,9 +97,7 @@ namespace Insound {
         if (!compare(user.body.password, password))
         {
             res.code = 401;
-            res.body = R"({"error":"Invalid password."})";
-            res.end();
-            return;
+            return res.end(R"({"error":"Invalid password."})");
         }
 
         UserToken token;
