@@ -10,6 +10,7 @@ ADD https://api.github.com/repos/tadashibashi/insound-cpp/git/refs/heads/main \
 # Install dependencies, build, clean up
 RUN \
     # Install dependencies
+        apt-get update -y && \
         apt-get install software-properties-common -y && \
         apt-get update -y && \
         add-apt-repository ppa:savoury1/curl34 -y && \
