@@ -20,7 +20,8 @@ namespace Insound {
 
         crow::mustache::context ctx({{"nonce", helmet.nonce}});
 
-        res.end(page.render_string(ctx));
+        res.body = page.render_string(ctx);
+        res.end();
     }
 
     bool Server::init()
