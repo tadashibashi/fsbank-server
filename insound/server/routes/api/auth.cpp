@@ -1,13 +1,13 @@
 #include "auth.h"
-#include "insound/core/MultipartMap.h"
-#include "insound/core/mongo/Model.h"
-#include "insound/core/password.h"
-#include <crow/common.h>
-#include <crow/middlewares/cookie_parser.h>
 
+#include <insound/core/mongo/Model.h>
+#include <insound/core/MultipartMap.h>
+#include <insound/core/password.h>
+#include <insound/core/util.h>
 #include <insound/server/Server.h>
 
-#include <insound/core/util.h>
+#include <crow/common.h>
+#include <crow/middlewares/cookie_parser.h>
 
 using SameSitePolicy = crow::CookieParser::Cookie::SameSitePolicy;
 
@@ -44,7 +44,7 @@ namespace Insound {
 
         auto fingerprint = cookies.get_cookie("fingerprint");
 
-        if (compare(fingerprint, user.fingerprint))
+        if (user.isAuthorized() && compare(fingerprint, user.fingerprint))
         {
             res.body = R"({"auth":true})";
         }
@@ -70,7 +70,9 @@ namespace Insound {
             email = data.fields.at("email");
             password = data.fields.at("password");
             password2 = data.fields["password2"];
-        } catch(...) {
+        }
+        catch(...)
+        {
             res.code = 400;
             res.end("Missing fields");
             return;
