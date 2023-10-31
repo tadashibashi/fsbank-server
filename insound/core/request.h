@@ -37,6 +37,10 @@ namespace Insound {
             const std::string_view &method = "GET");
         ~MakeRequest();
 
+        // Copiable via shared_ptr under the hood
+        MakeRequest(const MakeRequest &);
+        MakeRequest &operator=(const MakeRequest &);
+
         MakeRequest &url(const std::string_view &url);
 
         /**

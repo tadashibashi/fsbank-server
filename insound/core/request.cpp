@@ -5,6 +5,7 @@
 #include <curl/curl.h>
 
 #include <cassert>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -41,7 +42,8 @@ public:
         auto header = f("{}: {}", name, value);
         auto temp = curl_slist_append(list, header.c_str());
         if (!temp)
-            throw std::runtime_error("Error occurred while appending header to curl_slist");
+            throw std::runtime_error("Error occurred while appending header "
+                "to curl_slist");
         list = temp;
     }
 
@@ -51,20 +53,37 @@ private:
 };
 
 
-struct Insound::MakeRequest::Impl {
-    Impl() : headers(), curl(curl_easy_init()) { }
-    ~Impl() { curl_easy_cleanup(curl); }
+struct CurlContext {
+    CurlContext() : headers(), curl(curl_easy_init())
+    {
+        assert(InitOk == CURLE_OK);
+    }
+
+    ~CurlContext()
+    {
+        curl_easy_cleanup(curl);
+    }
 
     void clear()
     {
-        curl_easy_cleanup(curl);
-        curl = curl_easy_init();
+        curl_easy_reset(curl);
         headers = CurlHeaders();
     }
 
     CurlHeaders headers;
     CURL *curl;
 };
+
+struct Insound::MakeRequest::Impl {
+    Impl() : ctx(new CurlContext) { }
+    explicit Impl(std::shared_ptr<CurlContext> &ctx) : ctx(ctx) { }
+
+    std::shared_ptr<CurlContext> ctx;
+
+    CURL *curl() { return ctx->curl; }
+    CurlHeaders &headers() { return ctx->headers; }
+};
+
 
 
 Insound::MakeRequest::MakeRequest() : m(new Impl)
@@ -74,19 +93,33 @@ Insound::MakeRequest::MakeRequest() : m(new Impl)
 Insound::MakeRequest::MakeRequest(const std::string_view &url,
     const std::string_view &method) : m(new Impl)
 {
-    (*this)
-        .url(url)
-        .method(method);
+    this->url(url).method(method);
 }
 
 
-Insound::MakeRequest::~MakeRequest() { delete m; }
+Insound::MakeRequest::MakeRequest(const MakeRequest &other) : m(new Impl(other.m->ctx))
+{
+
+}
+
+
+Insound::MakeRequest &Insound::MakeRequest::operator=(const MakeRequest &other)
+{
+    m->ctx = other.m->ctx;
+    return *this;
+}
+
+
+Insound::MakeRequest::~MakeRequest()
+{
+
+}
 
 
 Insound::MakeRequest &
 Insound::MakeRequest::url(const std::string_view &url)
 {
-    auto result = curl_easy_setopt(m->curl, CURLOPT_URL, url.data());
+    auto result = curl_easy_setopt(m->curl(), CURLOPT_URL, url.data());
     if (result != CURLE_OK)
         throw CurlError(result);
 
@@ -97,7 +130,7 @@ Insound::MakeRequest::url(const std::string_view &url)
 Insound::MakeRequest &
 Insound::MakeRequest::method(const std::string_view &method)
 {
-    auto code = curl_easy_setopt(m->curl, CURLOPT_CUSTOMREQUEST,
+    auto code = curl_easy_setopt(m->curl(), CURLOPT_CUSTOMREQUEST,
         method.data());
     if (code != CURLE_OK)
         throw CurlError(code);
@@ -107,7 +140,7 @@ Insound::MakeRequest::method(const std::string_view &method)
 Insound::MakeRequest &
 Insound::MakeRequest::body(const std::string_view &body)
 {
-    auto code = curl_easy_setopt(m->curl, CURLOPT_POSTFIELDS, body.data());
+    auto code = curl_easy_setopt(m->curl(), CURLOPT_POSTFIELDS, body.data());
     if (code != CURLE_OK)
         throw CurlError(code);
     return *this;
@@ -117,23 +150,33 @@ Insound::MakeRequest &
 Insound::MakeRequest::header(const std::string_view &name,
     const std::string_view &value)
 {
-    m->headers.append(name, value);
+    m->headers().append(name, value);
     return *this;
 }
 
 std::string
 Insound::MakeRequest::send()
 {
-    auto result = curl_easy_setopt(m->curl, CURLOPT_HTTPHEADER, m->headers.getList());
+    CURLcode result;
+
+    if (m->headers().getList())
+    {
+        result = curl_easy_setopt(m->curl(), CURLOPT_HTTPHEADER,
+            m->headers().getList());
+        if (result != CURLE_OK)
+            throw CurlError(result);
+    }
+
+    result = curl_easy_setopt(m->curl(), CURLOPT_WRITEFUNCTION, write_data);
     if (result != CURLE_OK)
         throw CurlError(result);
 
     std::string resBody;
-    result = curl_easy_setopt(m->curl, CURLOPT_WRITEDATA, &resBody);
+    result = curl_easy_setopt(m->curl(), CURLOPT_WRITEDATA, &resBody);
     if (result != CURLE_OK)
         throw CurlError(result);
 
-    result = curl_easy_perform(m->curl);
+    result = curl_easy_perform(m->curl());
     if (result != CURLE_OK)
         throw CurlError(result);
 
@@ -145,7 +188,7 @@ std::string
 Insound::MakeRequest::getHeader(const std::string_view &name) const
 {
     curl_header *header;
-    auto result = curl_easy_header(m->curl, name.data(), 0, CURLH_HEADER, -1,
+    auto result = curl_easy_header(m->curl(), name.data(), 0, CURLH_HEADER, -1,
         &header);
     if (result != CURLHE_OK)
         throw CurlHeaderError(result);
@@ -159,7 +202,7 @@ Insound::MakeRequest::getHeaders(const std::string_view &name) const
 {
     // Get the first header
     curl_header *header;
-    auto result = curl_easy_header(m->curl, name.data(), 0, CURLH_HEADER, -1,
+    auto result = curl_easy_header(m->curl(), name.data(), 0, CURLH_HEADER, -1,
         &header);
 
     if (result != CURLHE_OK)
@@ -176,7 +219,7 @@ Insound::MakeRequest::getHeaders(const std::string_view &name) const
 
     for (size_t i = 1; i < amount; ++i)
     {
-        result = curl_easy_header(m->curl, name.data(), i, CURLH_HEADER, -1,
+        result = curl_easy_header(m->curl(), name.data(), i, CURLH_HEADER, -1,
             &header);
         if (result != CURLHE_OK)
             throw CurlHeaderError(result);
@@ -194,7 +237,7 @@ long
 Insound::MakeRequest::getCode() const
 {
     long code;
-    auto result = curl_easy_getinfo(m->curl, CURLINFO_HTTP_CODE, &code);
+    auto result = curl_easy_getinfo(m->curl(), CURLINFO_HTTP_CODE, &code);
     if (result != CURLE_OK)
         throw CurlError(result);
 
