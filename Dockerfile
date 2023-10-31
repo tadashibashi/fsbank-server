@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:23.10
 
 ENV APP_DIR=/app
 ENV BUILD_TYPE=minsizerel
@@ -10,12 +10,7 @@ ADD https://api.github.com/repos/tadashibashi/insound-cpp/git/refs/heads/main \
 # Install dependencies, build, clean up
 RUN \
     # Install dependencies
-        apt-get update -y && \
-        apt-get install software-properties-common -y && \
-        apt-get update -y && \
-        add-apt-repository ppa:savoury1/curl34 -y && \
-        apt-get update -y && \
-        apt-get install -y --no-install-recommends \
+        apt-get update -y && apt-get install -y --no-install-recommends \
         # Build tools
             clang \
             cmake \
@@ -72,7 +67,7 @@ RUN \
         rm -rf $APP_DIR && \
     # Clean up build tools
         apt-get remove -y python3.9 python-is-python3 git clang \
-            ninja-build cmake lld unzip software-properties-common && \
+            ninja-build cmake lld unzip && \
         apt-get clean autoclean && \
         apt-get autoremove -y && \
         rm -rf /var/lib/{apt,dpkg,cache,log}/
