@@ -56,7 +56,7 @@ RUN \
         chmod +x run && ./run install $BUILD_TYPE insound-server /usr/ && \
         rm -rf $APP_DIR && \
     # Clean up build tools
-        apt-get remove -y python3.9 python-is-python3 git clang \
+        apt-get remove -y python3 python-is-python3 git clang \
             ninja-build cmake lld unzip && \
         apt-get clean autoclean && \
         apt-get autoremove -y && \
