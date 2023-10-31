@@ -2,6 +2,7 @@
 #include <insound/core/env.h>
 #include <insound/core/mongo.h>
 #include <insound/core/Router.h>
+#include <insound/core/middleware/Helmet.h>
 #include <insound/core/middleware/UserAuth.hpp>
 
 #include <insound/core/thirdparty/crow.hpp>
@@ -26,7 +27,8 @@ namespace Insound {
     {
         inline static std::shared_ptr<App<Middlewares...>> s_instance = nullptr;
     public:
-        using Server = crow::App<crow::CookieParser, UserAuth, Middlewares...>;
+        using Server = crow::App<Helmet, crow::CookieParser, UserAuth,
+            Middlewares...>;
 
         App(const AppOpts &opts = {}): m_app(), m_routers(), m_wasInit(),
             m_opts(opts) {
@@ -92,7 +94,9 @@ namespace Insound {
                 Mongo::connect();
 
                 auto PORT = getEnv<int>("PORT", m_opts.defaultPort);
+
                 m_app
+                    .server_name("insound")
                     .loglevel(m_opts.logLevel)
                     .port(PORT)
                     .multithreaded()
