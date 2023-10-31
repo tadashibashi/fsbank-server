@@ -24,7 +24,7 @@ RUN \
             curl \
             libasio-dev \
             libcurl4-openssl-dev \
-            libmongoc-1.0-0 \
+            libmongoc-dev \
             libssl-dev \
             zlib1g-dev \
         # Settings packages
