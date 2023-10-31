@@ -1,4 +1,6 @@
 #include "Server.h"
+#include "crow/app.h"
+#include "crow/utility.h"
 
 #include <insound/core/definitions.h>
 #include <insound/core/email.h>
@@ -52,6 +54,12 @@ namespace Insound {
         mount<Auth>();
 
         CROW_ROUTE(this->internal(), "/")(catchAll);
+
+        CROW_CATCHALL_ROUTE(this->internal())
+        ([](const crow::request &req, crow::response &res) {
+            res.redirect("/?redirect=" +
+                crow::utility::base64encode_urlsafe(req.url, req.url.size()));
+        });
 
         return true;
     }
