@@ -57,9 +57,9 @@ namespace Insound {
 
         CROW_CATCHALL_ROUTE(this->internal())
         ([](const crow::request &req, crow::response &res) {
-            auto url = "/" + req.url;
-            res.redirect("/?redirect=" +
-                crow::utility::base64encode_urlsafe(url, url.size()));
+            res.redirect("?redirect=" +
+                crow::utility::base64encode_urlsafe(req.url, req.url.size()));
+            res.end();
         });
 
         return true;
