@@ -50,13 +50,6 @@ namespace Insound {
 
         mount<Auth>();
 
-
-
-        CROW_ROUTE(this->internal(), "/<path>")([](const crow::request &req,
-            crow::response &res, const std::string &path)
-        {
-            catchAll(req, res);
-        });
         CROW_ROUTE(this->internal(), "/")(catchAll);
 
         return true;
