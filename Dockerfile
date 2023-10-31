@@ -15,7 +15,7 @@ RUN \
             clang \
             cmake \
             git \
-            python3.9 \
+            python3 \
             python-is-python3 \
             lld \
             ninja-build \
@@ -24,21 +24,11 @@ RUN \
             curl \
             libasio-dev \
             libcurl4-openssl-dev \
+            libmongoc-1.0-0 \
             libssl-dev \
             zlib1g-dev \
         # Settings packages
             ca-certificates && \
-    # Build, install & clean-up mongo-c-driver (until package updated to v1.24)
-        git config --global http.sslverify false && \
-        git clone https://github.com/mongodb/mongo-c-driver.git && \
-        mkdir -p mongo-c-driver/cmake-build && \
-        cd mongo-c-driver/cmake-build && \
-        cmake -DCMAKE_INSTALL_PREFIX=/usr/ -DCMAKE_C_COMPILER=clang \
-            -DCMAKE_PREFIX_PATH=.. -G Ninja -DCMAKE_BUILD_TYPE=$BUILD_TYPE .. && \
-        cmake --build . && \
-        cmake --install . && \
-        cd ../.. && \
-        rm -rf mongo-c-driver && \
     # Build, install & clean-up aws-sdk-cpp (until package available in apt)
         git clone --recursive https://github.com/aws/aws-sdk-cpp && \
         mkdir -p aws-sdk-cpp/cmake-build && \
