@@ -71,6 +71,10 @@ the repository root, which demonstrates a complete installation on Ubuntu Linux
 
 #### External dependencies
 
+These services are needed in order for the website to carry out its
+functionality. Please see `Server Environment Variables` below for setting
+the urls and credentials for these services.
+
 - MongoDB storage access with read/write rights
 - S3 storage key with read/write admin rights over all buckets
 - Nodemailer-compatible email service that implements receiving the basic
@@ -80,7 +84,7 @@ the repository root, which demonstrates a complete installation on Ubuntu Linux
 
 | Name                  | Description                                         |
 | --------------------- | --------------------------------------------------- |
-| JWT_SECRET            | String signing for JSON web tokens                  |
+| JWT_SECRET            | String for signing JSON web tokens                  |
 | PASSWORD_SECRET       | String for hashing passwords                        |
 | PASSWORD_SALT         | String for salting password hashes                  |
 | MONGO_URL             | MongoDB url, including password & port number       |
@@ -89,9 +93,9 @@ the repository root, which demonstrates a complete installation on Ubuntu Linux
 | AWS_ACCESS_KEY_ID     | AWS Access ID string                                |
 | AWS_SECRET_ACCESS_KEY | AWS Secret Key string                               |
 | S3_BUCKET             | Name of the server's S3 bucket                      |
-| EMAIL_ENDJPOINT_URL   | Endpoint for a nodemailer-compatible smtp service   |
+| EMAIL_ENDPOINT_URL    | Endpoint for a nodemailer-compatible smtp service   |
 | EMAIL_ACCESS_KEY      | Access key for smtp service                         |
-| EMAIL_AUTOMATED_SENDER| Address of the site automated email sender          |
+| EMAIL_AUTOMATED_SENDER| Email address of the site's automated email sender  |
 
 For local builds, you may create a .env file in the root of this
 repo, which will automatically load and populate the environment.
