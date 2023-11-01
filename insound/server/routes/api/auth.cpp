@@ -64,12 +64,10 @@ namespace Insound {
 
         std::string email;
         std::string password;
-        std::string password2;
 
         try {
             email = data.fields.at("email");
             password = data.fields.at("password");
-            password2 = data.fields["password2"];
         }
         catch(...)
         {
@@ -79,10 +77,10 @@ namespace Insound {
         }
 
         // Protect from over-querying database
-        if (!password2.empty())
+        if (!data.fields["password2"].empty())
         {
-            res.code = 400;
-            return res.end("Invalid response.");
+            res.code = 200;
+            return res.end();
         }
 
         // check for user
@@ -128,12 +126,18 @@ namespace Insound {
         std::string email;
         std::string password;
 
+        // Protect database from automated requests
+        if (!data.fields["username2"].empty())
+        {
+            res.code = 200;
+            return res.end();
+        }
+
         try {
             if (data.fields.at("password") != data.fields.at("password2"))
             {
                 res.code = 400;
-                res.body = R"({"error":"Passwords mismatch"})";
-                res.end();
+                return res.end(R"({"error":"Passwords mismatch"})");
                 return;
             }
 
@@ -142,17 +146,13 @@ namespace Insound {
             if (user)
             {
                 res.code = 400;
-                res.body = R"({"error":"User with email account already exists."})";
-                res.end();
-                return;
+                return res.end(R"({"error":"User with email account already exists."})");
             }
         }
         catch (...)
         {
             res.code = 400;
-            res.body = R"({"error":"Missing field"})";
-            res.end();
-            return;
+            return res.end(R"({"error":"Missing field"})");
         }
     }
 
