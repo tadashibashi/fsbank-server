@@ -1,9 +1,6 @@
 #include "Router.h"
 #include "crow/app.h"
 
-using crow::response;
-using crow::request;
-
 namespace Insound {
 
     Router::Router(const std::string &route, const RouterOpt &opts) :
@@ -16,10 +13,11 @@ namespace Insound {
 
         if (opts.useCatchAll)
         {
-            CROW_BP_CATCHALL_ROUTE(bp)(
-            [this](const request &req, response &res) {
-                this->catchAll(req, res);
-            });
+            // This feature is currently broken in Crow
+            // CROW_BP_CATCHALL_ROUTE(bp)(
+            // [this](const crow::request &req, crow::response &res) {
+            //     this->catchAll(req, res);
+            // });
         }
 
         return bp;
