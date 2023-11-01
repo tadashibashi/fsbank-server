@@ -14,27 +14,37 @@
 
 namespace Insound {
 
-    static std::string HOST_ADDRESS;
+    static void catchall(const crow::request &req, crow::response &res)
+    {
+        static std::string HOST_ADDRESS{requireEnv("HOST_ADDRESS")};
 
-    static void catchAll(const crow::request &req, crow::response &res) {
-        auto &helmet = Server::getContext<Helmet>(req);
+        res.redirect( f("{}/?redirect={}", HOST_ADDRESS,
+            crow::utility::base64encode_urlsafe(req.url, req.url.size())
+        ));
 
+        res.end();
+    }
+
+    static void mainRoute(const crow::request &req, crow::response &res)
+    {
+        // Load html template
         crow::mustache::set_base(TEMPLATE_DIR "/");
         auto page = crow::mustache::load("index.html");
 
+        // Grab nonce from Helmet middleware
+        auto &helmet = Server::getContext<Helmet>(req);
         crow::mustache::context ctx({{"nonce", helmet.nonce}});
 
-        res.body = page.render_string(ctx);
-        res.end();
+        // Render html
+        res.end( page.render_string(ctx) );
     }
 
     bool Server::init()
     {
+        // Populate environment variables, if .env file is available.
         configureEnv();
 
-        // Server should set this variable to its host address.
-        HOST_ADDRESS = getEnv("HOST_ADDRESS", "http://localhost");
-
+        // Connect to S3, check for error
         bool result;
         result = S3::config();
         if (result)
@@ -43,6 +53,8 @@ namespace Insound {
         else
             IN_ERR("S3 client failed to initialize.");
 
+
+        // Connect to MongoDB, check for error
         result = Mongo::connect();
         if (result)
             IN_LOG("MongoDB client initialized, connected to: {}",
@@ -50,23 +62,23 @@ namespace Insound {
         else
             IN_ERR("MongoDB client failed to connect.");
 
+
+        // Set up email API configuration, check for error
         result = Email::config();
         if (result)
             IN_LOG("Email API configured.");
         else
             IN_ERR("Email failed to configure.");
 
+
+        // Mount routers
         mount<Auth>();
 
-        CROW_ROUTE(this->internal(), "/")(catchAll);
+        // Main route
+        CROW_ROUTE(this->internal(), "/")(mainRoute);
 
-        CROW_CATCHALL_ROUTE(this->internal())
-        ([](const crow::request &req, crow::response &res) {
-            res.redirect( f("{}/?redirect={}", HOST_ADDRESS,
-                crow::utility::base64encode_urlsafe(req.url, req.url.size())
-            ));
-            res.end();
-        });
+        // Workaround for catchall route bug.
+        CROW_CATCHALL_ROUTE(this->internal())(catchall);
 
         return true;
     }
