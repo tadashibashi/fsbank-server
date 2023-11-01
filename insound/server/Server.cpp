@@ -14,6 +14,8 @@
 
 namespace Insound {
 
+    static std::string HOST_ADDRESS;
+
     static void catchAll(const crow::request &req, crow::response &res) {
         auto &helmet = Server::getContext<Helmet>(req);
 
@@ -29,6 +31,9 @@ namespace Insound {
     bool Server::init()
     {
         configureEnv();
+
+        // Server should set this variable to its host address.
+        HOST_ADDRESS = getEnv("HOST_ADDRESS", "http://localhost");
 
         bool result;
         result = S3::config();
@@ -57,9 +62,9 @@ namespace Insound {
 
         CROW_CATCHALL_ROUTE(this->internal())
         ([](const crow::request &req, crow::response &res) {
-            // res.redirect("/?redirect=" +
-            //     crow::utility::base64encode_urlsafe(req.url, req.url.size()));
-            res.redirect("/");
+            res.redirect( f("{}/?redirect={}", HOST_ADDRESS,
+                crow::utility::base64encode_urlsafe(req.url, req.url.size())
+            ));
             res.end();
         });
 
