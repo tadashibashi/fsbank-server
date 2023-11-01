@@ -185,8 +185,8 @@ done via
 
 ## Roadmap
 
-- [ ] Email API
-    - [ ] Send emails
+- [x] Email API
+    - [x] Send emails
 
 - [ ] User API
     - [ ] Authorization on private routes
