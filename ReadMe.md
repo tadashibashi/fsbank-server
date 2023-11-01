@@ -18,38 +18,32 @@ For the frontend repository please visit
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 ![FMOD](https://img.shields.io/badge/FMOD-212121?style=for-the-badge)
 
+
 ## Getting Started
 
 Eventually a public link will be provided at which the website will be hosted.
 For now, you will need to build the project locally.
 
 When cloning this repository, please make sure to recursively initialize
-the submodules via
+its submodules via
 `git clone --recursive https://github.com/tadashibashi/insound-cpp` or if it is
 already cloned, run `git submodule update --init --recursive` in the project
 root.
 
 
-### Docker Build
+#### Supported Platforms
 
-First please read the section below for a list of external dependencies and
-the environment variables that will need to be set.
+Currently, only Linux Ubuntu 23 (mantic) amd64 and macOS 14 arm (M1) are tested
+and supported.
 
-Then in the root of this repository
-run `docker build . --platform=linux/amd64`.
+Supporting Windows for development may be considered, if necessary.
 
-
-### Manual Build
-
-Currently, only Linux Ubuntu 22.04 amd64 and macOS 14 arm (M1) are tested and
-supported.
-
-Before attempting to build the project, please make sure the following
-are available on your system.
 
 #### System dependencies
 
-- C++ 20 compiler (tested with clang 14-16)
+Pease make sure the following are available on your system before building:
+
+- C++ 20 compiler (tested with clang 16)
 - cmake 3.24+
 - aws-sdk-cpp
 - ca-certificates
@@ -66,17 +60,21 @@ Optional, for python build scripts
 - python 3.9+
 - psutil (optional)
 
-Some Linux package distributors do not have recent enough versions of libmongoc
-or aws-sdk-cpp so you may need to compile and install them from source.
+Some Linux package distributors do not have recent enough versions of
+libmongoc, libcurl, or aws-sdk-cpp, etc. so you may need to compile and install
+them from source.
 
 For a comprehensive installation command list, please check the Dockerfile in
 the repository root, which demonstrates a complete installation on Ubuntu Linux
-amd64.
+23 (mantic) amd64.
+
 
 #### External dependencies
 
 - MongoDB storage access with read/write rights
 - S3 storage key with read/write admin rights over all buckets
+- Nodemailer-compatible email service that implements receiving the basic
+    JSON options in the [message config](https://nodemailer.com/message/)
 
 #### Server Environment Variables
 
@@ -91,6 +89,9 @@ amd64.
 | AWS_ACCESS_KEY_ID     | AWS Access ID string                                |
 | AWS_SECRET_ACCESS_KEY | AWS Secret Key string                               |
 | S3_BUCKET             | Name of the server's S3 bucket                      |
+| EMAIL_ENDJPOINT_URL   | Endpoint for a nodemailer-compatible smtp service   |
+| EMAIL_ACCESS_KEY      | Access key for smtp service                         |
+| EMAIL_AUTOMATED_SENDER| Address of the site automated email sender          |
 
 For local builds, you may create a .env file in the root of this
 repo, which will automatically load and populate the environment.
@@ -155,6 +156,17 @@ need:
 - MongoDB server running on your machine at `mongodb://localhost:27017`
 - AWS S3-compatible storage server running on your machine at
 `http://localhost:9000`
+
+### Docker Deployment
+
+Granted that the external dependencies listed above are available and the
+environment variables are set accordingly, deploying via docker can be
+done via
+
+```shell
+    docker build . --platform=linux/amd64
+```
+
 
 ## Credits
 
