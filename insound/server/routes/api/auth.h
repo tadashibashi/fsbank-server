@@ -33,8 +33,9 @@ namespace Insound {
         /**
          * Log into the application
          *
+         * @route POST /api/auth/login/email
          * @input
-         * multipart formdata:
+         * form-data:
          * {
          *     email: string,
          *     password: string
@@ -47,8 +48,9 @@ namespace Insound {
         /**
          * Create a user account
          *
+         * @route POST /api/auth/create/email
          * @input
-         * multipart formdata:
+         * form-data:
          * {
          *     email: string,
          *     password: string,
