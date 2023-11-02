@@ -53,7 +53,7 @@ namespace Insound::Mongo {
             auto doc = m_collection.find_one(queryDoc);
             if (!doc) return {};
 
-            return Document<Schema>::fromBson(m_collection.name(), doc.value().view());
+            return Document<Schema>::fromBson(doc.value().view());
         }
 
         [[nodiscard]]

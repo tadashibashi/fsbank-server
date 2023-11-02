@@ -41,7 +41,10 @@ namespace Insound::Mongo {
             assertCollectionExists(glz::meta<T>::name);
         }
 
-        static Document<T> fromBson(std::string_view name,
+        /**
+         * Convert a raw bson document from MongoDB to this Document<T>
+         */
+        static Document<T> fromBson(
             const bsoncxx::document::view_or_value &bson)
         {
             T obj;
