@@ -1,6 +1,5 @@
 #pragma once
 #include <insound/core/App.h>
-
 #include <insound/core/Router.h>
 
 namespace Insound {
@@ -10,11 +9,57 @@ namespace Insound {
 
         void init() override;
 
+        /**
+         * @route GET /api/auth/check
+         *
+         * Check whether User is authenticated / logged in.
+         * Client should check in via this route to ensure its token is ok.
+         *
+         * @input
+         * Headers:
+         * {
+         *     Authorization: Bearer <json-web-token>
+         * }
+         *
+         * @return
+         * JSON:
+         * {
+         *     auth: boolean
+         * }
+         *
+         */
         static void get_check(const crow::request &req, crow::response &res);
-        static void post_login(const crow::request &req, crow::response &res);
-        static void post_create(const crow::request &req, crow::response &res);
 
-        void catchAll(const crow::request &req, crow::response &res) override;
+        /**
+         * Log into the application
+         *
+         * @input
+         * multipart formdata:
+         * {
+         *     email: string,
+         *     password: string
+         * }
+         *
+         * `password2` is a honeypot to help prevent bots
+         */
+        static void post_login(const crow::request &req, crow::response &res);
+
+        /**
+         * Create a user account
+         *
+         * @input
+         * multipart formdata:
+         * {
+         *     email: string,
+         *     password: string,
+         *     password2: string,
+         * }
+         *
+         * `password` must match `password2`
+         *
+         * `username2` is a honeypot to help prevent bots
+         */
+        static void post_create(const crow::request &req, crow::response &res);
     };
 
 

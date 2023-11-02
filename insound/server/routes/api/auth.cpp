@@ -29,12 +29,6 @@ namespace Insound {
             (Auth::post_create);
     }
 
-    void Auth::catchAll(const crow::request &req, crow::response &res)
-    {
-        IN_LOG("Auth catchall was hit!");
-        res.end("Auth catchall!");
-    }
-
     void Auth::get_check(const crow::request &req, crow::response &res)
     {
         auto &cookies = Server::getContext<crow::CookieParser>(req);
@@ -59,15 +53,15 @@ namespace Insound {
     void Auth::post_login(const crow::request &req, crow::response &res)
     {
         auto &cookies = Server::getContext<crow::CookieParser>(req);
+        auto body = MultipartMap::from(req);
 
-        auto data = MultipartMap::from(req);
-
+        // Required fields to collect
         std::string email;
         std::string password;
 
         try {
-            email = data.fields.at("email");
-            password = data.fields.at("password");
+            email = body.fields.at("email");
+            password = body.fields.at("password");
         }
         catch(...)
         {
@@ -76,14 +70,14 @@ namespace Insound {
             return;
         }
 
-        // Protect from over-querying database
-        if (!data.fields["password2"].empty())
+        // Check honeypot
+        if (!body.fields["password2"].empty())
         {
-            res.code = 200;
+            res.code = 400;
             return res.end();
         }
 
-        // check for user
+        // Check if user with email exists
         Mongo::Model<User> UserModel;
         auto userRes = UserModel.findOne({"email", email});
         if (!userRes)
@@ -92,61 +86,60 @@ namespace Insound {
             return res.end(R"({"error":"Could not find a user with that email."})");
         }
 
+        // Check password
         auto &user = userRes.value();
-
         if (!compare(user.body.password, password))
         {
             res.code = 401;
             return res.end(R"({"error":"Invalid password."})");
         }
 
+        // Create user token & fingerprint
+        const auto fingerprint = genHexString();
+
         UserToken token;
         token.username = user.body.username;
         token.displayName = user.body.displayName;
         token.email = user.body.email;
         token.type = user.body.type;
+        token.fingerprint = hash(fingerprint);
 
-        const auto fingerprint = genHexString();
+        // Stringify the token
+        res.body = glz::write_json(token);
+
+        // Done, commit fingerprint cookie
         cookies.set_cookie("fingerprint", fingerprint)
             .httponly()
             .same_site(SameSitePolicy::Strict)
-            .max_age(60 * 60 * 24 * 14)
+            .max_age(60 * 60 * 24 * 14) // two weeks
             .path("/");
-        token.fingerprint = hash(fingerprint);
 
-        res.body = glz::write_json(token);
         res.code = 200;
         res.end();
     }
 
     void Auth::post_create(const crow::request &req, crow::response &res)
     {
-        auto data = MultipartMap::from(req);
+        auto body = MultipartMap::from(req);
 
         std::string email;
         std::string password;
 
-        // Protect database from automated requests
-        if (!data.fields["username2"].empty())
+        // Check honeypot
+        if (!body.fields["username2"].empty())
         {
             res.code = 200;
             return res.end();
         }
 
         try {
-            if (data.fields.at("password") != data.fields.at("password2"))
+            email = body.fields.at("email");
+            password = body.fields.at("password");
+
+            if (password != body.fields.at("password2"))
             {
                 res.code = 400;
                 return res.end(R"({"error":"Passwords mismatch"})");
-                return;
-            }
-
-            auto UserModel = Mongo::Model<User>();
-            auto user = UserModel.findOne({"email", email});
-            if (user)
-            {
-                res.code = 400;
-                return res.end(R"({"error":"User with email account already exists."})");
             }
         }
         catch (...)
@@ -154,6 +147,30 @@ namespace Insound {
             res.code = 400;
             return res.end(R"({"error":"Missing field"})");
         }
+
+        auto UserModel = Mongo::Model<User>();
+        auto user = UserModel.findOne({"email", email});
+        if (user)
+        {
+            res.code = 400;
+            return res.end(R"({"error":"User with email account already exists."})");
+        }
+
+        User newUser;
+        newUser.email = email;
+        newUser.password = hash(password);
+        newUser.type = User::Type::User;
+
+        auto doc = UserModel.insertOne(newUser);
+        if (!doc)
+        {
+            // something went wrong...
+            res.code = 500;
+            return res.end();
+        }
+
+        res.code = 200;
+        return res.end("success");
     }
 
 } // namespace Insound
