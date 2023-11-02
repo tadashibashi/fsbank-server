@@ -48,4 +48,14 @@ namespace Insound {
         return buffer;
     }
 
+    std::string toUpper(const std::string_view &str)
+    {
+        std::string res;
+        res.reserve(str.length());
+
+        for (char c : str)
+            res += std::toupper(c);
+        return res;
+    }
+
 } // namespace Insound
