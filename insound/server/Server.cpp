@@ -1,6 +1,6 @@
 #include "Server.h"
-#include "crow/app.h"
-#include "crow/utility.h"
+#include <crow/app.h>
+#include <crow/utility.h>
 
 #include <insound/core/definitions.h>
 #include <insound/core/email.h>
@@ -13,6 +13,12 @@
 #include <insound/core/middleware/Helmet.h>
 
 namespace Insound {
+
+    Server::Server()
+        : ServerType(Insound::AppOpts{
+              .defaultPort = 3000,
+              .logLevel = Insound::LogLevel::Info,
+          }) {}
 
     static void catchall(const crow::request &req, crow::response &res)
     {
@@ -34,6 +40,13 @@ namespace Insound {
         // Grab nonce from Helmet middleware
         auto &helmet = Server::getContext<Helmet>(req);
         crow::mustache::context ctx({{"nonce", helmet.nonce}});
+
+        auto &cookies = Server::getContext<crow::CookieParser>(req);
+
+        auto bytes = genBytes();
+        cookies.set_cookie("csrftoken",
+            crow::utility::base64encode(bytes.data(), bytes.size()))
+            .same_site(crow::CookieParser::Cookie::SameSitePolicy::Strict);
 
         // Render html
         res.end( page.render_string(ctx) );
@@ -82,5 +95,5 @@ namespace Insound {
 
         return true;
     }
-}
 
+} // namespace Insound
