@@ -50,7 +50,7 @@ namespace Insound::Mongo {
         std::optional<Document<Schema>> findOne(bson query)
         {
             auto queryDoc = query.view().get_document().value;
-            auto doc = m_collection.find_one(query.view().get_document().value);
+            auto doc = m_collection.find_one(queryDoc);
             if (!doc) return {};
 
             return Document<Schema>::fromBson(m_collection.name(), doc.value().view());

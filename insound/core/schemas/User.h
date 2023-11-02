@@ -39,7 +39,7 @@ namespace Insound {
          * A value from the Type struct representing user type. Get permission
          * level via Insound::User::getTypeLevel.
          */
-        Type type;
+        Type type = Type::User;
 
         /**
          * Whether user is authorized at the level of `userType`.

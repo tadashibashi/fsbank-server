@@ -48,7 +48,7 @@ namespace Insound::Mongo {
             auto json = bsoncxx::to_json(bson.view());
             auto err = glz::read<glz::opts{
                 .error_on_unknown_keys=false,
-                .error_on_missing_keys=true
+                .error_on_missing_keys=false
             }>(obj, json);
 
             if (err)
