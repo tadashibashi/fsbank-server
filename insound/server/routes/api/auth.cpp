@@ -1,4 +1,6 @@
 #include "auth.h"
+#include <insound/core/chrono.h>
+#include <insound/core/jwt.h>
 
 #include <insound/core/mongo/Model.h>
 #include <insound/core/MultipartMap.h>
@@ -8,6 +10,8 @@
 
 #include <crow/common.h>
 #include <crow/middlewares/cookie_parser.h>
+
+using namespace Insound::ChronoLiterals;
 
 using SameSitePolicy = crow::CookieParser::Cookie::SameSitePolicy;
 
@@ -66,7 +70,8 @@ namespace Insound {
         catch(...)
         {
             res.code = 400;
-            res.end("Missing fields");
+            res.add_header("Content-Type", "application/json");
+            res.end(R"({"error":"Missing fields."})");
             return;
         }
 
@@ -74,7 +79,8 @@ namespace Insound {
         if (!body.fields["password2"].empty())
         {
             res.code = 400;
-            return res.end();
+            res.add_header("Content-Type", "application/json");
+            return res.end(R"({"error":"Invalid request."})");
         }
 
         // Check if user with email exists
@@ -83,6 +89,7 @@ namespace Insound {
         if (!userRes)
         {
             res.code = 401;
+            res.add_header("Content-Type", "application/json");
             return res.end(R"({"error":"Could not find a user with that email."})");
         }
 
@@ -91,39 +98,53 @@ namespace Insound {
         if (!compare(password, user.body.password))
         {
             res.code = 401;
+            res.add_header("Content-Type", "application/json");
             return res.end(R"({"error":"Invalid password."})");
         }
 
-        // Create user token & fingerprint
-        const auto fingerprint = genHexString();
+        try {
+            // Create user token & fingerprint
+            const auto fingerprint = genHexString();
 
-        UserToken token;
-        token.username = user.body.username;
-        token.displayName = user.body.displayName;
-        token.email = user.body.email;
-        token.type = user.body.type;
-        token.fingerprint = hash(fingerprint);
+            UserToken token;
+            token.username = user.body.username;
+            token.displayName = user.body.displayName;
+            token.email = user.body.email;
+            token.type = user.body.type;
+            token.fingerprint = hash(fingerprint);
 
-        // Stringify the token
-        res.body = glz::write_json(token);
+            // Sign the token
+            res.body = Jwt::sign(token, 2_w);
 
-        // Done, commit fingerprint cookie
-        cookies.set_cookie("fingerprint", fingerprint)
-            .httponly()
-            .same_site(SameSitePolicy::Strict)
-            .max_age(60 * 60 * 24 * 14) // two weeks
-            .path("/");
+            // Done, commit fingerprint cookie
+            cookies.set_cookie("fingerprint", fingerprint)
+                .httponly()
+                .same_site(SameSitePolicy::Strict)
+                .max_age(60 * 60 * 24 * 14) // two weeks
+                .path("/");
 
-        res.code = 200;
-        res.end();
+            res.set_header("Content-Type", "text/plain");
+            res.code = 200;
+            res.end();
+        }
+        catch(const std::exception &e)
+        {
+            IN_ERR(e.what());
+            res.code = 500;
+            res.end(R"({"error":"Internal Error."})");
+        }
+        catch(...)
+        {
+            IN_ERR("Unknown error occurred");
+            res.code = 500;
+            res.end(R"({"error":"Internal Error."})");
+        }
     }
 
     void Auth::post_create(const crow::request &req, crow::response &res)
     {
         auto body = MultipartMap::from(req);
-
-        std::string email;
-        std::string password;
+        res.add_header("Content-Type", "application/json");
 
         // Check honeypot
         if (!body.fields["username2"].empty())
@@ -132,6 +153,9 @@ namespace Insound {
             return res.end();
         }
 
+        // Get fields
+        std::string email;
+        std::string password;
         try {
             email = body.fields.at("email");
             password = body.fields.at("password");
@@ -139,15 +163,16 @@ namespace Insound {
             if (password != body.fields.at("password2"))
             {
                 res.code = 400;
-                return res.end(R"({"error":"Passwords mismatch"})");
+                return res.end(R"({"error":"Passwords mismatch."})");
             }
         }
         catch (...)
         {
             res.code = 400;
-            return res.end(R"({"error":"Missing field"})");
+            return res.end(R"({"error":"Missing field."})");
         }
 
+        // Check if user already exists
         auto UserModel = Mongo::Model<User>();
         auto user = UserModel.findOne({"email", email});
         if (user)
@@ -156,6 +181,7 @@ namespace Insound {
             return res.end(R"({"error":"User with email account already exists."})");
         }
 
+        // Create new user
         User newUser;
         newUser.email = email;
         newUser.password = hash(password);
@@ -166,11 +192,13 @@ namespace Insound {
         {
             // something went wrong...
             res.code = 500;
-            return res.end();
+            return res.end(R"({"error":"Internal Error."})");
         }
 
+        // TODO: send verification email here
+
         res.code = 200;
-        return res.end("success");
+        return res.end(R"({"result": "Success"})");
     }
 
 } // namespace Insound
