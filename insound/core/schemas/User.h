@@ -94,7 +94,7 @@ struct glz::meta<Insound::User> {
         "displayName", &T::displayName,
         "email", &T::email,
         "type", &T::type,
-        "password", glz::hide{&T::password}
+        "password", &T::password
     );
 };
 
