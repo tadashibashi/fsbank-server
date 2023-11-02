@@ -78,10 +78,10 @@ struct glz::meta<Insound::User::Type> {
 
     // Name must match precisely to enum, and once set, don't change it
     static constexpr auto value = glz::enumerate(
-        "Guest", Guest,
-        "User", User,
-        "Staff", Staff,
-        "Admin", Admin
+        "guest", Guest,
+        "user", User,
+        "staff", Staff,
+        "admin", Admin
     );
 };
 
