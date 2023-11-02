@@ -8,6 +8,7 @@ namespace Insound {
     void CsrfCheck::before_handle(crow::request &req, crow::response &res, context &ctx)
     {
         static std::string CSRF_SECRET_KEY{requireEnv("CSRF_SECRET_KEY")};
+        static bool CSRF_ALLOW_BYPASS{requireEnv("CSRF_ALLOW_BYPASS") == "true"};
 
         // Only check for non-get requests. Get requests should not perform any
         // mutable task such as posting data, altering databases, etc.
@@ -17,8 +18,19 @@ namespace Insound {
             auto &cookies = Server::getContext<crow::CookieParser>(req);
             auto cookie = cookies.get_cookie("csrftoken");
 
-            if (cookie.empty() ||
-                (csrftoken != CSRF_SECRET_KEY && csrftoken != cookie))
+            bool authorized;
+
+            if (CSRF_ALLOW_BYPASS)
+            {
+                authorized =  csrftoken == CSRF_SECRET_KEY ||
+                    (!cookie.empty() && cookie == csrftoken);
+            }
+            else
+            {
+                authorized = !cookie.empty() && cookie == csrftoken;
+            }
+
+            if (!authorized)
             {
                 res.code = 403;
                 return res.end("Unauthorized.");

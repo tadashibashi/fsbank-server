@@ -96,6 +96,8 @@ the urls and credentials for these services.
 | EMAIL_ENDPOINT_URL    | Endpoint for a nodemailer-compatible smtp service   |
 | EMAIL_ACCESS_KEY      | Access key for smtp service                         |
 | EMAIL_AUTOMATED_SENDER| Email address of the site's automated email sender  |
+| CSRF_SECRET_KEY       | Key to bypass csrf protection for dev purposes      |
+| CSRF_ALLOW_BYPASS     | "true" or "false": whether to allow secret key      |
 
 For local builds, you may create a .env file in the root of this
 repo, which will automatically load and populate the environment.
