@@ -88,7 +88,7 @@ namespace Insound {
 
         // Check password
         auto &user = userRes.value();
-        if (!compare(user.body.password, password))
+        if (!compare(password, user.body.password))
         {
             res.code = 401;
             return res.end(R"({"error":"Invalid password."})");
