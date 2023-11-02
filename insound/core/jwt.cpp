@@ -1,4 +1,5 @@
 #include "jwt.h"
+#include "insound/core/errors/GlazeError.h"
 
 #include <insound/core/env.h>
 
@@ -106,7 +107,7 @@ namespace Insound::Jwt
         glz::json_t payload;
         auto err = glz::read_json<glz::json_t>(payload, payloadStr);
         if (err.ec != glz::error_code::none)
-            throw f("Glaze error: {}", (int)err.ec);
+            throw GlazeError(err, payloadStr);
 
         auto builder = jwt::builder<glaze_traits>(
                 payload.as<glz::json_t::object_t>())
