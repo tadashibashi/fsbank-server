@@ -5,6 +5,7 @@
 
 #include <optional>
 #include <string>
+#include <string_view>
 
 namespace Insound::Mongo {
     /**
@@ -20,7 +21,7 @@ namespace Insound::Mongo {
     public:
         Id() : m_id() { }
 
-        explicit Id(const std::string &idString) :
+        explicit Id(std::string_view idString) :
             m_id(idString) { }
         explicit Id(const bsoncxx::oid &oid) :
             m_id(oid) { }
@@ -57,10 +58,10 @@ namespace Insound::Mongo {
         bool operator==(const Id &other) const { return m_id == other.m_id; }
 
         [[nodiscard]]
-        bool operator==(const std::string &other) const
+        bool operator==(std::string_view other) const
         {
             return m_id.has_value() &&
-                std::strcmp(m_id.value().bytes(), other.c_str()) == 0;
+                std::strcmp(m_id.value().bytes(), other.data()) == 0;
         }
 
         [[nodiscard]]
@@ -84,7 +85,7 @@ namespace Insound::Mongo {
     };
 
     [[nodiscard]]
-    inline bool operator==(const std::string &a, const Id &b)
+    inline bool operator==(std::string_view a, const Id &b)
     {
         return b.operator==(a);
     }

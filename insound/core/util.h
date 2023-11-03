@@ -1,5 +1,5 @@
 #pragma once
-#include <string>
+#include <string_view>
 #include <vector>
 
 namespace Insound {
@@ -21,12 +21,12 @@ namespace Insound {
     /**
      * Open a file and retrieve its contents as a vector of bytes
      */
-    std::vector<uint8_t> openFile(const std::string &path);
+    std::vector<uint8_t> openFile(std::string_view path);
 
     /**
      * Create an uppercase version of a string.
      * @param  str - string view to make uppercase
      * @return uppercase string.
      */
-    std::string toUpper(const std::string_view &str);
+    std::string toUpper(std::string_view str);
 }

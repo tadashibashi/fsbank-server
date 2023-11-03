@@ -1,6 +1,7 @@
 #pragma once
 #include <optional>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace Insound::S3 {
@@ -25,7 +26,7 @@ namespace Insound::S3 {
      *
      * @return    whether bucket erasure was successful.
      */
-    bool dropBucket__permanent__(const std::string_view &bucket);
+    bool dropBucket__permanent__(std::string_view bucket);
 
 
     /**
@@ -35,7 +36,7 @@ namespace Insound::S3 {
      *
      * @return          whether request was successful
      */
-    bool createBucket(const std::string_view &bucket);
+    bool createBucket(std::string_view bucket);
 
 
     /**
@@ -45,7 +46,7 @@ namespace Insound::S3 {
      *
      * @returns              the list of key names
      */
-    std::vector<std::string> listObjects(const std::string_view &prefix = "");
+    std::vector<std::string> listObjects(std::string_view prefix = "");
 
 
     /**
@@ -56,8 +57,8 @@ namespace Insound::S3 {
      *
      * @return             whether upload was successful
      */
-    bool uploadFile(const std::string_view &key,
-        const std::string &file);
+    bool uploadFile(std::string_view key,
+        const std::string &file); // leave string in case string_view can't maintain binary data
 
 
     /**
@@ -68,7 +69,7 @@ namespace Insound::S3 {
      *
      * @return            the file as a string (easy to return via crow).
      */
-    std::optional<std::string> downloadFile(const std::string_view &key);
+    std::optional<std::string> downloadFile(std::string_view key);
 
 
     /**
@@ -78,7 +79,7 @@ namespace Insound::S3 {
      *
      * @return            whether deletion was a success.
      */
-    bool deleteFile(const std::string_view &key);
+    bool deleteFile(std::string_view key);
 
 
     /**
@@ -98,7 +99,7 @@ namespace Insound::S3 {
      * 
      * @return                  whether the deletion was a success.
      */
-    bool deleteFolder(const std::string_view &folderKey);
+    bool deleteFolder(std::string_view folderKey);
 
 
     /**
@@ -108,5 +109,5 @@ namespace Insound::S3 {
      *
      * @return                  buffer string containing the binary zip file.
      */
-    std::optional<std::string> zipFolder(const std::string_view &folderKey);
+    std::optional<std::string> zipFolder(std::string_view folderKey);
 }

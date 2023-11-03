@@ -10,8 +10,8 @@ namespace Insound {
      * @param  varName - name of the environment variable
      */
     std::string_view getEnv(const std::string_view &varName);
-    std::string_view getEnv(const std::string_view &varName, const std::string_view &defaultVal);
-    std::string_view getEnv(const std::string_view &varName, const std::string &defaultVal);
+    std::string_view getEnv(const std::string_view &varName, std::string_view defaultVal);
+    std::string_view getEnv(const std::string_view &varName, std::string_view defaultVal);
     std::string_view getEnv(const std::string_view &varName, const char *defaultVal);
 
     /**
@@ -31,7 +31,7 @@ namespace Insound {
      * `auto TEMPERATURE = getEnv<float>("TEMPERATURE", 96);`
      */
     template <typename T>
-    T getEnv(const std::string_view &varName, T defaultVal);
+    T getEnv(std::string_view varName, T defaultVal);
 
 
     /**
@@ -39,7 +39,7 @@ namespace Insound {
      *
      * @param  varName - name of the environment variable
      */
-    std::string_view requireEnv(const std::string_view &varName);
+    std::string_view requireEnv(std::string_view varName);
 
 
     /**
@@ -47,7 +47,7 @@ namespace Insound {
      * @param path - path to file - relative path stems from project root -
      *               absolute paths work as well.
      */
-    void configureEnv(const std::string_view &path = ".env");
+    void configureEnv(std::string_view path = ".env");
 
 
     /**
@@ -55,11 +55,11 @@ namespace Insound {
      * @param path - path to file - relative paths stem from project root -
      *               absolute paths work as well.
      */
-    void resetEnv(const std::string_view &path = ".env");
+    void resetEnv(std::string_view path = ".env");
 }
 
 template<>
-inline int Insound::getEnv<int>(const std::string_view &varName, int defaultVal)
+inline int Insound::getEnv<int>(std::string_view varName, int defaultVal)
 {
     auto var = std::getenv(varName.data());
     if (!var) return defaultVal;
@@ -74,7 +74,7 @@ inline int Insound::getEnv<int>(const std::string_view &varName, int defaultVal)
 }
 
 template<>
-inline float Insound::getEnv<float>(const std::string_view &varName, float defaultVal)
+inline float Insound::getEnv<float>(std::string_view varName, float defaultVal)
 {
     auto var = std::getenv(varName.data());
     if (!var) return defaultVal;
@@ -89,7 +89,7 @@ inline float Insound::getEnv<float>(const std::string_view &varName, float defau
 }
 
 template<>
-inline double Insound::getEnv<double>(const std::string_view &varName, double defaultVal)
+inline double Insound::getEnv<double>(std::string_view varName, double defaultVal)
 {
     auto var = std::getenv(varName.data());
     if (!var) return defaultVal;

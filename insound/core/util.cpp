@@ -1,6 +1,7 @@
 #include "util.h"
 #include <fstream>
 
+
 namespace Insound {
     /**
      * Map of hex chars to string indices
@@ -28,12 +29,12 @@ namespace Insound {
         return res;
     }
 
-    std::vector<uint8_t> openFile(const std::string &path)
+    std::vector<uint8_t> openFile(std::string_view path)
     {
         // open file
         std::ifstream file(path, std::ios::binary | std::ios::in);
         if (!file.is_open()) {
-            throw std::runtime_error("Failed to open file at path " + path);
+            throw std::runtime_error(f("Failed to open file at path {}", path));
         }
 
         // find file size
@@ -48,7 +49,7 @@ namespace Insound {
         return buffer;
     }
 
-    std::string toUpper(const std::string_view &str)
+    std::string toUpper(std::string_view str)
     {
         std::string res;
         res.reserve(str.length());

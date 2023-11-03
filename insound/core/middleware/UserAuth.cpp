@@ -3,6 +3,8 @@
 #include <insound/core/jwt.h>
 #include <insound/core/log.h>
 
+#include <insound/core/schemas/User.json.h>
+
 void Insound::UserAuth::before_handle(crow::request &req,
     crow::response &res, context &ctx)
 {

@@ -3,8 +3,8 @@
 
 namespace Insound {
 
-    Router::Router(const std::string &route, const RouterOpt &opts) :
-        bp(route), opts(opts)
+    Router::Router(std::string_view route, const RouterOpt &opts) :
+        bp(route.data()), opts(opts)
     { }
 
     crow::Blueprint &Router::config()

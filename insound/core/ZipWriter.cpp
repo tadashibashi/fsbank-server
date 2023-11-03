@@ -69,14 +69,14 @@ namespace Insound {
         }
     }
 
-    void ZipWriter::addFile(const std::string &key, const std::string &file)
+    void ZipWriter::addFile(std::string_view key, const std::string &file)
     {
         // Don't add file if it has no bytes
         if (file.size() == 0) return;
 
-        zip_entry_open(zip, key.c_str());
+        zip_entry_open(zip, key.data());
         {
-            zip_entry_write(zip, file.c_str(), file.length());
+            zip_entry_write(zip, file.data(), file.length());
         }
         zip_entry_close(zip);
     }

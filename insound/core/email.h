@@ -180,7 +180,7 @@ namespace Insound::Email {
          *
          * @return reference to this SendEmail object for chaining.
          */
-        SendEmail &from(const std::string_view &sender)
+        SendEmail &from(std::string_view sender)
         {
             opts.from = sender;
             return *this;
@@ -195,7 +195,7 @@ namespace Insound::Email {
          *
          * @return reference to this SendEmail object for chaining.
          */
-        SendEmail &to(const std::string_view &recipient)
+        SendEmail &to(std::string_view recipient)
         {
             opts.to = recipient;
             return *this;
@@ -208,7 +208,7 @@ namespace Insound::Email {
          *
          * @return    reference to this SendEmail object for chaining.
          */
-        SendEmail &cc(const std::string_view &cc)
+        SendEmail &cc(std::string_view cc)
         {
             opts.cc = cc;
             return *this;
@@ -222,7 +222,7 @@ namespace Insound::Email {
          *
          * @return     reference to this SendEmail object for chaining.
          */
-        SendEmail &bcc(const std::string_view &bcc)
+        SendEmail &bcc(std::string_view bcc)
         {
             opts.bcc = bcc;
             return *this;
@@ -236,7 +236,7 @@ namespace Insound::Email {
          *
          * @return reference to this SendEmail object for chaining.
          */
-        SendEmail &subject(const std::string_view &subject)
+        SendEmail &subject(std::string_view subject)
         {
             opts.subject = subject;
             return *this;
@@ -250,7 +250,7 @@ namespace Insound::Email {
          *
          * @return reference to this SendEmail object for chaining.
          */
-        SendEmail &text(const std::string_view &text)
+        SendEmail &text(std::string_view text)
         {
             opts.text = text;
             return *this;
@@ -264,7 +264,7 @@ namespace Insound::Email {
          *
          * @return reference to this SendEmail object for chaining.
          */
-        SendEmail &html(const std::string_view &html)
+        SendEmail &html(std::string_view html)
         {
             opts.html = html;
             return *this;

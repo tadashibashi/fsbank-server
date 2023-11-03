@@ -33,15 +33,15 @@ namespace Insound {
     {
     public:
         MakeRequest();
-        explicit MakeRequest(const std::string_view &url,
-            const std::string_view &method = "GET");
+        explicit MakeRequest(std::string_view url,
+            std::string_view method = "GET");
         ~MakeRequest();
 
         // Copiable via shared_ptr under the hood
         MakeRequest(const MakeRequest &);
         MakeRequest &operator=(const MakeRequest &);
 
-        MakeRequest &url(const std::string_view &url);
+        MakeRequest &url(std::string_view url);
 
         /**
          * Set the http method e.g. "GET", "POST", "PATCH", "PUT", "DELETE"
@@ -50,7 +50,7 @@ namespace Insound {
          *
          * @return          a reference to this object for method chaining.
          */
-        MakeRequest &method(const std::string_view &method);
+        MakeRequest &method(std::string_view method);
 
 
         /**
@@ -61,8 +61,8 @@ namespace Insound {
          *
          * @return         a reference to this object for method chaining.
          */
-        MakeRequest &header(const std::string_view &name,
-            const std::string_view &value);
+        MakeRequest &header(std::string_view name,
+            std::string_view value);
 
 
         /**
@@ -106,7 +106,7 @@ namespace Insound {
          * @throws CurlHeaderError if an error occurred. This includes not
          *         finding a header with `name`.
          */
-        std::string getHeader(const std::string_view &name) const;
+        std::string getHeader(std::string_view name) const;
 
         /**
          * Get all headers with the indicated `name` in response retrieved
@@ -120,7 +120,7 @@ namespace Insound {
          *
          * @return header values
          */
-        std::vector<std::string> getHeaders(const std::string_view &name) const;
+        std::vector<std::string> getHeaders(std::string_view name) const;
 
         /**
          * Get http response code after a call to `MakeRequest::send`. This
@@ -135,7 +135,7 @@ namespace Insound {
          */
         void clear();
 
-        MakeRequest &body(const std::string_view &payload);
+        MakeRequest &body(std::string_view payload);
     private:
         struct Impl;
         Impl *m;
@@ -149,7 +149,9 @@ namespace Insound {
      * @param  jsonPayload [optional] JSON payload string
      * @return             The JSON body as a string
      */
-    std::string request(const std::string &url, const std::string &method = HttpMethod::Get, const std::string &jsonPayload = "");
+    std::string request(std::string_view url,
+        std::string_view method = HttpMethod::Get,
+        std::string_view jsonPayload = "");
 
 
     /**
@@ -163,7 +165,8 @@ namespace Insound {
      * @throws CurlError if an error occurred during the request
      */
     template <typename T, typename Payload = int>
-    T request(const std::string &url, const std::string &method = HttpMethod::Get, const Payload *payload = nullptr)
+    T request(std::string_view url, std::string_view method = HttpMethod::Get,
+        const Payload *payload = nullptr)
     {
         auto stringified = payload ? glz::write_json(*payload) : std::string();
         auto body = request(url, method, stringified);

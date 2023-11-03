@@ -54,7 +54,7 @@ namespace Insound::S3 {
      * Create a bucket if it doesn't exist yet.
      * @param name bucket name
      */
-    bool createBucket(const std::string_view &bucket)
+    bool createBucket(std::string_view bucket)
     {
         // Check if bucket exists, add if not
         auto &client = getClient();
@@ -113,7 +113,7 @@ namespace Insound::S3 {
         Aws::ShutdownAPI(options);
     }
 
-    std::vector<std::string> listObjects(const std::string_view &prefix)
+    std::vector<std::string> listObjects(std::string_view prefix)
     {
         auto &client = getClient();
         auto request = Aws::S3::Model::ListObjectsV2Request();
@@ -138,7 +138,7 @@ namespace Insound::S3 {
         return res;
     }
 
-    bool uploadFile(const std::string_view &key,
+    bool uploadFile(std::string_view key,
         const std::string &file)
     {
         auto &client = getClient();
@@ -168,7 +168,7 @@ namespace Insound::S3 {
         return true;
     }
 
-    std::optional<std::string> downloadFile(const std::string_view &key)
+    std::optional<std::string> downloadFile(std::string_view key)
     {
         auto &client = getClient();
 
@@ -193,7 +193,7 @@ namespace Insound::S3 {
         return stream.str();
     }
 
-    bool deleteFile(const std::string_view &key)
+    bool deleteFile(std::string_view key)
     {
         auto &client = getClient();
 
@@ -242,7 +242,7 @@ namespace Insound::S3 {
         return result.GetResult().GetDeleted().size() == keys.size();
     }
 
-    bool deleteFolder(const std::string_view &folderKey)
+    bool deleteFolder(std::string_view folderKey)
     {
         if (folderKey.empty()) return false; // no folder to delete
 
@@ -255,7 +255,7 @@ namespace Insound::S3 {
         return deleteFiles( listObjects(key) );
     }
 
-    bool dropBucket__permanent__(const std::string_view &bucket)
+    bool dropBucket__permanent__(std::string_view bucket)
     {
         auto &client = getClient();
         // Delete all files in bucket
@@ -305,7 +305,7 @@ namespace Insound::S3 {
     }
 
 
-    std::optional<std::string> zipFolder(const std::string_view &folderKey)
+    std::optional<std::string> zipFolder(std::string_view folderKey)
     {
         std::string key = folderKey.data();
         if (!folderKey.ends_with('/'))

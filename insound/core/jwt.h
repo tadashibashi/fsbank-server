@@ -1,6 +1,7 @@
 #pragma once
 #include <glaze/glaze.hpp>
 #include <string>
+#include <string_view>
 
 namespace Insound::Jwt
 {
@@ -9,7 +10,7 @@ namespace Insound::Jwt
      * @param  jwt - the base64-encoded token string
      * @returns json string of the payload
      */
-    std::string verify(const std::string &jwt);
+    std::string verify(std::string_view jwt);
 
 
     /**
@@ -24,7 +25,7 @@ namespace Insound::Jwt
      * @returns object of type T with its fields populated accordingly
      */
     template<typename T>
-    T verify(const std::string &jwt)
+    T verify(std::string_view jwt)
     {
         std::string payloadStr = verify(jwt);
 
@@ -48,7 +49,7 @@ namespace Insound::Jwt
      * @param   payloadStr - the payload as a json string
      * @param   expiresIn  - microseconds from now until expiration
      */
-    std::string sign(const std::string &payloadStr, long long expiresIn);
+    std::string sign(std::string_view payloadStr, long long expiresIn);
 
 
     /**

@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <string>
+#include <string_view>
 #include <vector>
 
 // Forward declaration
@@ -50,7 +51,7 @@ namespace Insound {
          * @param key  - pathname of file in the zip archive
          * @param file - data of file as a string, it may contain binary data
          */
-        void addFile(const std::string &key, const std::string &file);
+        void addFile(std::string_view key, const std::string &file);
 
         // /**
         //  * Delete a file in the zip archive

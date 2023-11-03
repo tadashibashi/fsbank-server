@@ -37,7 +37,7 @@ public:
             curl_slist_free_all(list);
     }
 
-    void append(const std::string_view &name, const std::string_view &value)
+    void append(std::string_view name, std::string_view value)
     {
         auto header = f("{}: {}", name, value);
         auto temp = curl_slist_append(list, header.c_str());
@@ -90,8 +90,8 @@ Insound::MakeRequest::MakeRequest() : m(new Impl)
 { }
 
 
-Insound::MakeRequest::MakeRequest(const std::string_view &url,
-    const std::string_view &method) : m(new Impl)
+Insound::MakeRequest::MakeRequest(std::string_view url,
+    std::string_view method) : m(new Impl)
 {
     this->url(url).method(method);
 }
@@ -117,7 +117,7 @@ Insound::MakeRequest::~MakeRequest()
 
 
 Insound::MakeRequest &
-Insound::MakeRequest::url(const std::string_view &url)
+Insound::MakeRequest::url(std::string_view url)
 {
     auto result = curl_easy_setopt(m->curl(), CURLOPT_URL, url.data());
     if (result != CURLE_OK)
@@ -128,7 +128,7 @@ Insound::MakeRequest::url(const std::string_view &url)
 
 
 Insound::MakeRequest &
-Insound::MakeRequest::method(const std::string_view &method)
+Insound::MakeRequest::method(std::string_view method)
 {
     auto code = curl_easy_setopt(m->curl(), CURLOPT_CUSTOMREQUEST,
         method.data());
@@ -138,7 +138,7 @@ Insound::MakeRequest::method(const std::string_view &method)
 }
 
 Insound::MakeRequest &
-Insound::MakeRequest::body(const std::string_view &body)
+Insound::MakeRequest::body(std::string_view body)
 {
     auto code = curl_easy_setopt(m->curl(), CURLOPT_POSTFIELDS, body.data());
     if (code != CURLE_OK)
@@ -147,8 +147,8 @@ Insound::MakeRequest::body(const std::string_view &body)
 }
 
 Insound::MakeRequest &
-Insound::MakeRequest::header(const std::string_view &name,
-    const std::string_view &value)
+Insound::MakeRequest::header(std::string_view name,
+    std::string_view value)
 {
     m->headers().append(name, value);
     return *this;
@@ -185,7 +185,7 @@ Insound::MakeRequest::send()
 
 
 std::string
-Insound::MakeRequest::getHeader(const std::string_view &name) const
+Insound::MakeRequest::getHeader(std::string_view name) const
 {
     curl_header *header;
     auto result = curl_easy_header(m->curl(), name.data(), 0, CURLH_HEADER, -1,
@@ -198,7 +198,7 @@ Insound::MakeRequest::getHeader(const std::string_view &name) const
 
 
 std::vector<std::string>
-Insound::MakeRequest::getHeaders(const std::string_view &name) const
+Insound::MakeRequest::getHeaders(std::string_view name) const
 {
     // Get the first header
     curl_header *header;
@@ -245,8 +245,8 @@ Insound::MakeRequest::getCode() const
 }
 
 
-std::string Insound::request(const std::string &url, const std::string &method,
-    const std::string &payload)
+std::string Insound::request(std::string_view url, std::string_view method,
+    std::string_view payload)
 {
     assert(InitOk == CURLE_OK);
 
@@ -258,13 +258,13 @@ std::string Insound::request(const std::string &url, const std::string &method,
         CurlHeaders headers;
         headers.append("Content-Type", "application/json");
         std::string resBody;
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method.c_str());
+        curl_easy_setopt(curl, CURLOPT_URL, url.data());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method.data());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &resBody);
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers.getList());
         curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "br, gzip, deflate");
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload.c_str());
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload.data());
 
         auto result = curl_easy_perform(curl);
         if (result != CURLE_OK)

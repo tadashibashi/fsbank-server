@@ -1,6 +1,6 @@
 #pragma once
 #include <insound/core/thirdparty/crow.hpp>
-#include <string>
+#include <string_view>
 
 namespace crow {
     class Blueprint;
@@ -14,7 +14,7 @@ namespace Insound {
             bool useCatchAll;
         };
 
-        explicit Router(const std::string &route, const RouterOpt &opts = {.useCatchAll=true});
+        explicit Router(std::string_view route, const RouterOpt &opts = {.useCatchAll=true});
         virtual ~Router() = default;
 
         crow::Blueprint &config();

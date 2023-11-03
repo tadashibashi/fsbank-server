@@ -15,7 +15,7 @@
  *
  * @returns     the file data wrapped in a string
  */
-static std::string openFile(const std::string &path);
+static std::string openFile(std::string_view path);
 
 /**
  * Thread-safe helper to add a file string to a files vector.
@@ -134,12 +134,12 @@ TEST_CASE("Bank can build in multithreaded context")
 
 // ===== Helper function definitions ==========================================
 
-std::string openFile(const std::string &path)
+std::string openFile(std::string_view path)
 {
     std::ifstream file(path, std::ios::binary | std::ios::binary);
     if (!file.is_open())
     {
-        throw std::runtime_error("Failed to open file at path " + path);
+        throw std::runtime_error(f("Failed to open file at path {}", path));
     }
 
     file.seekg(0, std::ios::end);

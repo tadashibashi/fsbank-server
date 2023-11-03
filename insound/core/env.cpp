@@ -17,25 +17,25 @@ namespace Insound {
         return var ? var : "";
     }
 
-    std::string_view getEnv(const std::string_view &varName, const std::string_view &defaultValue)
+    std::string_view getEnv(const std::string_view &varName, std::string_view defaultValue)
     {
         const auto var = std::getenv(varName.data());
         return var ? var : defaultValue;
     }
 
-    std::string_view getEnv(const std::string_view &varName, const std::string &defaultValue)
+    std::string_view getEnv(std::string_view varName, std::string_view defaultValue)
     {
         const auto var = std::getenv(varName.data());
-        return var ? var : defaultValue.c_str();
+        return var ? var : defaultValue;
     }
 
-    std::string_view getEnv(const std::string_view &varName, const char *defaultVal)
+    std::string_view getEnv(std::string_view varName, const char *defaultVal)
     {
         const auto var = std::getenv(varName.data());
         return var ? var : (defaultVal ? defaultVal : "");
     }
 
-    std::string_view requireEnv(const std::string_view &varName)
+    std::string_view requireEnv(std::string_view varName)
     {
         const auto var = std::getenv(varName.data());
         if (!var)
@@ -46,7 +46,7 @@ namespace Insound {
     /**
      * Set relative paths from project root. Absolute paths are unaffected.
      */
-    static std::string makePath(const std::string_view &path)
+    static std::string makePath(std::string_view path)
     {
         if (path.empty() || path.starts_with('/')) return path.data();
         if (path.starts_with("./")) return f("{}{}", PROJECT_ROOT, path.substr(1));
@@ -54,7 +54,7 @@ namespace Insound {
         return f("{}/{}", PROJECT_ROOT, path);
     }
 
-    void configureEnv(const std::string_view &path)
+    void configureEnv(std::string_view path)
     {
         // Open env file
         auto file = std::fstream(makePath(path));
@@ -89,7 +89,7 @@ namespace Insound {
         }
     }
 
-    void resetEnv(const std::string_view &path)
+    void resetEnv(std::string_view path)
     {
         // Open env file
         auto file = std::fstream(makePath(path));

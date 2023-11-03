@@ -84,10 +84,10 @@ namespace Insound::Jwt
         }
     };
 
-    std::string verify(const std::string &token)
+    std::string verify(std::string_view token)
     {
         static auto JWT_SECRET = requireEnv("JWT_SECRET");
-        auto decoded = jwt::decode<glaze_traits>(token);
+        auto decoded = jwt::decode<glaze_traits>(token.data());
         auto verifier = jwt::verify<glaze_traits>()
             .allow_algorithm(jwt::algorithm::hs256{JWT_SECRET.data()});
         verifier.verify(decoded);
@@ -95,7 +95,7 @@ namespace Insound::Jwt
         return decoded.get_payload();
     }
 
-    std::string sign(const std::string &payloadStr, long long duration)
+    std::string sign(std::string_view payloadStr, long long duration)
     {
         using std::chrono::system_clock;
         using std::chrono::microseconds;

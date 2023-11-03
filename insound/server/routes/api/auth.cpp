@@ -1,6 +1,10 @@
 #include "auth.h"
+#include "insound/core/email.h"
+#include "insound/server/emails.h"
 #include <insound/core/chrono.h>
 #include <insound/core/jwt.h>
+
+#include <insound/core/schemas/User.json.h>
 
 #include <insound/core/mongo/Model.h>
 #include <insound/core/MultipartMap.h>
@@ -195,7 +199,15 @@ namespace Insound {
             return res.end(R"({"error":"Internal Error."})");
         }
 
-        // TODO: send verification email here
+        Emails::createVerificationStrings(email, doc.value().id.str());
+
+        // Send verification email here
+        auto sendEmail = Email::SendEmail();
+        sendEmail
+            .from(requireEnv("EMAIL_AUTOMATED_SENDER"))
+            .to(email)
+            .subject("Insound Account Verification")
+            .html("");
 
         res.code = 200;
         return res.end(R"({"result": "Success"})");
