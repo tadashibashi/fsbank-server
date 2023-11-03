@@ -12,6 +12,12 @@ namespace Insound {
     {
     }
 
+    /**
+     * Helper to decode a URL-encoded string. Specifically, it parses all `%HH`
+     * to its char value, and converts '+' to ' '.
+     * @param  in - input url-encoded string
+     * @return      parsed string, e.g. "bob%40mail.com" -> "bob@mail.com"
+     */
     static inline std::string decodeUrl(const std::string_view &in)
     {
         std::string out;
@@ -40,9 +46,14 @@ namespace Insound {
                 break;
             }
         }
+
         return out;
     }
 
+    /**
+     * Handles a JSON response, creating a MultipartMap of first-level
+     * key-value strings. Nested JSON values are not supported.
+     */
     static inline MultipartMap handleJSON(const crow::request &req)
     {
         MultipartMap map;
@@ -55,6 +66,10 @@ namespace Insound {
         return map;
     }
 
+    /**
+     * Handles a multipart form data response, converting it to a MultipartMap.
+     * (uses crow::multipart::message under the hood.)
+     */
     static inline MultipartMap handleMultipart(const crow::request &req)
     {
         auto message = crow::multipart::message(req);
@@ -92,9 +107,13 @@ namespace Insound {
         return map;
     }
 
+    /**
+     * Parses urlencoded form data from a request into a MultipartMap.
+     */
     static inline MultipartMap handleFormUrlEncoded(const crow::request &req)
     {
-        auto &body = req.body;
+        // Decode the body
+        auto body = decodeUrl(req.body);
         MultipartMap map;
 
         for (size_t i = 0, size = body.size(); i < size;)
@@ -107,10 +126,10 @@ namespace Insound {
             auto end = body.find_first_of('&', i);
 
             // Interpret value
-            auto encoded = body.substr(eq+1, end-1-eq);
+            auto value = body.substr(eq+1, end-1-eq);
             auto key = body.substr(i, eq-i);
 
-            map.fields[key] = decodeUrl(encoded);
+            map.fields[key] = value;
 
             if (end == std::string::npos)
                 break;
@@ -141,7 +160,7 @@ namespace Insound {
         else if (contenttype_it->second.starts_with(
             "application/x-www-form-urlencoded"))
         {
-            handleFormUrlEncoded(req);
+            return handleFormUrlEncoded(req);
         }
 
         throw std::runtime_error("MultipartMap::from: content-type not "
