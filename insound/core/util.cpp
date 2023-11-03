@@ -32,7 +32,7 @@ namespace Insound {
     std::vector<uint8_t> openFile(std::string_view path)
     {
         // open file
-        std::ifstream file(path, std::ios::binary | std::ios::in);
+        std::ifstream file(path.data(), std::ios::binary | std::ios::in);
         if (!file.is_open()) {
             throw std::runtime_error(f("Failed to open file at path {}", path));
         }
