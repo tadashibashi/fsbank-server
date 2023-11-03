@@ -185,7 +185,7 @@ namespace Insound {
         User newUser;
         newUser.email = email;
         newUser.password = hash(password);
-        newUser.type = User::Type::User;
+        newUser.type = User::Type::Unverified;
 
         auto doc = UserModel.insertOne(newUser);
         if (!doc)

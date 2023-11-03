@@ -12,7 +12,7 @@ namespace Insound {
         virtual ~User() = default;
 
         enum class Type : unsigned int {
-            Guest, User, Staff, Admin
+            Guest, Unverified, User, Staff, Admin
         };
 
         /**
@@ -39,7 +39,7 @@ namespace Insound {
          * A value from the Type struct representing user type. Get permission
          * level via Insound::User::getTypeLevel.
          */
-        Type type = Type::User;
+        Type type = Type::Unverified;
 
         /**
          * Whether user is authorized at the level of `userType`.
@@ -76,9 +76,11 @@ template<>
 struct glz::meta<Insound::User::Type> {
     using enum Insound::User::Type;
 
-    // Name must match precisely to enum, and once set, don't change it
+    // Once strings are set, don't change it, as they will be written this
+    // way in the database and will become invalidated if changed.
     static constexpr auto value = glz::enumerate(
         "guest", Guest,
+        "unverified", Unverified,
         "user", User,
         "staff", Staff,
         "admin", Admin
