@@ -12,36 +12,51 @@ namespace Insound {
     {
     }
 
-    MultipartMap MultipartMap::from(const crow::request &req)
+    static inline std::string decodeUrl(const std::string_view &in)
     {
-        // Check that this is a multipart map request
+        std::string out;
+        auto length = in.length();
+        for (size_t i = 0; i < length;)
         {
-            auto contenttype_it = req.headers.find("Content-Type");
-            if (contenttype_it == req.headers.end())
-                throw std::runtime_error("MultipartMap::from: no content-type "
-                    "in crow::request headers");
-
-            // Handle application/json data
-            if (contenttype_it->second.starts_with("application/json"))
+            switch(in[i])
             {
-                MultipartMap map;
-                auto json = crow::json::load(req.body);
-                for (auto &value : json)
+            case '%':
                 {
-                    map.fields[value.key()] = value.s();
+                    if (i >= length - 2)
+                        throw std::runtime_error(f("Malformed URL-encoded string: "
+                            "\% at position {} is missing hex character(s)", i));
+                    auto end = &in[i+2];
+                    out += (unsigned char)std::strtoul(&in[i+1], (char **)&end, 16);
+                    i += 3;
+                    break;
                 }
-
-                return map;
-            }
-            else if (!contenttype_it->second.starts_with("multipart/form-data"))
-            {
-                throw std::runtime_error(f("MultipartMap::from: invalid "
-                    "content-type: \"{}\". Must be \"multipart/form-data\" "
-                    "or \"application/json\"", contenttype_it->second));
+            case '+':
+                out += ' ';
+                ++i;
+                break;
+            default:
+                out += in[i];
+                ++i;
+                break;
             }
         }
+        return out;
+    }
 
-        // Handle multipart data
+    static inline MultipartMap handleJSON(const crow::request &req)
+    {
+        MultipartMap map;
+        auto json = crow::json::load(req.body);
+        for (auto &value : json)
+        {
+            map.fields[value.key()] = value.s();
+        }
+
+        return map;
+    }
+
+    static inline MultipartMap handleMultipart(const crow::request &req)
+    {
         auto message = crow::multipart::message(req);
         MultipartMap map;
 
@@ -75,6 +90,62 @@ namespace Insound {
         }
 
         return map;
+    }
+
+    static inline MultipartMap handleFormUrlEncoded(const crow::request &req)
+    {
+        auto &body = req.body;
+        MultipartMap map;
+
+        for (size_t i = 0, size = body.size(); i < size;)
+        {
+            // Find the '='
+            auto eq = body.find_first_of('=', i);
+            if (eq == std::string::npos) // weird case: key missing value
+                break;
+            // Find the end of this value
+            auto end = body.find_first_of('&', i);
+
+            // Interpret value
+            auto encoded = body.substr(eq+1, end-1-eq);
+            auto key = body.substr(i, eq-i);
+
+            map.fields[key] = decodeUrl(encoded);
+
+            if (end == std::string::npos)
+                break;
+            i = end + 1; // move i one past the '&'
+        }
+
+        return map;
+    }
+
+    MultipartMap MultipartMap::from(const crow::request &req)
+    {
+        // Check that this is a multipart map request
+
+        auto contenttype_it = req.headers.find("Content-Type");
+        if (contenttype_it == req.headers.end())
+            throw std::runtime_error("MultipartMap::from: no content-type "
+                "in crow::request headers");
+
+        // Handle application/json data
+        if (contenttype_it->second.starts_with("application/json"))
+        {
+            return handleJSON(req);
+        }
+        else if (contenttype_it->second.starts_with("multipart/form-data"))
+        {
+            return handleMultipart(req);
+        }
+        else if (contenttype_it->second.starts_with(
+            "application/x-www-form-urlencoded"))
+        {
+            handleFormUrlEncoded(req);
+        }
+
+        throw std::runtime_error("MultipartMap::from: content-type not "
+            "recognized: " + contenttype_it->second);
     }
 }
 
