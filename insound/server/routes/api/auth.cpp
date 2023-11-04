@@ -226,4 +226,51 @@ namespace Insound {
         return res.end(R"({"result": "Success"})");
     }
 
+    void Auth::post_verify(const crow::request &req, crow::response &res)
+    {
+        res.set_header("Content-Type", "application/json");
+
+        try {
+            auto body = MultipartMap::from(req);
+            auto token = Emails::verifyEmail(body.fields.at("token"));
+
+            auto UserModel = Mongo::Model<User>();
+            auto user = UserModel.findOne({"_id", token.value()._id});
+
+            if (!user || user->body.email != token.value().email)
+            {
+                res.code = 400;
+                return res.end(R"({"error":"Invalid token."})");
+            }
+
+            if (user->body.isVerified())
+            {
+                res.code = 200;
+                return res.end(R"({"result":"User already verified."})");
+            }
+
+            user->body.type = User::Type::User;
+            auto result = user->save();
+            if (!result)
+            {
+                // try again...
+                result = user->save();
+                if (!result)
+                {
+                    res.code = 500;
+                    return res.end(R"({"error":"Failed to update user validation status."})");
+                }
+            }
+
+            res.code = 200;
+            return res.end(R"({"result":"Success"})");
+        }
+        catch(const std::invalid_argument &e)
+        {
+            res.code = 400;
+            res.end(R"({"error":"Invalid Request."})");
+        }
+
+    }
+
 } // namespace Insound

@@ -62,6 +62,21 @@ namespace Insound {
          * `username2` is a honeypot to help prevent bots
          */
         static void post_create(const crow::request &req, crow::response &res);
+
+        /**
+         * Email verification endpoint for automated emails
+         *
+         * @route POST /api/auth/verify
+         *
+         * @input
+         * form-data:
+         * {
+         *     token: string
+         * }
+         *
+         * `token` is the validation token received in the email
+         */
+        static void post_verify(const crow::request &req, crow::response &res);
     };
 
 
