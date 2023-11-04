@@ -15,3 +15,8 @@ bool Insound::User::isAdmin() const
 {
     return this->type >= Type::Admin;
 }
+
+bool Insound::User::isValidated() const
+{
+    return this->type > Type::Unverified;
+}

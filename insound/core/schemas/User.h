@@ -55,6 +55,9 @@ namespace Insound {
 
         [[nodiscard]]
         bool isAdmin() const;
+
+        [[nodiscard]]
+        bool isVerified() const;
     };
 
     /**
