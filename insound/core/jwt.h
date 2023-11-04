@@ -1,4 +1,5 @@
 #pragma once
+#include "insound/core/errors/GlazeError.h"
 #include <glaze/glaze.hpp>
 #include <string>
 #include <string_view>
@@ -34,10 +35,10 @@ namespace Insound::Jwt
         auto error = glz::read<glz::opts{
             .error_on_unknown_keys=false,
             .error_on_missing_keys=true,
-        }>(res, std::forward<const std::string>(payloadStr), ctx);
+        }>(res, payloadStr, ctx);
 
         if (error != glz::error_code::none)
-            throw f("Glaze Error: {}", error);
+            throw GlazeError(error, payloadStr);
 
         return res;
     }
