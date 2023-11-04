@@ -67,6 +67,6 @@ namespace Insound::Jwt
     {
         auto payloadStr = glz::write_json(payload);
 
-        return sign(payloadStr, expiresIn);
+        return sign(std::string_view(payloadStr), expiresIn);
     }
 }
