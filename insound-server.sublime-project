@@ -12,6 +12,8 @@
 				"$project_path"
 			],
 		},
+		"font_size": 13.0,
+		"font_face": "ProggyVector",
 	},
 
 	"build_systems": [
