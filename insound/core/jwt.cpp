@@ -86,10 +86,12 @@ namespace Insound::Jwt
 
     std::string verify(std::string_view token)
     {
-        static auto JWT_SECRET = requireEnv("JWT_SECRET");
+        static const auto verifier = jwt::verify<glaze_traits>()
+            .allow_algorithm(jwt::algorithm::hs256{
+                requireEnv("JWT_SECRET").data()
+            });
+
         auto decoded = jwt::decode<glaze_traits>(token.data());
-        auto verifier = jwt::verify<glaze_traits>()
-            .allow_algorithm(jwt::algorithm::hs256{JWT_SECRET.data()});
         verifier.verify(decoded);
 
         return decoded.get_payload();
