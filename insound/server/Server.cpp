@@ -14,6 +14,15 @@
 
 namespace Insound {
 
+
+    // Return param string without '?' in front of it, if any
+    static inline std::string_view getQueryString(std::string_view rawUrl)
+    {
+        auto qpos = rawUrl.find_first_of('?');
+        return (qpos == std::string_view::npos) ? "" :
+            rawUrl.substr(qpos + 1);
+    }
+
     Server::Server()
         : ServerType(Insound::AppOpts{
               .defaultPort = 3000,
@@ -24,8 +33,11 @@ namespace Insound {
     {
         static std::string HOST_ADDRESS{requireEnv("HOST_ADDRESS")};
 
-        res.redirect( f("{}/?redirect={}", HOST_ADDRESS,
-            crow::utility::base64encode_urlsafe(req.url, req.url.size())
+        auto params = getQueryString(req.raw_url);
+
+        res.redirect( f("{}/?redirect={}{}", HOST_ADDRESS,
+            crow::utility::base64encode_urlsafe(req.url, req.url.size()),
+            (params.empty() ? "" : f("&{}", params))
         ));
 
         res.end();
