@@ -199,15 +199,28 @@ namespace Insound {
             return res.end(R"({"error":"Internal Error."})");
         }
 
-        Emails::createVerificationStrings(email, doc.value().id.str());
+        auto emailStrs = Emails::createVerificationStrings(email,
+            doc.value().id.str());
 
         // Send verification email here
         auto sendEmail = Email::SendEmail();
-        sendEmail
-            .from(requireEnv("EMAIL_AUTOMATED_SENDER"))
+        auto result = sendEmail
             .to(email)
             .subject("Insound Account Verification")
-            .html("");
+            .html(emailStrs.html)
+            .text(emailStrs.text)
+            .send();
+
+        if (!result)
+        {
+            // try again...
+            result = sendEmail.send();
+            if (!result)
+            {
+                res.code = 200;
+                return res.end(R"({"result":"Account created, but failed to send verification email"})");
+            }
+        }
 
         res.code = 200;
         return res.end(R"({"result": "Success"})");
