@@ -27,7 +27,7 @@ headers.
 ## MongoDB Models & Documents
 You can create a MongoDB model simply by using a struct that specializes the
 `glz::meta` struct as a type parameter in the Model constructor like so:
-`auto TypeModel = Insound::Mongo::Document<TypeName>();`
+`auto TypeModel = Insound::Mongo::Model<TypeName>();`
 
 From here you can query the database and create new documents with its member
 functions. TODO: Examples should be written here. For now, please check out
