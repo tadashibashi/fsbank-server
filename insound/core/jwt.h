@@ -26,7 +26,7 @@ namespace Insound::Jwt
      * @returns object of type T with its fields populated accordingly
      */
     template<typename T>
-    T verify(std::string_view jwt)
+    inline T verify(std::string_view jwt)
     {
         std::string payloadStr = verify(jwt);
 
@@ -52,6 +52,11 @@ namespace Insound::Jwt
      */
     std::string sign(std::string_view payloadStr, long long expiresIn);
 
+    inline std::string sign(const std::string &payloadStr, long long expiresIn)
+    {
+        return sign(std::string_view(payloadStr), expiresIn);
+    }
+
 
     /**
      * Signs a token with an object as a payload.
@@ -63,7 +68,7 @@ namespace Insound::Jwt
      * @returns a string of the json web token
      */
     template<typename T>
-    std::string sign(const T &payload, long long expiresIn)
+    inline std::string sign(const T &payload, long long expiresIn)
     {
         auto payloadStr = glz::write_json(payload);
 
