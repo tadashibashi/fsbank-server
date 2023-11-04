@@ -35,6 +35,10 @@ namespace Insound {
         CROW_BP_ROUTE(bp, "/create/email")
             .methods("POST"_method)
             (Auth::post_create);
+
+        CROW_BP_ROUTE(bp, "/verify")
+            .methods("POST"_method)
+            (Auth::post_verify);
     }
 
     void Auth::get_check(const crow::request &req, crow::response &res)
