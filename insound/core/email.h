@@ -171,15 +171,17 @@ namespace Insound::Email {
     class SendEmail
     {
     public:
-        SendEmail(): opts() { }
+        SendEmail();
 
         /**
-         * Set who this email is from
-         *
-         * @param  sender e.g. "Bob Joe <example@mail.com>"
-         *
-         * @return reference to this SendEmail object for chaining.
-         */
+        * Set who this email is from. By default, `from` is set to the
+        * EMAIL_AUTOMATED_SENDER env variable, so this call overrides that
+        * value.
+        *
+        * @param  sender e.g. "Bob Joe <example@mail.com>"
+        *
+        * @return reference to this SendEmail object for chaining.
+        */
         SendEmail &from(std::string_view sender)
         {
             opts.from = sender;

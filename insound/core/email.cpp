@@ -10,6 +10,7 @@
 namespace Insound::Email
 {
     static std::string EMAIL_ENDPOINT_URL;
+    static std::string EMAIL_AUTOMATED_SENDER;
     static std::string EMAIL_ACCESS_KEY;
 
     bool config()
@@ -17,6 +18,7 @@ namespace Insound::Email
         try {
             // Set up constants for the email api will use
             EMAIL_ENDPOINT_URL = requireEnv("EMAIL_ENDPOINT_URL");
+            EMAIL_AUTOMATED_SENDER = requireEnv("EMAIL_AUTOMATED_SENDER");
             EMAIL_ACCESS_KEY = requireEnv("EMAIL_ACCESS_KEY");
             EMAIL_ACCESS_KEY = "Basic " + crow::utility::base64encode(
                 EMAIL_ACCESS_KEY + ":", EMAIL_ACCESS_KEY.size() + 1);
@@ -32,6 +34,11 @@ namespace Insound::Email
             IN_ERR("Unknown error while configuring email.");
             return false;
         }
+    }
+
+    SendEmail::SendEmail() : opts()
+    {
+        opts.from = EMAIL_AUTOMATED_SENDER;
     }
 
 
@@ -65,5 +72,6 @@ namespace Insound::Email
         opts.attachments.emplace_back(std::move(*attachment));
         return *this;
     }
+
 
 } // namespace Insound::Email
