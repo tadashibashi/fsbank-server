@@ -173,7 +173,7 @@ namespace Insound {
         // Find content-type
         auto contenttype_it = req.headers.find("Content-Type");
         if (contenttype_it == req.headers.end())
-            throw std::runtime_error("MultipartMap::from: no content-type "
+            throw std::invalid_argument("MultipartMap::from: no content-type "
                 "in crow::request headers");
 
         // Handle request body based on content-type
