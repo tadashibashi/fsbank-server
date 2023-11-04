@@ -28,7 +28,7 @@ namespace Insound::S3 {
     static std::optional<Aws::S3::S3Client> sClient{};
 
     /**
-     * Helper to create and return a new s3 client object.
+     * Helper to get s3 pseudo-singleton client object.
      */
     static Aws::S3::S3Client &getClient()
     {
@@ -51,8 +51,12 @@ namespace Insound::S3 {
     }
 
     /**
-     * Create a bucket if it doesn't exist yet.
-     * @param name bucket name
+     * Create a bucket
+     *
+     * @param name - bucket name
+     *
+     * @return whether op was successful. If a bucket already exists, the op
+     *         is considered a success. On false, an error will be logged.
      */
     bool createBucket(std::string_view bucket)
     {
@@ -86,7 +90,7 @@ namespace Insound::S3 {
             return createResult.IsSuccess();
         }
 
-        return false;
+        return true;
     }
 
     bool config()
