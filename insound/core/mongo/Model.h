@@ -21,7 +21,6 @@ namespace Insound::Mongo {
 
         /**
          * Create the model with collection name
-         * @param  collectionName - case-insensitive (made lowercase)
          */
         explicit Model() :
             m_collection()
@@ -38,6 +37,17 @@ namespace Insound::Mongo {
 
         }
 
+
+        /**
+         * Insert a document into the database - it is created by
+         * passing in an instance of the type of schema this Model represents
+         * (schemas are a struct that specializes the glz::meta class)
+         *
+         * @param obj - the schema object instance to use to create the doc
+         *
+         * @return the document, or none if there was a problem saving it to
+         *         the database.
+         */
         std::optional<Document<Schema>> insertOne(const Schema &obj)
         {
             auto doc = Document(obj);
@@ -46,6 +56,18 @@ namespace Insound::Mongo {
             return {};
         }
 
+
+        /**
+         * Find a document that matches the bson query.
+         *
+         * @param query - bson document that can be built like so:
+         *                `{"email", "joe@joe.com"}`
+         *
+         * This query would search for one document with an email field that
+         * matches "joe@joe.com".
+         *
+         * @return Document object if found, or none if one does not exist.
+         */
         [[nodiscard]]
         std::optional<Document<Schema>> findOne(bson query)
         {
@@ -56,6 +78,16 @@ namespace Insound::Mongo {
             return Document<Schema>::fromBson(doc.value().view());
         }
 
+
+        /**
+         * Finds a list of documents that match the bson query.
+         *
+         * @param query - bson document that can be built like so:
+         *                `{"email", "joe@joe.com"}`
+         *
+         * @return a list of Document objects if found, or an empty one if
+         *         none match the query.
+         */
         [[nodiscard]]
         std::vector<Document<Schema>> find(bson query)
         {
@@ -68,12 +100,29 @@ namespace Insound::Mongo {
             return res;
         }
 
+
+        /**
+         * Delete the first document that matches the bson query
+         *
+         * @param  query - bson document that can be built like so:
+         *                `{"email", "joe@joe.com"}`
+         *
+         * @return       whether a document was deleted
+         */
         bool deleteOne(bson query)
         {
             auto result = m_collection.delete_one(query.view().get_document().value);
             return result && result.value().deleted_count() == 1;
         }
 
+        /**
+         * Delete all documents that match the bson query
+         *
+         * @param  query - bson document that can be built like so:
+         *                `{"email", "joe@joe.com"}`
+         *
+         * @return       whether any document was deleted
+         */
         bool deleteMany(bson query)
         {
             auto result = m_collection.delete_many(query.view().get_document().value);

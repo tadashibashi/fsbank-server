@@ -42,7 +42,9 @@ namespace Insound::Mongo {
         }
 
         /**
-         * Convert a raw bson document from MongoDB to this Document<T>
+         * Convert a raw bson document retrived from MongoDB to this Document.
+         * This is mainly used Mongo::Model, and most likely does not need
+         * to be used directly by the end user.
          */
         static Document<T> fromBson(
             const bsoncxx::document::view_or_value &bson)
@@ -62,6 +64,14 @@ namespace Insound::Mongo {
             return doc;
         }
 
+
+        /**
+         * Save this Document to its collection. Adds a new document if this
+         * is a new instance, or updates a db-retrieved document that was
+         * already once created.
+         *
+         * @return whether save was successful
+         */
         bool save()
         {
             auto collection = db().collection(glz::meta<T>::name);
@@ -69,23 +79,35 @@ namespace Insound::Mongo {
             auto json = glz::write_json(body);
             auto bson = bsoncxx::from_json(json);
 
-            if (!id) // new document, generate new id
+            if (!id) // this is a new document
             {
+                // Insert doc
                 auto result = collection.insert_one(bson.view());
                 if (result && result.value().result().inserted_count())
                 {
+                    // Insert success: get the generated id and update local id
                     id = Id{result.value().inserted_id().get_oid().value};
                     return true;
                 }
+
+                // Insert failed
                 return false;
             }
-            else
+            else   // this is a previously created document, or a new one where
+                   // the user manually set the id
             {
+                // Set upsert to true. Covers the case where the user manually
+                // sets the Document's id, but it does not exist in the
+                // database yet.
                 auto opts = mongocxx::options::find_one_and_update();
                 opts.upsert(true);
+
+                // Find doc and update it
                 auto query = bsoncxx::builder::list({"_id", id});
                 auto result = collection.find_one_and_update(
                    query.view().get_document().value, bson.view(), opts);
+
+                // Any returned doc means the op succeeded.
                 return static_cast<bool>(result);
             }
         }
