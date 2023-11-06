@@ -1,5 +1,6 @@
 #include "auth.h"
 #include "insound/core/email.h"
+#include "insound/core/regex.h"
 #include "insound/server/emails.h"
 #include <insound/core/chrono.h>
 #include <insound/core/jwt.h>
@@ -79,8 +80,14 @@ namespace Insound {
         {
             res.code = 400;
             res.add_header("Content-Type", "application/json");
-            res.end(R"({"error":"Missing fields."})");
-            return;
+            return res.end(R"({"error":"Missing fields."})");
+        }
+
+        if (!std::regex_match(email, Regex::email))
+        {
+            res.code = 400;
+            res.add_header("Content-Type", "application/json");
+            return res.end(R"({"error":"Invalid email address."})");
         }
 
         // Check honeypot
@@ -178,6 +185,12 @@ namespace Insound {
         {
             res.code = 400;
             return res.end(R"({"error":"Missing field."})");
+        }
+
+        if (!std::regex_match(email, Regex::email))
+        {
+            res.code = 400;
+            return res.end(R"({"error":"Invalid email."})");
         }
 
         // Check if user already exists
