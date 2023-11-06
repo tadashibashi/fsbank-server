@@ -11,16 +11,10 @@
 #include <fstream>
 
 namespace Insound {
-    std::string_view getEnv(const std::string_view &varName)
+    std::string_view getEnv(std::string_view varName)
     {
         const auto var = std::getenv(varName.data());
         return var ? var : "";
-    }
-
-    std::string_view getEnv(const std::string_view &varName, std::string_view defaultValue)
-    {
-        const auto var = std::getenv(varName.data());
-        return var ? var : defaultValue;
     }
 
     std::string_view getEnv(std::string_view varName, std::string_view defaultValue)

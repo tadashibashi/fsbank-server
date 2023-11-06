@@ -9,10 +9,9 @@ namespace Insound {
      *
      * @param  varName - name of the environment variable
      */
-    std::string_view getEnv(const std::string_view &varName);
-    std::string_view getEnv(const std::string_view &varName, std::string_view defaultVal);
-    std::string_view getEnv(const std::string_view &varName, std::string_view defaultVal);
-    std::string_view getEnv(const std::string_view &varName, const char *defaultVal);
+    std::string_view getEnv(std::string_view varName);
+    std::string_view getEnv(std::string_view varName, std::string_view defaultVal);
+    std::string_view getEnv(std::string_view varName, const char *defaultVal);
 
     /**
      * Get a variable value from the environment, or the default value if it
