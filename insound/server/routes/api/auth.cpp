@@ -1,4 +1,5 @@
 #include "auth.h"
+#include "insound/core/HttpStatus.h"
 #include "insound/core/email.h"
 #include "insound/core/json.h"
 #include "insound/core/regex.h"
@@ -44,9 +45,8 @@ namespace Insound {
             (Auth::post_verify);
     }
 
-    Response Auth::get_check(const crow::request &req)
+    void Auth::get_check(const crow::request &req, crow::response &res)
     {
-        Response res;
         auto &cookies = Server::getContext<crow::CookieParser>(req);
         auto &user = Server::getContext<UserAuth>(req).user;
 
@@ -60,15 +60,15 @@ namespace Insound {
         }
         else
         {
+            res.code = 401;
             res.body = R"({"auth":false})";
         }
 
-        return res;
+        res.end();
     }
 
     Response Auth::post_login(const crow::request &req)
     {
-        Response res;
         auto &cookies = Server::getContext<crow::CookieParser>(req);
         auto body = MultipartMap::from(req);
 
@@ -84,23 +84,25 @@ namespace Insound {
         }
         catch(...)
         {
-            res.code = 400;
-            return res.json("Missing fields.");
+            if (email.empty())
+                errors.append("email", "Missing field.");
+            if (password.empty())
+                errors.append("password", "Missing field.");
+
+            return Response::json(errors, HttpStatus::BadRequest);
         }
 
         // Check honeypot
         if (!body.fields["password2"].empty())
         {
-            res.code = 400;
             errors.append("password2", "Field should be empty.");
-            return res.json(errors);
+            return Response::json(errors, HttpStatus::BadRequest);
         }
 
         if (!std::regex_match(email, Regex::email))
         {
-            res.code = 400;
             errors.append("email", "Invalid email address.");
-            return res.json(errors);
+            return Response::json(errors, HttpStatus::BadRequest);
         }
 
         // Check if user with email exists
@@ -108,18 +110,16 @@ namespace Insound {
         auto userRes = UserModel.findOne({"email", email});
         if (!userRes)
         {
-            res.code = 401;
             errors.append("email", "Could not find a user with that address.");
-            return res.json(errors);
+            return Response::json(errors, HttpStatus::Unauthorized);
         }
 
         // Check password
         auto &user = userRes.value();
         if (!compare(password, user.body.password))
         {
-            res.code = 401;
             errors.append("password", "Invalid password.");
-            return res.json(errors);
+            return Response::json(errors, HttpStatus::Unauthorized);
         }
 
         try {
@@ -134,7 +134,7 @@ namespace Insound {
             token.fingerprint = hash(fingerprint);
 
             // Sign the token
-            res.body = Jwt::sign(token, 2_w);
+            auto jwt = Jwt::sign(token, 2_w);
 
             // Done, commit fingerprint cookie
             cookies.set_cookie("fingerprint", fingerprint)
@@ -143,27 +143,23 @@ namespace Insound {
                 .max_age(60 * 60 * 24 * 14) // two weeks
                 .path("/");
 
-            res.code = 200;
-            return res.json("Success");
+            return Response::json(jwt);
         }
         catch(const std::exception &e)
         {
             IN_ERR(e.what());
-            res.code = 500;
             errors.append("error", "Internal error.");
-            return res.json(errors);
+            return Response::json(errors, HttpStatus::InternalServerError);
         }
         catch(...)
         {
-            res.code = 500;
             errors.append("error", "Internal error.");
-            return res.json(errors);
+            return Response::json(errors, HttpStatus::InternalServerError);
         }
     }
 
     Response Auth::post_create(const crow::request &req)
     {
-        Response res;
         auto body = MultipartMap::from(req);
 
         auto errors = FormErrors();
@@ -171,9 +167,8 @@ namespace Insound {
         // Check honeypot
         if (!body.fields["username2"].empty())
         {
-            res.code = 400;
             errors.append("username2", "This field should be empty.");
-            return res.json(errors);
+            return Response::json(errors, HttpStatus::BadRequest);
         }
 
         // Get fields
@@ -186,18 +181,16 @@ namespace Insound {
             if (password != body.fields.at("password2"))
             {
                 errors.append("password", "Passwords mismatch.");
-                res.code = 400;
-                return res.json(errors);
+                return Response::json(errors, HttpStatus::BadRequest);
             }
         }
         catch (...)
         {
-            res.code = 400;
             if (body.fields["email"].empty())
                 errors.append("email", "Missing email field.");
             if (body.fields["password"].empty())
                 errors.append("password", "Missing password field.");
-            return res.json(errors);
+            return Response::json(errors, HttpStatus::BadRequest);
         }
 
         // Main validation checks
@@ -224,8 +217,7 @@ namespace Insound {
 
         if (!errors.empty())
         {
-            res.code = 400;
-            return res.json(errors);
+            return Response::json(errors, HttpStatus::BadRequest);
         }
 
         // Create new user
@@ -242,9 +234,8 @@ namespace Insound {
             doc = UserModel.insertOne(newUser);
             if (!doc)
             {
-                res.code = 500;
                 errors.append("error", "Database error.");
-                return res.json(errors);
+                return Response::json(errors, HttpStatus::InternalServerError);
             }
         }
 
@@ -266,33 +257,38 @@ namespace Insound {
             result = sendEmail.send();
             if (!result)
             {
-                return res.json("Account created, but failed to send verification email");
+                return Response::json("Account created, but failed to send verification email");
             }
         }
 
-        return res.json("Success");
+        return Response::json("Success");
     }
 
     Response Auth::post_verify(const crow::request &req)
     {
-        Response res;
-
         try {
             auto body = MultipartMap::from(req);
-            auto token = Emails::verifyEmail(body.fields.at("token"));
+            auto token_it = body.fields.find("token");
+            if (token_it == body.fields.end() || token_it->second.empty())
+            {
+                return Response::json("Missing token.",
+                    HttpStatus::BadRequest);
+            }
+
+            auto token = Emails::verifyEmail(token_it->second);
 
             auto UserModel = Mongo::Model<User>();
             auto user = UserModel.findOne({"_id", token.value()._id});
 
             if (!user || user->body.email != token.value().email)
             {
-                res.code = 400;
-                return res.json("Invalid token.");
+                return Response::json("Bad token.",
+                    HttpStatus::BadRequest);
             }
 
             if (user->body.isVerified())
             {
-                return res.json("User already verified.");
+                return Response::json("User already verified.");
             }
 
             user->body.type = User::Type::User;
@@ -303,17 +299,16 @@ namespace Insound {
                 result = user->save();
                 if (!result)
                 {
-                    res.code = 500;
-                    return res.json("Failed to update user validation status.");
+                    return Response::json("Failed to update user validation "
+                        "status.", HttpStatus::InternalServerError);
                 }
             }
 
-            return res.json("Success");
+            return Response::json("Success");
         }
         catch(const std::invalid_argument &e)
         {
-            res.code = 400;
-            return res.json("Invalid Request.");
+            return Response::json("Invalid Request.", HttpStatus::BadRequest);
         }
 
     }

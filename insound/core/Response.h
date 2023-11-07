@@ -12,15 +12,14 @@
 
 #include <string>
 #include <string_view>
+#include <utility>
 
 namespace Insound {
 
     class Response : public crow::response
     {
     public:
-        Response() : crow::response() {
-
-        }
+        Response() : crow::response() {}
 
         Response(int code, std::string_view contentType, std::string_view body)
             : crow::response(code, contentType.data(), body.data())
@@ -32,22 +31,28 @@ namespace Insound {
         {
         }
 
-        Response(const Response &other) : crow::response()
-        {
-
+        ~Response() {
+            IN_LOG("Destructor of response was called!");
         }
 
         /**
          * Set the body to json data
          */
         template <JSON::Serializable T>
-        Response &json(const T &obj)
+        static Response json(const T &obj, int status = 200)
         {
-            this->set_header("Content-Type", "application/json");
-            this->body = glz::write_json(obj);
-
-            return *this;
+            return {status, "application/json", glz::write_json(obj)};
         }
+
+        /**
+         * Set the body to json data
+         */
+        template <JSON::Serializable T>
+        static Response json(const T &obj, HttpStatus status)
+        {
+            return {(int)status, "application/json", glz::write_json(obj)};
+        }
+
 
         /**
          * Set both the content-type & body at one time
