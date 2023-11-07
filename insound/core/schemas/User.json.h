@@ -20,7 +20,10 @@ struct glz::meta<Insound::User::Type> {
 template<>
 struct glz::meta<Insound::User> {
     using T = Insound::User;
-    static constexpr std::string_view name = "users";
+
+    // This allows Insound::User to be used as a mongo collection
+    static constexpr std::string_view collection_name = "users";
+
     static constexpr auto value = glz::object(
         "username", &T::username,
         "displayName", &T::displayName,

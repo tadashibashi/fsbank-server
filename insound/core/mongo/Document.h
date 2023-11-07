@@ -33,12 +33,12 @@ namespace Insound::Mongo {
     public:
         Document() : id(), body()
         {
-                assertCollectionExists(glz::meta<T>::name);
+            assertCollectionExists(glz::meta<T>::collection_name);
         }
 
         explicit Document(const T &body) : id(), body(body)
         {
-            assertCollectionExists(glz::meta<T>::name);
+            assertCollectionExists(glz::meta<T>::collection_name);
         }
 
         /**
@@ -74,7 +74,7 @@ namespace Insound::Mongo {
          */
         bool save()
         {
-            auto collection = db().collection(glz::meta<T>::name);
+            auto collection = db().collection(glz::meta<T>::collection_name);
 
             auto json = glz::write_json(body);
             auto bson = bsoncxx::from_json(json);

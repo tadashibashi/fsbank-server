@@ -25,7 +25,7 @@ namespace Insound::Mongo {
         explicit Model() :
             m_collection()
         {
-            auto name = glz::meta<Schema>::name;
+            auto name = glz::meta<Schema>::collection_name;
             std::string lowercased;
             for (auto c : name)
                 lowercased += std::tolower(c);
