@@ -2,6 +2,7 @@
 
 
 #include <insound/core/HttpStatus.h>
+#include <insound/core/json.h>
 
 #include <crow/http_response.h>
 
@@ -31,16 +32,37 @@ namespace Insound {
         {
         }
 
+        Response(const Response &other) : crow::response()
+        {
+
+        }
+
         /**
          * Set the body to json data
          */
-        template <typename T>
-            requires glz::is_specialization_v<T, glz::meta> ||
-            requires {T::glaze;}
-        void json(const T &obj)
+        template <JSON::Serializable T>
+        Response &json(const T &obj)
         {
             this->set_header("Content-Type", "application/json");
             this->body = glz::write_json(obj);
+
+            return *this;
+        }
+
+        /**
+         * Set both the content-type & body at one time
+         *
+         * @param  type - content type of body
+         * @param  body - body to set
+         *
+         * @return      reference to this object for method chaining.
+         */
+        Response &content(std::string_view type, std::string_view body)
+        {
+            this->set_header("Content-Type", type.data());
+            this->body = body;
+
+            return *this;
         }
     private:
 
