@@ -1,6 +1,7 @@
 #pragma once
 
 
+#include <insound/core/ContentType.h>
 #include <insound/core/HttpStatus.h>
 #include <insound/core/json.h>
 
@@ -41,7 +42,8 @@ namespace Insound {
         template <JSON::Serializable T>
         static Response json(const T &obj, int status = 200)
         {
-            return {status, "application/json", glz::write_json(obj)};
+            return {status, ContentType::Application::JSON,
+                glz::write_json(obj)};
         }
 
         /**
@@ -50,7 +52,8 @@ namespace Insound {
         template <JSON::Serializable T>
         static Response json(const T &obj, HttpStatus status)
         {
-            return {(int)status, "application/json", glz::write_json(obj)};
+            return {(int)status, ContentType::Application::JSON,
+                glz::write_json(obj)};
         }
 
 
