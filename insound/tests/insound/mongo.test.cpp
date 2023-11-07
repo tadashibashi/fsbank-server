@@ -16,7 +16,7 @@ struct Person {
 template<>
 struct glz::meta<Person> {
     using T = Person;
-    static constexpr std::string_view name = "people";
+    static constexpr std::string_view collection_name = "people";
     static constexpr auto value = glz::object(
         "name", &T::name,
         "age", &T::age);
