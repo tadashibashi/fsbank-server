@@ -25,15 +25,27 @@ namespace Insound {
 
         // Success status, indicating that a resource has been created
         Created = 201,
+
+        // Request accepted for processing, but not yet complete. 202 is non-
+        // committal, since there is no way for the request to later send
+        // a follow-up indicating any result.
         Accepted = 202,
+
+        // Request was successful but some modification by a proxy has occurred
+        // that differs from the main server's 200 OK-response.
         NonAuthoriativeInfo = 203,
+
         // Request was processed but, no content will be returned in body
         NoContent = 204,
 
+        // Tells the client to reset the document view, to clear the content
+        // e.g. a form, a canvas state, some other UI refresh, etc.
         ResetContent = 205,
 
+        // The request succeeded, the body contains requested ranges of data,
+        // as described in the Range header of the request. Check docs for
+        // specific use cases (https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/206)
         PartialContent = 206,
-
 
         MultipleChoices = 300,
         MovedPermanently = 303,
@@ -43,7 +55,10 @@ namespace Insound {
         TemporaryRedirect = 307,
         PermanentRedirect = 308,
 
+        // Something was wrong with the client's request
+        // e.g. bad params, body, headers, etc.
         BadRequest = 400,
+
         Unauthorized = 401,
         Forbidden = 403,
         NotFound = 404,
