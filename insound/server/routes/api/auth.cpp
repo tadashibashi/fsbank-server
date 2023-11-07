@@ -45,26 +45,30 @@ namespace Insound {
             (Auth::post_verify);
     }
 
-    void Auth::get_check(const crow::request &req, crow::response &res)
+    struct AuthCheckResult {
+        bool auth;
+
+        IN_JSON_LOCAL_META(AuthCheckResult, auth);
+    };
+
+    Response Auth::get_check(const crow::request &req)
     {
         auto &cookies = Server::getContext<crow::CookieParser>(req);
         auto &user = Server::getContext<UserAuth>(req).user;
 
-        res.add_header("Content-Type", "application/json");
-
         auto fingerprint = cookies.get_cookie("fingerprint");
 
+        AuthCheckResult result;
         if (user.isAuthorized() && compare(fingerprint, user.fingerprint))
         {
-            res.body = R"({"auth":true})";
+            result.auth = true;
+            return Response::json(result);
         }
         else
         {
-            res.code = 401;
-            res.body = R"({"auth":false})";
+            result.auth = false;
+            return Response::json(result, HttpStatus::Unauthorized);
         }
-
-        res.end();
     }
 
     Response Auth::post_login(const crow::request &req)

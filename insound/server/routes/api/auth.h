@@ -29,7 +29,7 @@ namespace Insound {
          * }
          *
          */
-        static void get_check(const crow::request &req, crow::response &res);
+        static Response get_check(const crow::request &req);
 
         /**
          * Log into the application
