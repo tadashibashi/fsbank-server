@@ -2,4 +2,6 @@
 #include <insound/core/json.h>
 #include <insound/core/schemas/FormErrors.h>
 
-GLZ_META(Insound::FormErrors, errors);
+using Insound::FormErrors;
+
+GLZ_META(FormErrors, errors);
