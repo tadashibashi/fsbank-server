@@ -1,20 +1,20 @@
 #include "auth.h"
-#include "insound/core/HttpStatus.h"
-#include "insound/core/email.h"
-#include "insound/core/json.h"
-#include "insound/core/regex.h"
-#include "insound/core/schemas/FormErrors.json.h"
-#include "insound/server/emails.h"
+
 #include <insound/core/chrono.h>
+#include <insound/core/email.h>
+#include <insound/core/HttpStatus.h>
+#include <insound/core/json.h>
 #include <insound/core/jwt.h>
-
-#include <insound/core/schemas/User.json.h>
-
 #include <insound/core/mongo/Model.h>
 #include <insound/core/MultipartMap.h>
 #include <insound/core/password.h>
+#include <insound/core/regex.h>
+#include <insound/core/schemas/FormErrors.json.h>
+#include <insound/core/schemas/User.json.h>
 #include <insound/core/util.h>
+
 #include <insound/server/Server.h>
+#include <insound/server/emails.h>
 
 #include <crow/common.h>
 #include <crow/middlewares/cookie_parser.h>
