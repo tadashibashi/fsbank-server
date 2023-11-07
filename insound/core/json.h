@@ -35,7 +35,7 @@ namespace Insound::JSON {
 
     template <typename T>
     concept Serializable =
-        glz::is_specialization_v<T, glz::meta> || requires {T::glaze;} ||
+        glz::is_specialization_v<glz::meta<T>, glz::meta> || requires {T::glaze;} ||
         std::is_same_v<std::string, T> ||
         std::is_same_v<std::string_view, T> ||
         glz::is_specialization_v<T, glz::detail::Object> ||
