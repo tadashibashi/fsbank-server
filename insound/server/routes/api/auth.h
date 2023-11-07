@@ -1,6 +1,7 @@
 #pragma once
 #include <insound/core/App.h>
 #include <insound/core/Router.h>
+#include <insound/core/Response.h>
 
 namespace Insound {
     class Auth : public Router {
@@ -28,7 +29,7 @@ namespace Insound {
          * }
          *
          */
-        static void get_check(const crow::request &req, crow::response &res);
+        static Response get_check(const crow::request &req);
 
         /**
          * Log into the application
@@ -43,7 +44,7 @@ namespace Insound {
          *
          * `password2` is a honeypot to help prevent bots
          */
-        static void post_login(const crow::request &req, crow::response &res);
+        static Response post_login(const crow::request &req);
 
         /**
          * Create a user account
@@ -61,7 +62,7 @@ namespace Insound {
          *
          * `username2` is a honeypot to help prevent bots
          */
-        static void post_create(const crow::request &req, crow::response &res);
+        static Response post_create(const crow::request &req);
 
         /**
          * Email verification endpoint for automated emails
@@ -76,7 +77,7 @@ namespace Insound {
          *
          * `token` is the validation token received in the email
          */
-        static void post_verify(const crow::request &req, crow::response &res);
+        static Response post_verify(const crow::request &req);
     };
 
 
