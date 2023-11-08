@@ -29,13 +29,22 @@
 #define IN_JSON_LOCAL_META(name, ...) GLZ_LOCAL_META(name, __VA_ARGS__)
 
 namespace Insound::JSON {
+
+    // ===== type traits ======================================================
+
+    // Char array
+
     template <class> struct is_bounded_char_array : std::false_type {};
     template <size_t N>
     struct is_bounded_char_array<char[N]> : std::true_type {};
 
+    /**
+     * A class that is JSON-serializable
+     */
     template <typename T>
     concept Serializable =
-        glz::is_specialization_v<glz::meta<T>, glz::meta> || requires {T::glaze;} ||
+        glz::is_specialization_v<glz::meta<T>, glz::meta> ||
+        requires {T::glaze;} ||
         std::is_same_v<std::string, T> ||
         std::is_same_v<std::string_view, T> ||
         glz::is_specialization_v<T, glz::detail::Object> ||
@@ -53,9 +62,22 @@ namespace Insound::JSON {
         glz::is_specialization_v<T, std::vector> ||
         glz::is_specialization_v<T, std::tuple>;
 
+    /**
+     * A class that has specialized glz::meta either globally or locally
+     */
+    template <typename T>
+    concept Specialized =
+        glz::is_specialization_v<glz::meta<T>, glz::meta> ||
+        requires {T::glaze;};
+
+
+    // ===== Type synonyms  ===================================================
     using Opts = glz::opts;
     using ErrorCode = glz::error_code;
     using ParseError = glz::parse_error;
+
+
+    // ===== API ==============================================================
 
     /**
      * Stringify a JSON-serializable object
