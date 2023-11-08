@@ -2,9 +2,12 @@
 #include <insound/core/schemas/User.h>
 #include <insound/core/thirdparty/glaze.hpp>
 
+using Insound::User;
+using Insound::UserToken;
+
 template<>
-struct glz::meta<Insound::User::Type> {
-    using enum Insound::User::Type;
+struct glz::meta<User::Type> {
+    using enum User::Type;
 
     // Once strings are set, don't change it, as they will be written this
     // way in the database and will become invalidated if changed.
@@ -18,8 +21,8 @@ struct glz::meta<Insound::User::Type> {
 };
 
 template<>
-struct glz::meta<Insound::User> {
-    using T = Insound::User;
+struct glz::meta<User> {
+    using T = User;
 
     // This allows Insound::User to be used as a mongo collection
     static constexpr std::string_view collection_name = "users";
@@ -34,8 +37,8 @@ struct glz::meta<Insound::User> {
 };
 
 template<>
-struct glz::meta<Insound::UserToken> {
-    using T = Insound::UserToken;
+struct glz::meta<UserToken> {
+    using T = UserToken;
     static constexpr auto value = glz::object(
         "username", &T::username,
         "displayName", &T::displayName,
@@ -46,4 +49,4 @@ struct glz::meta<Insound::UserToken> {
     );
 };
 
-GLZ_FORMAT(Insound::User::Type);
+GLZ_FORMAT(User::Type);
