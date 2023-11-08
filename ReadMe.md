@@ -194,9 +194,11 @@ done via
 - [x] Email API
     - [x] Send emails
 
+- [ ] Auth API
+    - [ ] Create Account (email confirmation with activation token)
+
 - [ ] User API
     - [ ] Authorization on private routes
-    - [ ] Create Account (email confirmation with activation token)
     - [ ] Read Profile Page (private / public settings)
     - [ ] Patch profile info
     - [ ] Delete Account
