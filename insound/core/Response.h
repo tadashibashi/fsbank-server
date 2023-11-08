@@ -32,10 +32,6 @@ namespace Insound {
         {
         }
 
-        ~Response() {
-            IN_LOG("Destructor of response was called!");
-        }
-
         /**
          * Set the body to json data
          */
