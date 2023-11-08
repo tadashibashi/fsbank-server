@@ -1,5 +1,6 @@
 #include "jwt.h"
 #include "insound/core/errors/GlazeError.h"
+#include "insound/core/errors/JwtError.h"
 
 #include <insound/core/env.h>
 
@@ -11,7 +12,7 @@
 #include <sstream>
 #include <typeinfo>
 #include <typeindex>
-#include <variant>
+#include <utility>
 
 namespace Insound::Jwt
 {
@@ -91,10 +92,41 @@ namespace Insound::Jwt
                 requireEnv("JWT_SECRET").data()
             });
 
-        auto decoded = jwt::decode<glaze_traits>(token.data());
-        verifier.verify(decoded);
+        std::optional<jwt::decoded_jwt<glaze_traits>> decoded;
+        try {
+            decoded = jwt::decode<glaze_traits>(token.data());
+        }
+        catch (const std::invalid_argument &e)
+        {
+            throw Error(Error::Code::BadTokenFormat);
+        }
+        catch (const std::runtime_error &e)
+        {
+            throw Error(Error::Code::ConversionFailure);
+        }
 
-        return decoded.get_payload();
+        try {
+            verifier.verify(*decoded);
+        }
+        catch (const std::system_error &e)
+        {
+            throw Error(Error::Code::VerificationFailure, e.what());
+        }
+
+        return decoded->get_payload();
+    }
+
+    Error::Code verify(std::string_view token, std::string &buffer)
+    {
+        try {
+            buffer = std::move(verify(token));
+        }
+        catch (Error error)
+        {
+            return error.code();
+        }
+
+        return Error::Code::OK;
     }
 
     std::string sign(std::string_view payloadStr, long long duration)
