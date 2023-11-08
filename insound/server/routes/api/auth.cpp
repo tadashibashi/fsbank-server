@@ -30,19 +30,19 @@ namespace Insound {
     {
         CROW_BP_ROUTE(bp, "/login/email")
             .methods("POST"_method)
-            (Auth::post_login);
+            (Auth::login_email);
 
         CROW_BP_ROUTE(bp, "/check")
             .methods("GET"_method)
-            (Auth::get_check);
+            (Auth::check);
 
         CROW_BP_ROUTE(bp, "/create/email")
             .methods("POST"_method)
-            (Auth::post_create);
+            (Auth::create_email);
 
-        CROW_BP_ROUTE(bp, "/verify")
+        CROW_BP_ROUTE(bp, "/activate")
             .methods("POST"_method)
-            (Auth::post_verify);
+            (Auth::activate);
     }
 
     struct AuthCheckResult {
@@ -51,7 +51,7 @@ namespace Insound {
         IN_JSON_LOCAL_META(AuthCheckResult, auth);
     };
 
-    Response Auth::get_check(const crow::request &req)
+    Response Auth::check(const crow::request &req)
     {
         auto &cookies = Server::getContext<crow::CookieParser>(req);
         auto &user = Server::getContext<UserAuth>(req).user;
@@ -71,7 +71,7 @@ namespace Insound {
         }
     }
 
-    Response Auth::post_login(const crow::request &req)
+    Response Auth::login_email(const crow::request &req)
     {
         auto &cookies = Server::getContext<crow::CookieParser>(req);
         auto body = MultipartMap::from(req);
@@ -162,7 +162,7 @@ namespace Insound {
         }
     }
 
-    Response Auth::post_create(const crow::request &req)
+    Response Auth::create_email(const crow::request &req)
     {
         auto body = MultipartMap::from(req);
 
@@ -268,7 +268,7 @@ namespace Insound {
         return Response::json("Success");
     }
 
-    Response Auth::post_verify(const crow::request &req)
+    Response Auth::activate(const crow::request &req)
     {
         try {
             auto body = MultipartMap::from(req);

@@ -29,10 +29,11 @@ namespace Insound {
          * }
          *
          */
-        static Response get_check(const crow::request &req);
+        static Response check(const crow::request &req);
 
         /**
-         * Log into the application
+         * Log into the application via email. Other types of login may be
+         * supported at a later time.
          *
          * @route POST /api/auth/login/email
          * @input
@@ -44,10 +45,10 @@ namespace Insound {
          *
          * `password2` is a honeypot to help prevent bots
          */
-        static Response post_login(const crow::request &req);
+        static Response login_email(const crow::request &req);
 
         /**
-         * Create a user account
+         * Create a user account via email
          *
          * @route POST /api/auth/create/email
          * @input
@@ -62,7 +63,7 @@ namespace Insound {
          *
          * `username2` is a honeypot to help prevent bots
          */
-        static Response post_create(const crow::request &req);
+        static Response create_email(const crow::request &req);
 
         /**
          * Email verification endpoint for automated emails
@@ -77,7 +78,7 @@ namespace Insound {
          *
          * `token` is the validation token received in the email
          */
-        static Response post_verify(const crow::request &req);
+        static Response activate(const crow::request &req);
     };
 
 
