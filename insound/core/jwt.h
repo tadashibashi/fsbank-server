@@ -26,10 +26,6 @@ namespace Insound::Jwt
      */
     Error::Code verify(std::string_view jwt, std::string &buffer);
 
-    template <typename T>
-    concept GlazeSpecialized = glz::is_specialization_v<T, glz::meta> ||
-        requires {T::glaze;};
-
     /**
      * Decode and verify a json web token, then verify its
      * payload, converting it to type `T`.
@@ -43,7 +39,7 @@ namespace Insound::Jwt
      *         Jwt::Error - if there was a problem converting/verifying jwt
      *                      token string.
      */
-    template<GlazeSpecialized T, JSON::Opts O=JSON::Opts{
+    template<JSON::Specialized T, JSON::Opts O=JSON::Opts{
         .error_on_unknown_keys=false,
         .error_on_missing_keys=false
     }>
@@ -75,7 +71,7 @@ namespace Insound::Jwt
      * @throws GlazeError if there was a problem deserializing the token into
      *                    type `T` object.
      */
-    template<GlazeSpecialized T, JSON::Opts O=JSON::Opts{
+    template<JSON::Specialized T, JSON::Opts O=JSON::Opts{
         .error_on_unknown_keys=false,
         .error_on_missing_keys=false
     }>
@@ -118,7 +114,7 @@ namespace Insound::Jwt
      *
      * @throws system_error on any problem during jwt conversion/verification
      */
-    template<GlazeSpecialized T>
+    template<JSON::Specialized T>
     inline std::string sign(const T &payload, long long expiresIn)
     {
         auto payloadStr = glz::write_json(payload);
@@ -137,7 +133,7 @@ namespace Insound::Jwt
      * @return ErrorCode - ErrorCode::OK on success and eny other value on
      *                     an error.
      */
-    template <GlazeSpecialized T>
+    template <JSON::Specialized T>
     inline Error::Code sign(const T&payload, long long expiresIn, std::string &output)
     {
         auto payloadStr = glz::write_json(payload);
