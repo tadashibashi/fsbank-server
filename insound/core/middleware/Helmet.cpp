@@ -57,22 +57,31 @@ void Insound::Helmet::after_handle(crow::request &req, crow::response &res,
     res.add_header("X-XSS-Protection",
         headers.xXssProtection.value_or("0"));
 
+    auto &csp = headers.contentSecurityPolicy;
+
     // Add CSP
     res.add_header("Content-Security-Policy",
-        headers.contentSecurityPolicy.value_or(
-            f(
-                "base-uri 'self';"
-                "font-src 'self';"
-                "form-action 'self';"
-                "frame-ancestors 'none';"
-                "img-src 'self';"
-                "object-src 'none';"
-                "script-src 'nonce-{0}';"
-                "style-src 'nonce-{0}'"
-                "{1}"
-                , ctx.nonce,
-                USE_SSL ? "; upgrade-insecure-requests" : ""
-            )
+        f(
+            "base-uri {0};"
+            "font-src {1};"
+            "form-action {2};"
+            "frame-ancestors {3};"
+            "img-src {4};"
+            "object-src {5};"
+            "script-src {6};"
+            "style-src {7}"
+            "{8}"
+            ,
+            csp.baseURI.value_or("'self'"),
+            csp.fontSrc.value_or("'self'"),
+            csp.formAction.value_or("'self'"),
+            csp.frameAncestors.value_or("'none'"),
+            csp.imgSrc.value_or("'self'"),
+            csp.objectSrc.value_or("'none'"),
+            csp.scriptSrc.value_or(f("'nonce-{}'", ctx.nonce)),
+            csp.styleSrc.value_or(f("'nonce-{}'", ctx.nonce)),
+            csp.upgradeInsecureRequests.value_or(USE_SSL) ?
+                "; upgrade-insecure-requests" : ""
         )
     );
 

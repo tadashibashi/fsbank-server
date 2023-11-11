@@ -18,6 +18,18 @@ namespace Insound {
     public:
         using OptString = std::optional<std::string>;
 
+        struct CSPHeaders {
+            OptString baseURI;
+            OptString fontSrc;
+            OptString formAction;
+            OptString frameAncestors;
+            OptString imgSrc;
+            OptString objectSrc;
+            OptString scriptSrc;
+            OptString styleSrc;
+            std::optional<bool> upgradeInsecureRequests;
+        };
+
         /**
          * Security headers to set. Please check implementation file for
          * defaults.
@@ -32,7 +44,7 @@ namespace Insound {
          */
         struct Headers {
             OptString strictTransportSecurity;
-            OptString contentSecurityPolicy;
+            CSPHeaders contentSecurityPolicy;
             OptString crossOriginEmbedderPolicy;
             OptString crossOriginOpenerPolicy;
             OptString crossOriginResourcePolicy;
