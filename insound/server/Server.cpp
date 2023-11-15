@@ -1,4 +1,6 @@
 #include "Server.h"
+#include "insound/core/BankBuilder.h"
+#include "insound/server/routes/api/test.h"
 #include <crow/app.h>
 #include <crow/utility.h>
 
@@ -69,6 +71,10 @@ namespace Insound {
         // Populate environment variables, if .env file is available.
         configureEnv();
 
+        if (auto buildResult = BankBuilder::initLibrary();
+            buildResult != BankBuilder::OK)
+            IN_ERR("FSBank builder failed to init: {}", buildResult);
+
         // Connect to S3, check for error
         bool result;
         result = S3::config();
@@ -98,6 +104,7 @@ namespace Insound {
 
         // Mount routers
         mount<Auth>();
+        mount<TestRouter>();
 
         // Main route
         CROW_ROUTE(this->internal(), "/")(mainRoute);
