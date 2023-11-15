@@ -59,7 +59,8 @@ namespace Insound {
         auto fingerprint = cookies.get_cookie("fingerprint");
 
         AuthCheckResult result;
-        if (user.isAuthorized() && compare(fingerprint, user.fingerprint))
+        if (user.isAuthorized(User::Type::Unverified) &&    // TODO:Set this to verified user later after testing.
+            compare(fingerprint, user.fingerprint))
         {
             result.auth = true;
             return Response::json(result);

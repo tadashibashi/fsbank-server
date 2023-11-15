@@ -28,6 +28,8 @@ namespace Insound
             if (result != BankBuilder::OK)
                 IN_ERR("Failed to add file \"{}\" to bank: {}",
                     name, result);
+            else
+                IN_LOG("Compiling bank with layer: {}", name);
         }
 
         result = builder.build();
@@ -36,12 +38,12 @@ namespace Insound
             return Response::json( f("Failed to build bank: {}", result), 500);
         }
 
-        return {"application/octet-stream", std::move(builder.data())};
+        return {"application/octet-stream", builder.data()};
     }
 
     void TestRouter::init()
     {
-        CROW_BP_ROUTE(bp, "make-fsb")
+        CROW_BP_ROUTE(bp, "/make-fsb")
             .methods("POST"_method)
             (make_fsb);
     }

@@ -1,6 +1,7 @@
 #include "Server.h"
-#include "insound/core/BankBuilder.h"
-#include "insound/server/routes/api/test.h"
+#include <insound/core/BankBuilder.h>
+#include <insound/server/routes/api/test.h>
+
 #include <crow/app.h>
 #include <crow/utility.h>
 
@@ -15,7 +16,6 @@
 #include <insound/core/middleware/Helmet.h>
 
 namespace Insound {
-
 
     // Return param string without '?' in front of it, if any
     static inline std::string_view getQueryString(std::string_view rawUrl)

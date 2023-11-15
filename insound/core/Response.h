@@ -32,8 +32,8 @@ namespace Insound {
             {
             }
 
-        Response(std::string_view contentType, std::string_view body)
-            : crow::response(contentType.data(), body.data())
+        Response(std::string_view contentType, const std::string &body)
+            : crow::response(contentType.data(), body)
         {
         }
 

@@ -109,16 +109,20 @@ namespace Insound {
             unsigned int size;
             FSB_CHECK( FSBank_FetchFSBMemory(&data, &size) );
 
-            auto retrieved = std::string((const char *)data, (const char *)data + size);
+            auto retrieved = std::string((const char *)data,
+                (const char *)data + size);
 
             // Done, commit changes
             builtFile.swap(retrieved);
             build_lock.unlock();
             return OK;
-        } catch (const std::exception &e) {
+        }
+        catch (const std::exception &e)
+        {
             build_lock.unlock();
             return e.what();
-        } catch (...) {
+        }
+        catch (...) {
             build_lock.unlock();
             return "an unknown error occurred";
         }
@@ -131,9 +135,13 @@ namespace Insound {
             files.clear();
             fileSizes.clear();
             return OK;
-        } catch (const std::exception &e) {
+        }
+        catch (const std::exception &e)
+        {
             return e.what();
-        } catch (...) {
+        }
+        catch (...)
+        {
             return "an unknown error occurred";
         }
     }
