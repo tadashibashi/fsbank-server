@@ -1,4 +1,4 @@
-#include "UserAuth.hpp"
+#include "UserAuth.h"
 
 #include <insound/core/jwt.h>
 #include <insound/core/log.h>

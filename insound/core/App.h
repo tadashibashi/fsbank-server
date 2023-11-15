@@ -3,7 +3,7 @@
 #include <insound/core/mongo.h>
 #include <insound/core/Router.h>
 #include <insound/core/middleware/Helmet.h>
-#include <insound/core/middleware/UserAuth.hpp>
+#include <insound/core/middleware/UserAuth.h>
 
 #include <insound/core/thirdparty/crow.hpp>
 #include <crow/middlewares/cookie_parser.h>

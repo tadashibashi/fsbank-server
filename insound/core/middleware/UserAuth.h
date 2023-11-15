@@ -14,8 +14,14 @@ namespace Insound {
             UserToken user;
         };
 
+        /**
+         * Callback executed before the route
+         */
         void before_handle(crow::request &req, crow::response &res, context &ctx);
 
+        /**
+         * Callback executed after the route
+         */
         void after_handle(crow::request &req, crow::response &res,
                           context &ctx);
 
