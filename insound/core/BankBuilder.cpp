@@ -103,7 +103,7 @@ namespace Insound {
 
             // Run build
             FSB_CHECK( FSBank_Build(&subsound, 1, BankFormat,
-                FSBANK_BUILD_NOGUID, 100, nullptr, nullptr) );
+                FSBANK_BUILD_NOGUID, 75, nullptr, nullptr) );
 
             const void *data;
             unsigned int size;

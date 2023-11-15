@@ -10,7 +10,6 @@
 
 namespace Insound
 {
-
     TestRouter::TestRouter() : Router("api/test")
     {
 
@@ -18,18 +17,18 @@ namespace Insound
 
     static Response make_fsb(const crow::request &req)
     {
+        // Get files from multipart data
         auto map = MultipartMap::from(req);
 
         BankBuilder builder;
         BankBuilder::Result result;
         for (auto &[name, file]: map.files)
         {
+            // Add each file to the fsbank
             result = builder.addFile(file.data.data(), file.data.length());
             if (result != BankBuilder::OK)
                 IN_ERR("Failed to add file \"{}\" to bank: {}",
                     name, result);
-            else
-                IN_LOG("Compiling bank with layer: {}", name);
         }
 
         result = builder.build();
