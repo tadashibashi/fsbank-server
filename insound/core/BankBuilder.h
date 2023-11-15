@@ -10,7 +10,6 @@
 #pragma once
 
 #include <vector>
-#include <cstdint>
 
 namespace Insound
 {
@@ -56,10 +55,17 @@ namespace Insound
 
         /**
          * Get the data of the built file. Only available after a successful
-         * call to BankBuilder::build.
+         * call to `BankBuilder::build`.
          */
         [[nodiscard]]
-        const std::vector<uint8_t> &data() const noexcept { return builtFile; }
+        std::string &data() noexcept { return builtFile; }
+
+        /**
+         * Get the data of the built file. Only available after a successful
+         * call to `BankBuilder::build`.
+         */
+        [[nodiscard]]
+        const std::string &data() const noexcept { return builtFile; }
 
     private:
         // Byte length of each file
@@ -70,7 +76,7 @@ namespace Insound
 
         // Data of the built file, only available after a successful call to
         // BankBuilder::build.
-        std::vector<uint8_t> builtFile;
+        std::string builtFile;
     };
 
 }

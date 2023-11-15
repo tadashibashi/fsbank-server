@@ -102,13 +102,14 @@ namespace Insound {
             subsound.fileDataLengths = fileSizes.data();
 
             // Run build
-            FSB_CHECK( FSBank_Build(&subsound, 1, BankFormat, FSBANK_BUILD_NOGUID, 100, nullptr, nullptr) );
+            FSB_CHECK( FSBank_Build(&subsound, 1, BankFormat,
+                FSBANK_BUILD_NOGUID, 100, nullptr, nullptr) );
 
             const void *data;
             unsigned int size;
             FSB_CHECK( FSBank_FetchFSBMemory(&data, &size) );
 
-            auto retrieved = std::vector<uint8_t>((uint8_t *)data, (uint8_t *)data + size);
+            auto retrieved = std::string((const char *)data, (const char *)data + size);
 
             // Done, commit changes
             builtFile.swap(retrieved);

@@ -1,10 +1,12 @@
 #include "test.h"
-#include "insound/core/BankBuilder.h"
-#include "insound/core/MultipartMap.h"
+
+#include <insound/core/BankBuilder.h>
+#include <insound/core/MultipartMap.h>
 #include <insound/core/Response.h>
 
 #include <crow/common.h>
 
+#include <utility>
 
 namespace Insound
 {
@@ -34,9 +36,7 @@ namespace Insound
             return Response::json( f("Failed to build bank: {}", result), 500);
         }
 
-        return {"application/octet-stream",
-            std::string(builder.data().data(),
-                builder.data().size() + builder.data().data())};
+        return {"application/octet-stream", std::move(builder.data())};
     }
 
     void TestRouter::init()
