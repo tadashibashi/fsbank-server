@@ -248,19 +248,22 @@ def kill_process(name: str):
     if no_kill:
         return
     for proc in psutil.process_iter():
-        if name.lower() == proc.name().lower():
-            print(f"Ending pre-existing process {proc.pid}: {proc.name()}")
-            gone, alive = _kill_proc_tree(proc.pid, sig=signal.SIGTERM,
-                                          timeout=1)
-            if len(alive) > 0:
-                gone, alive = _kill_proc_tree(proc.pid, sig=signal.SIGKILL,
+        try:
+            if name.lower() == proc.name().lower():
+                print(f"Ending pre-existing process {proc.pid}: {proc.name()}")
+                gone, alive = _kill_proc_tree(proc.pid, sig=signal.SIGTERM,
                                               timeout=1)
                 if len(alive) > 0:
-                    print(f"Failed to kill process \"{name}\"")
+                    gone, alive = _kill_proc_tree(proc.pid, sig=signal.SIGKILL,
+                                                  timeout=1)
+                    if len(alive) > 0:
+                        print(f"Failed to kill process \"{name}\"")
+                    else:
+                        print(f"Process {proc.pid} killed.\n")
                 else:
-                    print(f"Process {proc.pid} killed.\n")
-            else:
-                print(f"Process {proc.pid} terminated.\n")
+                    print(f"Process {proc.pid} terminated.\n")
+        except psutil.NoSuchProcess:
+            pass
 
 
 def kill_server():
