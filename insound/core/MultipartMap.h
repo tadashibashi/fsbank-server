@@ -1,3 +1,9 @@
+/**
+ * @file MultipartMap.h
+ *
+ * Contains MultipartMap class, which is used to store form data from a
+ * request.
+ */
 #pragma once
 #include <crow/http_request.h>
 

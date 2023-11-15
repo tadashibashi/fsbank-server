@@ -1,8 +1,15 @@
+/**
+ * @file email.h
+ *
+ * Contains SendEmail class for building and sending an email request.
+ * `Email::config` should be successfully called before using any email
+ * functionality.
+ */
 #pragma once
+#include <optional>
+#include <map>
 #include <string>
-#include <unordered_map>
-
-#include <insound/core/thirdparty/glaze.hpp>
+#include <vector>
 
 namespace Insound::Email {
     /**
@@ -48,7 +55,7 @@ namespace Insound::Email {
          * Optional http headers to pass on with the `href` request, e.g.
          * {"Authorization": "Bearer ..."}
          */
-        std::unordered_map<std::string, std::string> httpHeaders;
+        std::map<std::string, std::string> httpHeaders;
 
         /**
          * Optional content type for the attachment, if not set will be derived
@@ -98,9 +105,6 @@ namespace Insound::Email {
          * prepare node contents yourself.
          */
         OptString raw;
-
-        GLZ_LOCAL_META(Attachment, filename, content, path, href, httpHeaders,
-            contentType, contentDisposition, cid, encoding, headers, raw);
     };
 
 
@@ -148,8 +152,6 @@ namespace Insound::Email {
          * A list of attachments
          */
         std::vector<Attachment> attachments;
-
-        GLZ_LOCAL_META(SendEmailOpts, from, to, cc, bcc, subject, text, html);
     };
 
 

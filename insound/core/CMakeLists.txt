@@ -1,3 +1,4 @@
+# CMake project file for building the insound core library
 project (insound-core)
 
 # Enable zlib compression

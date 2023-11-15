@@ -1,12 +1,13 @@
+/**
+ * @file ContentType.h
+ *
+ * Contains constants containing various mimetypes used by the application.
+ * These constants should be used for setting values in responses rather than
+ * deciphering content-type values from requests.
+ */
 #pragma once
 #include <string_view>
 
-/**
- * List of Content-Type mime types.
- * Not comprehensive. Add as needed.
- * Ultimately should not rely on mime-types since spoofing is a possibility.
- * May use 
- */
 namespace Insound::ContentType {
 
 

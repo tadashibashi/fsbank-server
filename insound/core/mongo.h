@@ -1,3 +1,9 @@
+/**
+ * @file mongo.h
+ *
+ * Contains global functions for dealing with MongoDB. Use classes in mongo/
+ * directory for abstracted usage.
+ */
 #pragma once
 #include <mongocxx/database.hpp>
 

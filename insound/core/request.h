@@ -1,3 +1,12 @@
+/**
+ * @file request.h
+ *
+ * Contains `MakeRequest` class for creating an http request and `request`
+ * function for sending a request and receiving a JSON response.
+ *
+ * `MakeRequest` gives more options, such as specifying headers, and receiving
+ * headers, whereas `request` is simpler.
+ */
 #pragma once
 
 #include <insound/core/errors/GlazeError.h>

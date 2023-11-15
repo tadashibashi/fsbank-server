@@ -1,3 +1,13 @@
+/**
+ * @file platform.h
+ *
+ * Contains defines indicating which platform is running the server.
+ * Defines:
+ *     INSOUND_PLATFORM_MAC   -> macOS
+ *     INSOUND_PLATFORM_LINUS -> linux os
+ *     INSOUND_CPU_ARM64      -> CPU is an arm64 processor
+ *     INSOUND_CPU_X86_64     -> CPU is an x86_64 processor
+ */
 #pragma once
 
 // macOS checks

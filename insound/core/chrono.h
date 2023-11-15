@@ -1,5 +1,7 @@
 /**
- * This file contains literals for converting units of time into microseconds.
+ * @file chrono.h
+ *
+ * Contains literals for converting units of time into microseconds.
  */
 #pragma once
 

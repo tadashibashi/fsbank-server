@@ -168,6 +168,9 @@ namespace Insound {
         return map;
     }
 
+    /**
+     * Get Multipart map from request data
+     */
     MultipartMap MultipartMap::from(const crow::request &req)
     {
         // Find content-type

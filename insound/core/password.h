@@ -1,6 +1,10 @@
+/**
+ * @file password.h
+ *
+ * Contains functions for hashing passwords and comparing hashed values.
+ */
 #pragma once
 #include <string>
-
 
 namespace Insound {
 

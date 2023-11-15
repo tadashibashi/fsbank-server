@@ -1,11 +1,17 @@
+/**
+ * @file BankBuilder.h
+ *
+ * Contains class for builder fsbanks from audio files.
+ */
 #pragma once
 
 #include <vector>
 #include <cstdint>
 
-namespace Insound {
-
-    class BankBuilder {
+namespace Insound
+{
+    class BankBuilder
+    {
     public:
         using Result = const char *;
         static const Result OK;
