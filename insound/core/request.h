@@ -9,8 +9,7 @@
  */
 #pragma once
 
-#include <insound/core/errors/GlazeError.h>
-#include <glaze/glaze.hpp>
+#include <insound/core/json.h>
 
 #include <string>
 #include <string_view>
@@ -153,9 +152,11 @@ namespace Insound {
 
    /**
      * Send a request, and receive the payload as a string
+     *
      * @param  url         endpoint url
      * @param  method      http method - use constants in Insound::HttpMethod namespace
      * @param  jsonPayload [optional] JSON payload string
+     *
      * @return             The JSON body as a string
      */
     std::string request(std::string_view url,
@@ -169,6 +170,7 @@ namespace Insound {
      * @param  url     endpoint url
      * @param  method  http method, use constants in Insound::HttpMethod namespace
      * @param  payload optional Json payload to set
+     *
      * @return         body of the response as a Json object
      *
      * @throws CurlError if an error occurred during the request
@@ -177,19 +179,12 @@ namespace Insound {
     T request(std::string_view url, std::string_view method = HttpMethod::Get,
         const Payload *payload = nullptr)
     {
-        auto stringified = payload ? glz::write_json(*payload) : std::string();
+        auto stringified = payload ? JSON::stringify(*payload) : std::string();
         auto body = request(url, method, stringified);
 
-        T res;
-        glz::context ctx{};
-        glz::parse_error error = glz::read<glz::opts{
+        return JSON::parse<JSON::Opts{
             .error_on_unknown_keys=false,
             .error_on_missing_keys=true
-        }> (res, std::forward<std::string>(body), ctx);
-
-        if (error)
-            throw GlazeError(error, body);
-
-        return res;
+        }> (body);
     }
 }

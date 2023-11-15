@@ -3,9 +3,17 @@
 #include <crow/utility.h>
 
 #include <insound/core/env.h>
+#include <insound/core/json.h>
 #include <insound/core/request.h>
 
 #include <utility>
+
+using Insound::Email::Attachment;
+using Insound::Email::SendEmailOpts;
+
+IN_JSON_META(Attachment, filename, content, path, href, httpHeaders,
+            contentType, contentDisposition, cid, encoding, headers, raw);
+IN_JSON_META(SendEmailOpts, from, to, cc, bcc, subject, text, html);
 
 namespace Insound::Email
 {
@@ -44,8 +52,7 @@ namespace Insound::Email
 
     bool SendEmail::send() const
     {
-        std::string payload;
-        glz::write_json(this->opts, payload);
+        auto payload = JSON::stringify(this->opts);
 
         auto request = MakeRequest(EMAIL_ENDPOINT_URL, "POST")
             .header("Authorization", EMAIL_ACCESS_KEY)
