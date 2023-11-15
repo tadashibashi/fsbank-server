@@ -1,7 +1,11 @@
 /**
  * @file BankBuilder.h
  *
- * Contains class for builder fsbanks from audio files.
+ * Contains `BankBuilder` class for building fsbanks from audio files.
+ *
+ * Please make sure to call static `BankBuilder::initLibrary()` before using
+ * this class. BankBuilder::closeLibrary() cleans up resources. Once `build` is
+ * called successfully `data()` contains the bank's populated data.
  */
 #pragma once
 

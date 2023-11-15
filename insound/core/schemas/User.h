@@ -1,3 +1,8 @@
+/**
+ * @file User.h
+ *
+ * User is a MongoDB model used by this server to store user credentials.
+ */
 #pragma once
 #include <insound/core/format.h>
 #include <string>

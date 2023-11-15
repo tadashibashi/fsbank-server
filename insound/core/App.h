@@ -1,3 +1,11 @@
+/**
+ * @file App.h
+ *
+ * App is the base class for an http server that other projects should inherit
+ * from.
+ *
+ * Please see server/Server.h for an example of how to implement this class.
+ */
 #pragma once
 #include <insound/core/env.h>
 #include <insound/core/mongo.h>
