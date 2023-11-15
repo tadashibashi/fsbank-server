@@ -1,5 +1,6 @@
 #pragma once
 #include <insound/core/schemas/User.h>
+#include <insound/core/json.h>
 #include <insound/core/thirdparty/glaze.hpp>
 
 using Insound::User;
@@ -49,4 +50,4 @@ struct glz::meta<UserToken> {
     );
 };
 
-GLZ_FORMAT(User::Type);
+IN_JSON_FORMAT(User::Type);

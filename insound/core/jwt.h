@@ -1,3 +1,10 @@
+/**
+ * @file jwt.h
+ *
+ * Contains functions pertaining to signing and verifying json web tokens.
+ * Makes use of JSON to serialize and deserialize values into and from the
+ * token to and from C++.
+ */
 #pragma once
 #include <insound/core/json.h>
 #include <insound/core/errors/JwtError.h>

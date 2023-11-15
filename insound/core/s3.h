@@ -1,3 +1,8 @@
+/**
+ * @file s3.h
+ *
+ * Contains functions dealing with S3 connection, uploads, downloads, etc.
+ */
 #pragma once
 #include <optional>
 #include <string>

@@ -1,3 +1,8 @@
+/**
+ * @file log.h
+ *
+ * Contains definitions for debug logging.
+ */
 #pragma once
 
 #define INSOUND_ALLOW_LOGGING

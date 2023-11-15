@@ -1,5 +1,7 @@
 /**
- * This file contains functions pertaining to Insound's automated emails,
+ * @file emails.h
+ *
+ * Contains functions pertaining to Insound's automated emails,
  * such as for verification and other communications.
  */
 #pragma once

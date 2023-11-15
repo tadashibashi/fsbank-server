@@ -1,3 +1,9 @@
+/**
+ * @file Server.h
+ *
+ * Contains class `Server`, which derives from Insound::App. This is the main
+ * server object.
+ */
 #pragma once
 #include <insound/core/App.h>
 

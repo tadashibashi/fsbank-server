@@ -1,3 +1,9 @@
+/**
+ * @file util.h
+ *
+ * A place for general helpers. Please refactor these functions to other files
+ * and namespaces when it seems necessary.
+ */
 #pragma once
 #include <string_view>
 #include <vector>

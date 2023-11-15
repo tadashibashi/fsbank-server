@@ -1,3 +1,8 @@
+/**
+ * @file auth.h
+ *
+ * Contains authorization-related routes @ "/api/auth"
+ */
 #pragma once
 #include <insound/core/App.h>
 #include <insound/core/Router.h>

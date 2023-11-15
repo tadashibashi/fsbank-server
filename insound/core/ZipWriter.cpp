@@ -2,16 +2,18 @@
 
 #include <zip.h>
 
+#include <cstdlib>
+
 namespace Insound {
     ZipBuffer::~ZipBuffer()
     {
-        free(m_buffer);
+        std::free(m_buffer);
     }
 
     ZipBuffer::ZipBuffer(const ZipBuffer &buf)
-        : m_buffer((char *)malloc(buf.m_size)), m_size(buf.m_size)
+        : m_buffer((char *)std::malloc(buf.m_size)), m_size(buf.m_size)
     {
-        memcpy(m_buffer, buf.m_buffer, buf.m_size);
+        std::memcpy(m_buffer, buf.m_buffer, buf.m_size);
     }
 
     ZipBuffer::ZipBuffer(ZipBuffer &&buf)
@@ -23,10 +25,10 @@ namespace Insound {
 
     ZipBuffer &ZipBuffer::operator=(const ZipBuffer &buf)
     {
-        free(m_buffer);
-        m_buffer = (char *)malloc(buf.m_size);
+        std::free(m_buffer);
+        m_buffer = (char *)std::malloc(buf.m_size);
         m_size = buf.m_size;
-        memcpy(m_buffer, buf.m_buffer, buf.m_size);
+        std::memcpy(m_buffer, buf.m_buffer, buf.m_size);
         return *this;
     }
 
@@ -43,7 +45,7 @@ namespace Insound {
 
     void ZipBuffer::close()
     {
-        free(m_buffer);
+        std::free(m_buffer);
         m_buffer = nullptr;
         m_size = 0;
     }

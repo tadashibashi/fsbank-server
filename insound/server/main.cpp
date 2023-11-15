@@ -1,3 +1,8 @@
+/**
+ * @file main.cpp
+ * 
+ * Main function driver
+ */
 #include "Server.h"
 
 int main(int argc, char *argv[])

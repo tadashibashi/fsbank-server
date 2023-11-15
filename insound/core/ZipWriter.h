@@ -1,3 +1,9 @@
+/**
+ * @file ZipWriter.h
+ *
+ * Contains class `ZipWriter` for creating zip files in-memory, that can then
+ * be uploaded to S3 or written elsewhere, etc.
+ */
 #pragma once
 #include <cstdint>
 #include <string>
@@ -9,6 +15,9 @@ struct zip_t;
 
 namespace Insound {
 
+    /**
+     * Exception-safe container for a zip file buffer
+     */
     class ZipBuffer
     {
     public:

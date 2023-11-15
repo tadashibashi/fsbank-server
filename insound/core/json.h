@@ -1,3 +1,10 @@
+/**
+ * @file json.h
+ *
+ * Contains JSON-related functions, definitions, etc. The main
+ * functionalities are serialization and deseraialization from JSON strings to
+ * C++ objects and back.
+ */
 #pragma once
 
 #include <insound/core/errors/GlazeError.h>
@@ -25,7 +32,7 @@
 #include <vector>
 
 #define IN_JSON_META(name, ...) GLZ_META(name, __VA_ARGS__); \
-    GLZ_FORMAT(name)
+    IN_JSON_FORMAT(name)
 #define IN_JSON_LOCAL_META(name, ...) GLZ_LOCAL_META(name, __VA_ARGS__)
 
 namespace Insound::JSON {

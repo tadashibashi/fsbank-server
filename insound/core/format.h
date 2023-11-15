@@ -11,7 +11,7 @@
  * to a JSON string when passed into fmt library, f-strings, logs, etc.
  * @param  T - the type to format
  */
-#define GLZ_FORMAT(T) template<> \
+#define IN_JSON_FORMAT(T) template<> \
     struct fmt::formatter<T> { \
         template<typename ParseContext> \
         constexpr auto parse(ParseContext& ctx) { \

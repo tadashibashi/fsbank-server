@@ -1,3 +1,12 @@
+/**
+ * @file FormErrors.h
+ *
+ * FormErrors is a struct that indicates which fields have errors and what
+ * about those fields is invalid. This is json-stringified and sent to inform
+ * the client.
+ *
+ * Please include FormErrors.json.h to include json stringification bindings.
+ */
 #pragma once
 
 #include <unordered_map>

@@ -1,3 +1,8 @@
+/**
+ * @file test.h
+ *
+ * Contains test-related routes at "/api/test"
+ */
 #pragma once
 
 #include "insound/core/Router.h"

@@ -1,5 +1,10 @@
+/**
+ * @file Response.h
+ *
+ * Child class of crow::response. Adds some useful helpers to expedite the use
+ * of JSON, and other library-specific types.
+ */
 #pragma once
-
 
 #include <insound/core/ContentType.h>
 #include <insound/core/HttpStatus.h>

@@ -1,3 +1,9 @@
+/**
+ * @file Security.h
+ *
+ * Contains crow middleware class `Security` for setting security headers.
+ * (Alters defaults of Helmet middleware)
+ */
 #pragma once
 #include <insound/core/thirdparty/crow.hpp>
 
