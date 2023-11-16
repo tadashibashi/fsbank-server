@@ -52,7 +52,7 @@ namespace Insound {
                 *(s_instance = std::make_shared<App<Middlewares...>>());
         }
 
-        ~App() { for (auto router : m_routers) delete router; }
+        virtual ~App() { for (auto router : m_routers) delete router; }
 
         /**
          * Mount a router to the App.

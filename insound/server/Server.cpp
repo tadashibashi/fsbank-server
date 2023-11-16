@@ -31,6 +31,12 @@ namespace Insound {
               .logLevel = Insound::LogLevel::Info,
           }) {}
 
+    Server::~Server()
+    {
+        BankBuilder::closeLibrary();
+        S3::close();
+    }
+
     static void catchall(const crow::request &req, crow::response &res)
     {
         static std::string HOST_ADDRESS{requireEnv("HOST_ADDRESS")};

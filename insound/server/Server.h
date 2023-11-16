@@ -17,6 +17,7 @@ namespace Insound {
     {
     public:
       Server();
+      virtual ~Server();
 
     private:
       bool init() override;
