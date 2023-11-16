@@ -94,16 +94,21 @@ namespace Insound {
             if (files.size() != fileSizes.size())
                 return "files and fileSizes mismatch length";
 
-            // Prepare subsound to build
-            auto subsound = FSBANK_SUBSOUND();
-            subsound.desiredSampleRate = samplerate;
-            subsound.numFiles = files.size();
-            subsound.fileData = files.data();
-            subsound.fileDataLengths = fileSizes.data();
+            std::vector<FSBANK_SUBSOUND> subsounds;
+            for (size_t i = 0, size = files.size(); i < size; ++i)
+            {
+                auto &subsound = subsounds.emplace_back();
+                std::memset(&subsound, 0, sizeof(FSBANK_SUBSOUND));
+
+                subsound.desiredSampleRate = samplerate;
+                subsound.numFiles = 1;
+                subsound.fileData = &files[i];
+                subsound.fileDataLengths = &fileSizes[i];
+            }
 
             // Run build
-            FSB_CHECK( FSBank_Build(&subsound, 1, BankFormat,
-                FSBANK_BUILD_NOGUID, 75, nullptr, nullptr) );
+            FSB_CHECK( FSBank_Build(subsounds.data(), subsounds.size(), BankFormat,
+                FSBANK_BUILD_DEFAULT, 75, nullptr, nullptr) );
 
             const void *data;
             unsigned int size;
