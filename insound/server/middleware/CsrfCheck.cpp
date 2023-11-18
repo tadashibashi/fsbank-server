@@ -1,14 +1,19 @@
 #include "CsrfCheck.h"
+#include <insound/core/settings.h>
 #include <insound/core/util.h>
 
 #include <insound/server/Server.h>
 #include <insound/core/thirdparty/crow.hpp>
 
-namespace Insound {
+namespace Insound
+{
     void CsrfCheck::before_handle(crow::request &req, crow::response &res, context &ctx)
     {
         static std::string CSRF_SECRET_KEY{requireEnv("CSRF_SECRET_KEY")};
         static bool CSRF_ALLOW_BYPASS{requireEnv("CSRF_ALLOW_BYPASS") == "true"};
+
+        if (!Settings::isProd()) // deactivate csrf protection in debug mode
+            return;
 
         // Only check for non-get requests. Get requests should not perform any
         // mutable task such as posting data, altering databases, etc.
