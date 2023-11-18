@@ -20,11 +20,20 @@
 #include <type_traits>
 #include <vector>
 
-namespace Insound {
+namespace Insound
+{
     using LogLevel = crow::LogLevel;
 
-    struct AppOpts {
+    /**
+     * Options to set when initializing an `App`.
+     */
+    struct AppOpts
+    {
+        // Default port number if var "PORT" is not provided to the environment
         int defaultPort = 3000;
+
+        // Log level of the application. E.g. `LogLevel::Warning` will only log
+        // warnings and anything more severe.
         LogLevel logLevel = LogLevel::Warning;
     };
 
@@ -40,9 +49,8 @@ namespace Insound {
             Middlewares...>;
 
         App(const AppOpts &opts = {}): m_app(), m_routers(), m_wasInit(),
-            m_opts(opts) {
-
-        }
+            m_opts(opts)
+        { }
 
         /**
          * Retrieve App singleton
@@ -53,7 +61,7 @@ namespace Insound {
                 *(s_instance = std::make_shared<App<Middlewares...>>());
         }
 
-        virtual ~App() { }
+        virtual ~App() = default;
 
         /**
          * Mount a router to the App.
@@ -74,11 +82,13 @@ namespace Insound {
         }
 
         /**
-         * Get middleware context object from the singleton App.
+         * Get middleware context object from the singleton App
+         *
          * @param req - current route's request object
          */
         template <typename MiddlewareType>
-        static typename MiddlewareType::context &getContext(const crow::request &req)
+        static typename MiddlewareType::context &getContext(
+            const crow::request &req)
         {
             return instance().m_app.template get_context<MiddlewareType>(req);
         }
@@ -171,6 +181,14 @@ namespace Insound {
         [[nodiscard]]
         bool wasInit() const { return m_wasInit; }
     private:
+        /**
+         * Contains initialization logic for the app. Sub-classes should
+         * implement this virtual function for its own initialization
+         *
+         * @see insound/server/Server.h for an example of implementation
+         *
+         * @return whether initialization was successful.
+         */
         virtual bool init() { return true; };
 
         bool m_wasInit;
