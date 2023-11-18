@@ -1,5 +1,5 @@
 #include "emails.h"
-#include "insound/core/env.h"
+#include "insound/core/settings.h"
 #include <insound/core/jwt.h>
 #include <insound/core/chrono.h>
 
@@ -12,18 +12,16 @@ GLZ_META(Insound::Emails::EmailVerificationToken, _id, email);
 
 namespace Insound::Emails {
 
-    EmailStrings createVerificationStrings(std::string_view email, std::string_view id)
+    EmailStrings createVerificationStrings(std::string_view email,
+        std::string_view id)
     {
-        static std::string HOST_ADDRESS{requireEnv("HOST_ADDRESS")};
-
         auto token = EmailVerificationToken{
             ._id{id},
             .email{email}
         };
 
         auto jwt = Insound::Jwt::sign(token, 15_min);
-
-        std::string link = HOST_ADDRESS + "/auth/verify?token=" + jwt;
+        auto link = f("{}/auth/verify?token={}", Settings::hostAddress(), jwt);
 
         auto html = f(
 R"html(<p>Hello,</p>

@@ -13,14 +13,6 @@
 
 namespace Insound::Email {
     /**
-     * Initialize the Email API. Must be successfully called (return true)
-     * before using any email api functionality
-     *
-     * @return whether config/initialization of the email api succeeded.
-     */
-    bool config();
-
-    /**
      * Optional string alias
      */
     using OptString = std::optional<std::string>;

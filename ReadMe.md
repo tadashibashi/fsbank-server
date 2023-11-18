@@ -85,8 +85,6 @@ the urls and credentials for these services.
 | Name                  | Description                                         |
 | --------------------- | --------------------------------------------------- |
 | JWT_SECRET            | String for signing JSON web tokens                  |
-| PASSWORD_SECRET       | String for hashing passwords                        |
-| PASSWORD_SALT         | String for salting password hashes                  |
 | MONGO_URL             | MongoDB url, including password & port number       |
 | MONGO_DBNAME          | Name of server's mongo database                     |
 | AWS_ENDPOINT_URL      | AWS Endpoint URL, including port if applicable      |
@@ -98,6 +96,7 @@ the urls and credentials for these services.
 | EMAIL_AUTOMATED_SENDER| Email address of the site's automated email sender  |
 | CSRF_SECRET_KEY       | Key to bypass csrf protection for dev purposes      |
 | CSRF_ALLOW_BYPASS     | "true" or "false": whether to allow secret key      |
+| PRODUCTION            | "true" if running in production mode                |
 
 For local builds, you may create a .env file in the root of this
 repo, which will automatically load and populate the environment.

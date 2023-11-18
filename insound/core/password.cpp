@@ -1,17 +1,14 @@
 #include "password.h"
-#include <insound/core/env.h>
-#include <insound/core/log.h>
 #include <bcrypt.h>
-#include <memory>
 
 namespace Insound {
 
-    std::string hash(const std::string &text)
+    std::string hash(std::string_view text)
     {
         return bcrypt::generateHash(text);
     }
 
-    bool compare(const std::string &text, const std::string &encrypted)
+    bool compare(std::string_view text, std::string_view encrypted)
     {
         return bcrypt::validatePassword(text, encrypted);
     }

@@ -5,6 +5,7 @@
  */
 #pragma once
 #include <string>
+#include <string_view>
 
 namespace Insound {
 
@@ -13,7 +14,7 @@ namespace Insound {
      * @param text - the string to encrypt
      */
     [[nodiscard]]
-    std::string hash(const std::string &text);
+    std::string hash(std::string_view text);
 
 
     /**
@@ -23,5 +24,5 @@ namespace Insound {
      * @returns true when text matches encrypted string, and false otherwise.
      */
     [[nodiscard]]
-    bool compare(const std::string &text, const std::string &encrypted);
+    bool compare(std::string_view text, std::string_view encrypted);
 }

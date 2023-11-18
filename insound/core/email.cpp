@@ -2,9 +2,9 @@
 
 #include <crow/utility.h>
 
-#include <insound/core/env.h>
 #include <insound/core/json.h>
 #include <insound/core/request.h>
+#include <insound/core/settings.h>
 
 #include <utility>
 
@@ -17,45 +17,17 @@ IN_JSON_META(SendEmailOpts, from, to, cc, bcc, subject, text, html);
 
 namespace Insound::Email
 {
-    static std::string EMAIL_ENDPOINT_URL;
-    static std::string EMAIL_AUTOMATED_SENDER;
-    static std::string EMAIL_ACCESS_KEY;
-
-    bool config()
-    {
-        try {
-            // Set up constants for the email api will use
-            EMAIL_ENDPOINT_URL = requireEnv("EMAIL_ENDPOINT_URL");
-            EMAIL_AUTOMATED_SENDER = requireEnv("EMAIL_AUTOMATED_SENDER");
-            EMAIL_ACCESS_KEY = requireEnv("EMAIL_ACCESS_KEY");
-            EMAIL_ACCESS_KEY = "Basic " + crow::utility::base64encode(
-                EMAIL_ACCESS_KEY + ":", EMAIL_ACCESS_KEY.size() + 1);
-            return true;
-        }
-        catch (const std::exception &e)
-        {
-            IN_ERR("Exception while configuring email: {}", e.what());
-            return false;
-        }
-        catch(...)
-        {
-            IN_ERR("Unknown error while configuring email.");
-            return false;
-        }
-    }
-
     SendEmail::SendEmail() : opts()
     {
-        opts.from = EMAIL_AUTOMATED_SENDER;
+        opts.from = Settings::emailAutomatedSender();
     }
-
 
     bool SendEmail::send() const
     {
         auto payload = JSON::stringify(this->opts);
 
-        auto request = MakeRequest(EMAIL_ENDPOINT_URL, "POST")
-            .header("Authorization", EMAIL_ACCESS_KEY)
+        auto request = MakeRequest(Settings::emailEndpointURL(), "POST")
+            .header("Authorization", Settings::emailAccessKey())
             .header("Content-Type", "application/json")
             .body(payload);
 

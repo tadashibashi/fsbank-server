@@ -10,7 +10,8 @@
 
 #include <fstream>
 
-namespace Insound {
+namespace Insound
+{
     std::string_view getEnv(std::string_view varName)
     {
         const auto var = std::getenv(varName.data());

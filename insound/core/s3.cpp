@@ -1,7 +1,7 @@
 #include "s3.h"
 #include "insound/core/ZipWriter.h"
-#include <insound/core/env.h>
 #include <insound/core/errors/AwsS3Error.h>
+#include <insound/core/settings.h>
 #include <insound/core/util.h>
 
 #include <aws/core/Aws.h>
@@ -15,16 +15,14 @@
 #include <aws/s3/model/ListObjectsV2Request.h>
 #include <aws/s3/model/PutObjectRequest.h>
 
-
 #include <sstream>
 
-namespace Insound::S3 {
+namespace Insound::S3
+{
     // Global SDK options. May move config/close with its options elsewhere if
     // we end up using more than one AWS SDK.
     static const auto options = Aws::SDKOptions{};
 
-    static std::string S3_BUCKET;
-    static std::string AWS_ENDPOINT_URL;
     static std::optional<Aws::S3::S3Client> sClient{};
 
     /**
@@ -35,7 +33,7 @@ namespace Insound::S3 {
         if (!sClient)
         {
             Aws::Client::ClientConfiguration config {};
-            config.endpointOverride = AWS_ENDPOINT_URL;
+            config.endpointOverride = Settings::awsEndpointURL();
 
             try {
                 sClient = Aws::S3::S3Client{config};
@@ -68,7 +66,7 @@ namespace Insound::S3 {
         bool bucketExists = false;
         for (auto &bucket : buckets.GetResult().GetBuckets())
         {
-            if (bucket.GetName() == S3_BUCKET)
+            if (bucket.GetName() == Settings::s3Bucket())
             {
                 bucketExists = true;
                 break;
@@ -78,7 +76,7 @@ namespace Insound::S3 {
         if (!bucketExists)
         {
             Aws::S3::Model::CreateBucketRequest request;
-            request.SetBucket(S3_BUCKET.c_str());
+            request.SetBucket(Settings::s3Bucket().data());
             auto createResult = client.CreateBucket(request);
             if (!createResult.IsSuccess())
             {
@@ -97,10 +95,7 @@ namespace Insound::S3 {
     {
         try {
             Aws::InitAPI(options);
-            S3_BUCKET = requireEnv("S3_BUCKET");
-            AWS_ENDPOINT_URL = requireEnv("AWS_ENDPOINT_URL");
-
-            createBucket(S3_BUCKET);
+            createBucket(Settings::s3Bucket());
 
             return true;
         } catch(const std::exception &e) {
@@ -121,7 +116,7 @@ namespace Insound::S3 {
     {
         auto &client = getClient();
         auto request = Aws::S3::Model::ListObjectsV2Request();
-        request.SetBucket(S3_BUCKET);
+        request.SetBucket(Settings::s3Bucket().data());
         request.SetPrefix(prefix.data());
 
         auto result = client.ListObjectsV2(request);
@@ -149,7 +144,7 @@ namespace Insound::S3 {
 
         // Make the request
         auto request = Aws::S3::Model::PutObjectRequest{};
-        request.SetBucket(S3_BUCKET);
+        request.SetBucket(Settings::s3Bucket().data());
         request.SetKey(key.data());
 
         std::shared_ptr<Aws::IOStream> inputData =
@@ -178,7 +173,7 @@ namespace Insound::S3 {
 
         // Make the request
         auto request = Aws::S3::Model::GetObjectRequest{};
-        request.SetBucket(S3_BUCKET);
+        request.SetBucket(Settings::s3Bucket().data());
         request.SetKey(key.data());
 
         auto res = client.GetObject(request);
@@ -202,7 +197,7 @@ namespace Insound::S3 {
         auto &client = getClient();
 
         auto request = Aws::S3::Model::DeleteObjectRequest();
-        request.SetBucket(S3_BUCKET);
+        request.SetBucket(Settings::s3Bucket().data());
         request.SetKey(key.data());
 
         auto result = client.DeleteObject(request);
@@ -231,7 +226,7 @@ namespace Insound::S3 {
         }
 
         request.SetDelete(del);
-        request.SetBucket(S3_BUCKET);
+        request.SetBucket(Settings::s3Bucket().data());
 
         auto result = client.DeleteObjects(request);
 
@@ -266,7 +261,7 @@ namespace Insound::S3 {
         {
             auto result = Aws::S3::Model::ListObjectsV2Outcome{};
             auto request = Aws::S3::Model::ListObjectsV2Request{};
-            request.SetBucket(S3_BUCKET);
+            request.SetBucket(Settings::s3Bucket().data());
             std::vector<std::string> list;
             do {
                 result = client.ListObjectsV2(request);

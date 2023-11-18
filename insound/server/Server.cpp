@@ -100,14 +100,6 @@ namespace Insound {
             IN_ERR("MongoDB client failed to connect.");
 
 
-        // Set up email API configuration, check for error
-        result = Email::config();
-        if (result)
-            IN_LOG("Email API configured.");
-        else
-            IN_ERR("Email failed to configure.");
-
-
         // Mount routers
         mount<Auth>();
         mount<TestRouter>();
