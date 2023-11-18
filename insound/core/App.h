@@ -16,6 +16,7 @@
 #include <insound/core/thirdparty/crow.hpp>
 #include <crow/middlewares/cookie_parser.h>
 
+#include <memory>
 #include <type_traits>
 #include <vector>
 
@@ -52,7 +53,7 @@ namespace Insound {
                 *(s_instance = std::make_shared<App<Middlewares...>>());
         }
 
-        virtual ~App() { for (auto router : m_routers) delete router; }
+        virtual ~App() { }
 
         /**
          * Mount a router to the App.
@@ -69,7 +70,7 @@ namespace Insound {
             requires std::is_base_of_v<Router, T>
         void mount(TArgs &&...args)
         {
-            mount(new T(std::forward<TArgs>(args)...));
+            mount(std::make_unique<T>(std::forward<TArgs>(args)...));
         }
 
         /**
@@ -129,27 +130,29 @@ namespace Insound {
 
         /**
          * Mount a router onto the App
-         * @param  router [description]
-         * @return        [description]
+         *
+         * @param  router - the router - ownership is passed to the App so it
+         *                  must be moved
+         *
+         * @return app object for chaining.
          */
-        App &mount(Router *router)
+        App &mount(std::unique_ptr<Router> router)
         {
-            try
-            {
+            try {
                 m_app.register_blueprint(router->config());
             }
             catch (const std::runtime_error &e)
             {
-                IN_WARN("Called App::mount, but router was already mounted");
+                IN_WARN("Called `App::mount`, but router was already mounted");
                 return *this;
             }
             catch(...)
             {
-                IN_ERR("Uknown error occurred during App::mount router");
+                IN_ERR("Uknown error occurred during `App::mount` router");
                 throw;
             }
 
-            m_routers.emplace_back(router);
+            m_routers.emplace_back(std::move(router));
 
             return *this;
         }
@@ -165,7 +168,7 @@ namespace Insound {
         bool m_wasInit;
 
         Server m_app;
-        std::vector<Router *> m_routers;
+        std::vector<std::unique_ptr<Router>> m_routers;
         AppOpts m_opts;
     };
 }
