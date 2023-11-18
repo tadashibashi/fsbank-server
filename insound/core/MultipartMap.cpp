@@ -198,6 +198,17 @@ namespace Insound {
         throw std::runtime_error("MultipartMap::from: content-type not "
             "recognized: " + contenttype_it->second);
     }
+
+    size_t MultipartMap::fileSize() const
+    {
+        size_t size = 0;
+        for (auto &[fieldName, file] : files)
+        {
+            size += file.data.size();
+        }
+
+        return size;
+    }
 }
 
 

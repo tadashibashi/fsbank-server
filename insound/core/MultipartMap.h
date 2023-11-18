@@ -51,6 +51,12 @@ namespace Insound {
         static MultipartMap from(const crow::request &req);
 
         /**
+         * Get the byte size of all files
+         */
+        [[nodiscard]]
+        size_t fileSize() const;
+
+        /**
          * Shorthand for string map
          */
         using Map = std::map<std::string, std::string>;
