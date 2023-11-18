@@ -85,6 +85,9 @@ namespace Insound {
 
         /**
          * Start the server
+         *
+         * @return boolean whether app is now running - false on error, or if
+         *                 app was already running - true on success.
          */
         bool run()
         {
@@ -117,15 +120,13 @@ namespace Insound {
             {
                 IN_ERR("An exception occurred during App<...>::run(): {}",
                     e.what());
-                throw;
+                return false;
             }
             catch(...)
             {
                 IN_ERR("An exception occurred during App<...>::run()");
-                throw;
+                return false;
             }
-
-            return false;
         }
 
         /**
@@ -160,8 +161,15 @@ namespace Insound {
         /**
          * Get internal crow application
          */
+        [[nodiscard]]
         Server &internal() { return m_app; }
 
+        /**
+         * Get whether app was already initialized via a successful call to
+         * `App::run`
+         */
+        [[nodiscard]]
+        bool wasInit() const { return m_wasInit; }
     private:
         virtual bool init() { return true; };
 
