@@ -95,7 +95,10 @@ namespace Insound {
                 return "files and fileSizes mismatch length";
 
             std::vector<FSBANK_SUBSOUND> subsounds;
-            for (size_t i = 0, size = files.size(); i < size; ++i)
+
+            // Add files in reverse order, since indexes are reversed when
+            // indexing the bank object in FMOD.
+            for (int i = (int)files.size()-1; i >= 0; --i)
             {
                 auto &subsound = subsounds.emplace_back();
                 std::memset(&subsound, 0, sizeof(FSBANK_SUBSOUND));
