@@ -44,9 +44,9 @@ namespace Insound
     static std::string makePath(std::string_view path)
     {
         if (path.empty() || path.starts_with('/')) return path.data();
-        if (path.starts_with("./")) return f("{}{}", PROJECT_ROOT, path.substr(1));
+        if (path.starts_with("./")) return sf("{}{}", PROJECT_ROOT, path.substr(1));
 
-        return f("{}/{}", PROJECT_ROOT, path);
+        return sf("{}/{}", PROJECT_ROOT, path);
     }
 
     void configureEnv(std::string_view path)

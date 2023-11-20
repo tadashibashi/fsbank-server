@@ -11,7 +11,8 @@
 #include <string>
 #include <vector>
 
-namespace Insound::Email {
+namespace Insound::Email
+{
     /**
      * Optional string alias
      */
@@ -271,13 +272,15 @@ namespace Insound::Email {
          * Append an attachment to the email. Ownership is handed off to
          * the email object and becomes moved/invalidated once passed.
          *
-         * @param  attachment - attachment to add
+         * @param attachment - attachment to add
+         *
          * @return reference to the SendEmail object for chaining.
          */
         SendEmail &attachment(Attachment *attachment);
 
         /**
          * Send the email
+         *
          * @return whether send succeeded.
          */
         bool send() const;

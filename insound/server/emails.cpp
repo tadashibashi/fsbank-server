@@ -21,9 +21,9 @@ namespace Insound::Emails {
         };
 
         auto jwt = Insound::Jwt::sign(token, 15_min);
-        auto link = f("{}/auth/verify?token={}", Settings::hostAddress(), jwt);
+        auto link = sf("{}/auth/verify?token={}", Settings::hostAddress(), jwt);
 
-        auto html = f(
+        auto html = sf(
 R"html(<p>Hello,</p>
 <p>Thank you for registering your account with Insound Audio!</p>
 <p>To complete your registration, please visit this <a href="{0}">link</a>
@@ -33,7 +33,7 @@ within the next 15 minutes to verify your email address.</p>
 <p>The Insound Audio Team</p>
 )html", link);
 
-        auto text = f(
+        auto text = sf(
 R"(Hello,
 
 Thank you for registering your account with Insound Audio!

@@ -7,7 +7,7 @@ namespace Insound {
     public:
         MissingEnvError(std::string_view varName) :
             std::runtime_error(
-                f("Missing Environment Variable: \"{}\"", varName))
+                sf("Missing Environment Variable: \"{}\"", varName))
         { }
     };
 }

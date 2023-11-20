@@ -61,7 +61,7 @@ void Insound::Helmet::after_handle(crow::request &req, crow::response &res,
 
     // Add CSP
     res.add_header("Content-Security-Policy",
-        f(
+        sf(
             "base-uri {0};"
             "font-src {1};"
             "form-action {2};"
@@ -78,8 +78,8 @@ void Insound::Helmet::after_handle(crow::request &req, crow::response &res,
             csp.frameAncestors.value_or("'none'"),
             csp.imgSrc.value_or("'self'"),
             csp.objectSrc.value_or("'none'"),
-            csp.scriptSrc.value_or(f("'nonce-{}'", ctx.nonce)),
-            csp.styleSrc.value_or(f("'nonce-{}'", ctx.nonce)),
+            csp.scriptSrc.value_or(sf("'nonce-{}'", ctx.nonce)),
+            csp.styleSrc.value_or(sf("'nonce-{}'", ctx.nonce)),
             csp.upgradeInsecureRequests.value_or(USE_SSL) ?
                 "; upgrade-insecure-requests" : ""
         )

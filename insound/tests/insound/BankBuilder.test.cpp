@@ -139,7 +139,7 @@ std::string openFile(std::string_view path)
     std::ifstream file(path, std::ios::binary | std::ios::binary);
     if (!file.is_open())
     {
-        throw std::runtime_error(f("Failed to open file at path {}", path));
+        throw std::runtime_error(sf("Failed to open file at path {}", path));
     }
 
     file.seekg(0, std::ios::end);

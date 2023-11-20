@@ -1,14 +1,15 @@
 #pragma once
 #include <aws/s3/S3Errors.h>
 
-namespace Insound {
+namespace Insound
+{
 
     class AwsS3Error : public std::runtime_error
     {
     public:
         explicit AwsS3Error(const Aws::S3::S3Error &error) :
             std::runtime_error(""), error(error), message(
-                f("{}: {}", error.GetExceptionName(),
+                sf("{}: {}", error.GetExceptionName(),
                     error.GetMessage()))
         { }
 

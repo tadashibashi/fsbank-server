@@ -10,7 +10,7 @@ namespace Insound {
         auto &helmet = Server::getContext<Helmet>(req);
         helmet.headers.contentSecurityPolicy.scriptSrc =
             "'self' 'wasm-unsafe-eval' blob:";
-            //f("'nonce-{}' 'wasm-unsafe-eval' blob:", helmet.nonce);
+            //sf("'nonce-{}' 'wasm-unsafe-eval' blob:", helmet.nonce);
     }
 
 }

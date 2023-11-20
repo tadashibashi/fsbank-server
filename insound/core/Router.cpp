@@ -14,10 +14,10 @@ namespace Insound {
         if (opts.useCatchAll)
         {
             // This feature is currently broken in Crow
-            // CROW_BP_CATCHALL_ROUTE(bp)(
-            // [this](const crow::request &req, crow::response &res) {
-            //     this->catchAll(req, res);
-            // });
+            CROW_BP_CATCHALL_ROUTE(bp)(
+            [this](const crow::request &req, crow::response &res) {
+                this->catchAll(req, res);
+            });
         }
 
         return bp;
@@ -25,7 +25,7 @@ namespace Insound {
 
     void Router::catchAll(const crow::request &req, crow::response &res)
     {
-        IN_LOG("Hit bp catchall route");
+        IN_LOG( sf("Hit bp catchall route: {}", req.url) );
         res.end("404 Not found.");
     }
 }

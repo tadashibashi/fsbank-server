@@ -34,7 +34,7 @@ namespace Insound
         result = builder.build();
         if (result != BankBuilder::OK)
         {
-            return Response::json( f("Failed to build bank: {}", result), 500);
+            return Response::json( sf("Failed to build bank: {}", result), 500);
         }
 
         return {"application/octet-stream", builder.data()};

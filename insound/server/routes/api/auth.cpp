@@ -23,7 +23,8 @@ using namespace Insound::ChronoLiterals;
 
 using SameSitePolicy = crow::CookieParser::Cookie::SameSitePolicy;
 
-namespace Insound {
+namespace Insound
+{
     Auth::Auth() : Router("api/auth") {}
 
     void Auth::init()

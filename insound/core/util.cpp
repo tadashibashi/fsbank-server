@@ -34,7 +34,7 @@ namespace Insound {
         // open file
         std::ifstream file(path.data(), std::ios::binary | std::ios::in);
         if (!file.is_open()) {
-            throw std::runtime_error(f("Failed to open file at path {}", path));
+            throw std::runtime_error(sf("Failed to open file at path {}", path));
         }
 
         // find file size

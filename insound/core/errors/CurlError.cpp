@@ -4,7 +4,7 @@
 
 namespace Insound {
     CurlError::CurlError(int curlError) : std::runtime_error(
-        f("Curl Error: code: {}: {}", curlError,
+        sf("Curl Error: code: {}: {}", curlError,
             curl_easy_strerror( CURLcode(curlError) )
         )
     )

@@ -25,7 +25,7 @@ namespace Insound {
                 case '%':
                 {
                     if (i >= length - 2)
-                        throw std::invalid_argument(f("Malformed URL-encoded "
+                        throw std::invalid_argument(sf("Malformed URL-encoded "
                             "string: escaped char at position {} is missing "
                             "hex character(s)", i));
                     auto end = &in[i+2];
@@ -90,7 +90,7 @@ namespace Insound {
         }
         catch(const std::exception &e)
         {
-            throw std::invalid_argument(f("Error occurred while parsing "
+            throw std::invalid_argument(sf("Error occurred while parsing "
                 "multipart message: {}", e.what()));
         }
         catch(...)
@@ -107,7 +107,7 @@ namespace Insound {
             auto contentdisp_it = value.headers.find("Content-Disposition");
             if (contentdisp_it == value.headers.end())
             {
-                throw std::invalid_argument(f("Multipart map part \"{}\" is "
+                throw std::invalid_argument(sf("Multipart map part \"{}\" is "
                     "missing a Content-Disposition header.", name));
             }
 
@@ -210,5 +210,3 @@ namespace Insound {
         return size;
     }
 }
-
-

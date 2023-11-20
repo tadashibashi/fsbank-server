@@ -43,9 +43,9 @@ namespace Insound {
 
         auto params = getQueryString(req.raw_url);
 
-        res.redirect( f("{}/?redirect={}{}", HOST_ADDRESS,
+        res.redirect( sf("{}/?redirect={}{}", HOST_ADDRESS,
             crow::utility::base64encode_urlsafe(req.url, req.url.size()),
-            (params.empty() ? "" : f("&{}", params))
+            (params.empty() ? "" : sf("&{}", params))
         ));
 
         res.end();

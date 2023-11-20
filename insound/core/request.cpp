@@ -39,7 +39,7 @@ public:
 
     void append(std::string_view name, std::string_view value)
     {
-        auto header = f("{}: {}", name, value);
+        auto header = sf("{}: {}", name, value);
         auto temp = curl_slist_append(list, header.c_str());
         if (!temp)
             throw std::runtime_error("Error occurred while appending header "

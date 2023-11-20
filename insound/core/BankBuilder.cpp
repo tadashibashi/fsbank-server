@@ -13,7 +13,8 @@
 
 static const char *CacheDirectory = ".fscache";
 
-namespace Insound {
+namespace Insound
+{
     // Build Vorbis when available. (Not available on ARM64 Macs)
     #if defined(INSOUND_PLATFORM_MAC) && defined (INSOUND_CPU_ARM64)
         static const FSBANK_FORMAT BankFormat = FSBANK_FORMAT_FADPCM;

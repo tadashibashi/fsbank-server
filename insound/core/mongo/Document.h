@@ -26,7 +26,7 @@ namespace Insound::Mongo {
     private:
         static void assertCollectionExists(std::string_view name) {
             if (!db().has_collection(name))
-                throw std::runtime_error(f("Mongo::Document error: "
+                throw std::runtime_error(sf("Mongo::Document error: "
                     "Collection ({}) doesn't exist in the database",
                     name));
         }
@@ -58,7 +58,7 @@ namespace Insound::Mongo {
 
             if (err)
                 throw GlazeError(err, json);
-            
+
             auto doc = Document(obj);
             doc.id = Id::fromBsonDocument(bson);
             return doc;

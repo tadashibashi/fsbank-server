@@ -30,7 +30,7 @@ namespace Insound::Jwt {
             std::runtime_error(errorString(ec).data()), ec(ec) { }
 
         explicit Error(Code ec, std::string_view detail) :
-            std::runtime_error(f("{}: {}", errorString(ec).data(), detail)),
+            std::runtime_error(sf("{}: {}", errorString(ec).data(), detail)),
             ec(ec) { }
 
         Code code() const { return ec; }

@@ -18,6 +18,6 @@ namespace Insound {
     }
 
     CurlHeaderError::CurlHeaderError(int curlHError) : std::runtime_error(
-        f("Curl Header Error {}: {}", curlHError, GetHErrorString(curlHError))
+        sf("Curl Header Error {}: {}", curlHError, GetHErrorString(curlHError))
     ) { }
 }
