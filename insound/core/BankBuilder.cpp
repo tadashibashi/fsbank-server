@@ -7,6 +7,7 @@
 #include <insound/core/util.h>
 
 #include <cassert>
+#include <cstdio>
 #include <filesystem>
 #include <fstream>
 #include <thread>
@@ -114,6 +115,14 @@ namespace Insound
             FSB_CHECK( FSBank_Build(subsounds.data(), subsounds.size(), BankFormat,
                 FSBANK_BUILD_DEFAULT, 75, nullptr, nullptr) );
 
+            // Delete cache files
+            auto fileIt = std::filesystem::recursive_directory_iterator(CacheDirectory);
+            for (auto file : fileIt)
+            {
+                if (file.is_regular_file())
+                    std::remove(file.path().c_str());
+            }
+
             const void *data;
             unsigned int size;
             FSB_CHECK( FSBank_FetchFSBMemory(&data, &size) );
@@ -123,6 +132,9 @@ namespace Insound
 
             // Done, commit changes
             builtFile.swap(retrieved);
+
+
+
             build_lock.unlock();
             return OK;
         }
