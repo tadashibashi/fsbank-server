@@ -52,6 +52,8 @@ namespace Insound {
          */
         static Response login_email(const crow::request &req);
 
+        static Response logout(const crow::request &req);
+
         /**
          * Create a user account via email
          *

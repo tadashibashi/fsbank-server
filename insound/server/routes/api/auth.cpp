@@ -33,6 +33,10 @@ namespace Insound
             .methods("POST"_method)
             (Auth::login_email);
 
+        CROW_BP_ROUTE(bp, "/logout")
+            .methods("POST"_method)
+            (Auth::logout);
+
         CROW_BP_ROUTE(bp, "/check")
             .methods("GET"_method)
             (Auth::check);
@@ -71,6 +75,18 @@ namespace Insound
             result.auth = false;
             return Response::json(result, HttpStatus::Unauthorized);
         }
+    }
+
+    Response Auth::logout(const crow::request &req)
+    {
+        auto &cookies = Server::getContext<crow::CookieParser>(req);
+        cookies.set_cookie("fingerprint", "")
+            .httponly()
+            .same_site(SameSitePolicy::Strict)
+            .max_age(0) // expire cookie immediately
+            .path("/");
+
+        return Response::json(true);
     }
 
     Response Auth::login_email(const crow::request &req)
