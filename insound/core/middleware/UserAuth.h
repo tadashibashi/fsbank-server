@@ -1,5 +1,5 @@
 #pragma once
-#include <insound/core/schemas/User.h>
+#include <insound/core/schemas/User.json.h>
 
 #include <crow/middleware.h>
 #include <string>

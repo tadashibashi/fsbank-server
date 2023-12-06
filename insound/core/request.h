@@ -182,7 +182,7 @@ namespace Insound {
         auto stringified = payload ? JSON::stringify(*payload) : std::string();
         auto body = request(url, method, stringified);
 
-        return JSON::parse<JSON::Opts{
+        return JSON::parse<T, JSON::Opts{
             .error_on_unknown_keys=false,
             .error_on_missing_keys=true
         }> (body);

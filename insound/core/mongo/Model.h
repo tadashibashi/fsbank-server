@@ -25,16 +25,11 @@ namespace Insound::Mongo {
         explicit Model() :
             m_collection()
         {
-            auto name = glz::meta<Schema>::collection_name;
-            std::string lowercased;
-            for (auto c : name)
-                lowercased += std::tolower(c);
-            if (!Mongo::db().has_collection(lowercased))
-                m_collection = Mongo::db().create_collection(lowercased);
+            auto name = glz::meta<Schema>::name;
+            if (!Mongo::db().has_collection(name))
+                m_collection = Mongo::db().create_collection(name);
             else
-                m_collection = Mongo::db().collection(lowercased);
-
-
+                m_collection = Mongo::db().collection(name);
         }
 
 

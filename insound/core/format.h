@@ -12,7 +12,7 @@
  * @param  T - the type to format
  */
 #define IN_JSON_FORMAT(T) template<> \
-    struct fmt::formatter<T> { \
+    struct ::fmt::formatter<T> { \
         template<typename ParseContext> \
         constexpr auto parse(ParseContext& ctx) { \
             return ctx.begin(); \

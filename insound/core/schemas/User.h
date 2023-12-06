@@ -4,7 +4,6 @@
  * User is a MongoDB model used by this server to store user credentials.
  */
 #pragma once
-#include <insound/core/format.h>
 #include <string>
 
 namespace Insound {
@@ -15,9 +14,7 @@ namespace Insound {
     public:
         virtual ~User() = default;
 
-        enum class Type : unsigned int {
-            Guest, Unverified, User, Staff, Admin
-        };
+        enum class Type { Guest, Unverified, User, Staff, Admin };
 
         /**
          * Username that can be used as a link to one's profile

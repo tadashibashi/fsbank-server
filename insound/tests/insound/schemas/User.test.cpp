@@ -14,8 +14,8 @@ TEST_CASE ("User type levels are in expected order")
 
 TEST_CASE ("User type level enums are spelled correctly")
 {
-    REQUIRE(glz::write_json(User::Type::Guest) == "\"guest\"");
-    REQUIRE(glz::write_json(User::Type::User) == "\"user\"");
-    REQUIRE(glz::write_json(User::Type::Staff) == "\"staff\"");
-    REQUIRE(glz::write_json(User::Type::Admin) == "\"admin\"");
+    REQUIRE(glz::write_json(User::Type::Guest) == "\"Guest\"");
+    REQUIRE(glz::write_json(User::Type::User) == "\"User\"");
+    REQUIRE(glz::write_json(User::Type::Staff) == "\"Staff\"");
+    REQUIRE(glz::write_json(User::Type::Admin) == "\"Admin\"");
 }

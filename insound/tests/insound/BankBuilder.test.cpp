@@ -23,8 +23,8 @@ static std::string openFile(std::string_view path);
  * @param files - files list
  * @param file  - file to add
  */
-static void addToVector(std::vector<std::vector<uint8_t>> &files,
-    const std::vector<uint8_t> &file);
+static void addToVector(std::vector<std::string> &files,
+    const std::string &file);
 
 
 // ===== Tests ================================================================
@@ -84,7 +84,7 @@ TEST_CASE("Bank can build in multithreaded context")
 {
     const auto NumThreads = 100;
     std::vector<std::thread> threads;
-    std::vector<std::vector<uint8_t>> files;
+    std::vector<std::string> files;
 
     // Build 100 banks in 100 threads
     for (int i = 0; i < NumThreads; ++i)
@@ -152,8 +152,8 @@ std::string openFile(std::string_view path)
     return buffer;
 }
 
-void addToVector(std::vector<std::vector<uint8_t>> &files,
-    const std::vector<uint8_t> &file)
+void addToVector(std::vector<std::string> &files,
+    const std::string &file)
 {
     static std::mutex lock;
     lock.lock();

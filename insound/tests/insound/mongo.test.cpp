@@ -1,3 +1,4 @@
+#include "insound/core/json.h"
 #include <insound/tests/test.h>
 #include <insound/core/mongo/Model.h>
 #include <insound/core/mongo.h>
@@ -13,14 +14,7 @@ struct Person {
     int age;
 };
 
-template<>
-struct glz::meta<Person> {
-    using T = Person;
-    static constexpr std::string_view collection_name = "people";
-    static constexpr auto value = glz::object(
-        "name", &T::name,
-        "age", &T::age);
-};
+IN_JSON_META(Person, name, age);
 
 TEST_CASE ("Mongodb tests")
 {

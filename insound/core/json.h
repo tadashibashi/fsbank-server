@@ -11,11 +11,11 @@
 #include <insound/core/format.h>
 #include <insound/core/thirdparty/glaze.hpp>
 
-#include <glaze/util/type_traits.hpp>
 #include <glaze/api/std/array.hpp>
 #include <glaze/core/common.hpp>
+#include <glaze/util/type_traits.hpp>
 
-// json-serializable std lib built-in templates
+// json-serializable stl templates built in to glaze
 #include <array>
 #include <concepts>
 #include <deque>
@@ -35,7 +35,24 @@
     IN_JSON_FORMAT(name)
 #define IN_JSON_LOCAL_META(name, ...) GLZ_LOCAL_META(name, __VA_ARGS__)
 
-namespace Insound::JSON {
+#define __IN_IMPL_ENUM_X(a) #a, IN_T::a
+
+/**
+ * Templatize json metadata for a pre-existing enum to use string names
+ */
+#define IN_JSON_ENUM(E, ...) \
+    template <>                                                               \
+    struct ::glz::meta<E>                                                     \
+    {                                                                         \
+        using IN_T = E;                                                       \
+        [[maybe_unused]] static constexpr ::std::string_view name = #E;       \
+        static constexpr auto value = ::glz::enumerate(                       \
+            GLZ_FOR_EACH(__IN_IMPL_ENUM_X, __VA_ARGS__));                     \
+    };                                                                        \
+    IN_JSON_FORMAT(E)
+
+namespace Insound::JSON
+{
 
     // ===== type traits ======================================================
 

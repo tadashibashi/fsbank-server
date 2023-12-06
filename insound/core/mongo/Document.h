@@ -2,19 +2,17 @@
 #include "Id.h"
 
 #include <insound/core/errors/GlazeError.h>
+#include <insound/core/json.h>
 #include <insound/core/mongo.h>
-
 #include <insound/core/thirdparty/glaze.hpp>
 
 #include <bsoncxx/builder/list.hpp>
 #include <bsoncxx/json.hpp>
 
-#include <glaze/core/common.hpp>
-#include <glaze/core/context.hpp>
-#include <glaze/util/expected.hpp>
-
 #include <string>
 #include <string_view>
+
+#define IN_DOC(Class, ...) IN_JSON_META(Class, __VA_ARGS__)
 
 namespace Insound::Mongo {
     /**
@@ -33,12 +31,12 @@ namespace Insound::Mongo {
     public:
         Document() : id(), body()
         {
-            assertCollectionExists(glz::meta<T>::collection_name);
+            assertCollectionExists(glz::meta<T>::name);
         }
 
         explicit Document(const T &body) : id(), body(body)
         {
-            assertCollectionExists(glz::meta<T>::collection_name);
+            assertCollectionExists(glz::meta<T>::name);
         }
 
         /**
@@ -74,7 +72,7 @@ namespace Insound::Mongo {
          */
         bool save()
         {
-            auto collection = db().collection(glz::meta<T>::collection_name);
+            auto collection = db().collection(glz::meta<T>::name);
 
             auto json = glz::write_json(body);
             auto bson = bsoncxx::from_json(json);

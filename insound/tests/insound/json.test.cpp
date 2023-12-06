@@ -16,3 +16,20 @@ TEST_CASE("Check serializing for non-glaze-specialized types")
     REQUIRE(JSON::stringify(std::list<int>{1, 2, 3, 4 ,5}) == "[1,2,3,4,5]");
     REQUIRE(JSON::stringify(std::map<std::string, int>{{"hello", 1}, {"world", 2}}) == R"({"hello":1,"world":2})");
 }
+
+struct TestStruct {
+    std::string name;
+    int value;
+};
+
+TEST_CASE("Check auto-serializing in newer Glaze versions")
+{
+    TestStruct param {
+        .name="test-struct",
+        .value=10
+    };
+
+    std::string_view expected = R"({"name":"test-struct","value":10})";
+
+    REQUIRE(JSON::stringify(param) == expected);
+}
