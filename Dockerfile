@@ -42,7 +42,7 @@ RUN \
         cmake --install . --config=$BUILD_TYPE && \
         cd ../.. && rm -rf aws-sdk-cpp && \
     # Build, install & clean-up frontend
-        curl -fsSL https://bun.sh/install | bash && \
+        curl -fsSL https://bun.sh/install | ash -s "bun-v1.0.13" && \
         git clone --recursive https://github.com/tadashibashi/insound-frontend && \
         cd insound-frontend && \
         ~/.bun/bin/bun install && \
