@@ -35,5 +35,8 @@ namespace Insound
 
         // name of each original file, used for retrieving and saving files
         std::vector<std::string> channels;
+
+        // document ID of owner
+        std::string owner;
     };
 }
