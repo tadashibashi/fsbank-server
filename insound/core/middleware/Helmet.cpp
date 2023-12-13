@@ -79,7 +79,7 @@ void Insound::Helmet::after_handle(crow::request &req, crow::response &res,
             csp.imgSrc.value_or("'self'"),
             csp.objectSrc.value_or("'none'"),
             csp.scriptSrc.value_or(sf("'nonce-{}'", ctx.nonce)),
-            csp.styleSrc.value_or(sf("'unsafe-inline'", ctx.nonce)),
+            csp.styleSrc.value_or(sf("'self' 'unsafe-inline'")),
             csp.upgradeInsecureRequests.value_or(USE_SSL) ?
                 "upgrade-insecure-requests" : ""
         )
