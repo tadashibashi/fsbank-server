@@ -15,7 +15,6 @@ namespace Insound
 
     struct TrackChannel
     {
-        
     };
 
     class Track
@@ -38,5 +37,15 @@ namespace Insound
 
         // document ID of owner
         std::string owner;
+
+
+        // ===== Helper functions =============================================
+
+        /**
+         * Download track with each original audio file bundled into a zip
+         *
+         * @return buffer containing raw binary data.
+         */
+        std::string downloadZip() const;
     };
 }
