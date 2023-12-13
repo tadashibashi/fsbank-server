@@ -69,7 +69,7 @@ void Insound::Helmet::after_handle(crow::request &req, crow::response &res,
             "img-src {4};"
             "object-src {5};"
             "script-src {6};"
-            "style-src {7}"
+            "style-src {7};"
             "{8}"
             ,
             csp.baseURI.value_or("'self'"),
@@ -79,9 +79,9 @@ void Insound::Helmet::after_handle(crow::request &req, crow::response &res,
             csp.imgSrc.value_or("'self'"),
             csp.objectSrc.value_or("'none'"),
             csp.scriptSrc.value_or(sf("'nonce-{}'", ctx.nonce)),
-            csp.styleSrc.value_or(sf("'nonce-{}' 'unsafe-inline'", ctx.nonce)),
+            csp.styleSrc.value_or(sf("'unsafe-inline'", ctx.nonce)),
             csp.upgradeInsecureRequests.value_or(USE_SSL) ?
-                "; upgrade-insecure-requests" : ""
+                "upgrade-insecure-requests" : ""
         )
     );
 
