@@ -1,20 +1,30 @@
 #pragma once
 
+#include <insound/core/schemas/User.json.h>
+#include <insound/core/mongo/Document.h>
+
 #include <map>
 #include <string>
 #include <vector>
 
 namespace Insound
 {
-    class MixPreset
+    struct MixPreset
     {
-    public:
         std::string name;
-        std::vector<int> levels;
+        std::vector<double> levels;
+    };
+
+    struct TrackMarker
+    {
+        std::string text;
+        double offset; // in seconds
     };
 
     struct TrackChannel
     {
+        std::string name;     // user-provided layer name
+        std::string filename; // randomly generated name indicating s3 filename
     };
 
     class Track
@@ -32,11 +42,16 @@ namespace Insound
         // Sample position of loop end
         unsigned long long loopEnd;
 
-        // name of each original file, used for retrieving and saving files
-        std::vector<std::string> channels;
-
         // document ID of owner
         std::string owner;
+
+        Mongo::Document<User> getOwner() const;
+
+        std::vector<MixPreset> presets;
+
+        std::vector<TrackChannel> channels;
+
+        std::vector<TrackMarker> markers;
 
 
         // ===== Helper functions =============================================
