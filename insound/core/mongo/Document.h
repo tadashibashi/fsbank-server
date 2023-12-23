@@ -101,7 +101,7 @@ namespace Insound::Mongo {
                 opts.upsert(true);
 
                 // Find doc and update it
-                auto query = bsoncxx::builder::list({"_id", id});
+                auto query = bsoncxx::builder::list({"_id", id.oid().value()});
                 auto result = collection.find_one_and_update(
                    query.view().get_document().value, bson.view(), opts);
 
