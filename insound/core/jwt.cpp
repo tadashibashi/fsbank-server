@@ -6,6 +6,7 @@
 
 #include <jwt-cpp/jwt.h>
 
+#include <chrono>
 #include <cstdint>
 #include <sstream>
 #include <typeinfo>
@@ -33,6 +34,15 @@ namespace Insound::Jwt
         catch (const std::runtime_error &e)
         {
             throw Jwt::Error(Jwt::Error::Code::ConversionFailure);
+        }
+
+        // check for expiration explicitly here for fine-grained error message
+        auto exp = decoded.value().get_expires_at().time_since_epoch();
+        auto now = std::chrono::system_clock::now().time_since_epoch();
+
+        if ((now - exp).count() >= 0) // expired
+        {
+            throw Jwt::Error(Jwt::Error::Code::TokenExpired);
         }
 
         try {

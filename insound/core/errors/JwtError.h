@@ -5,8 +5,6 @@
 
 namespace Insound::Jwt {
 
-
-
     /**
      * JWT error class. Reports errors during conversion and verification.
      */
@@ -19,7 +17,9 @@ namespace Insound::Jwt {
             BadTokenFormat,
             // Runtime error due to faulty base64 or JSON conversion
             ConversionFailure,
-            // Token converted, but failed to pass verification, due to expiration,
+            // Token is expired and no longer valid
+            TokenExpired,
+            // Token converted, but failed to pass verification,
             // wrong algorithm, missing claims, claim type/value mismatch, etc.
             VerificationFailure,
         };

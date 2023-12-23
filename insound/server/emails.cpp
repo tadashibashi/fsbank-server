@@ -57,14 +57,27 @@ The Insound Audio Team
     }
 
 
-    std::optional<EmailVerificationToken> verifyEmail(std::string_view tokenStr)
+    VerificationResult verifyEmail(std::string_view tokenStr, EmailVerificationToken *outToken)
     {
         try {
-            return Jwt::verify<EmailVerificationToken>(tokenStr);
+            *outToken = Jwt::verify<EmailVerificationToken>(tokenStr);
+            return VerificationResult::OK;
         }
-        catch(...)
+        catch(const Jwt::Error &error)
         {
-            return {};
+            switch(error.code())
+            {
+            case Jwt::Error::Code::BadTokenFormat:
+            case Jwt::Error::Code::ConversionFailure:
+            case Jwt::Error::Code::VerificationFailure:
+                return VerificationResult::InvalidToken;
+
+            case Jwt::Error::Code::TokenExpired:
+                return VerificationResult::TokenExpired;
+
+            case Jwt::Error::Code::OK: // this is unusual, should never occur
+                throw error; // rethrow
+            }
         }
     }
 }

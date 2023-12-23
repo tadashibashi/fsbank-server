@@ -5,7 +5,6 @@
  * such as for verification and other communications.
  */
 #pragma once
-#include <optional>
 #include <string>
 #include <string_view>
 
@@ -34,6 +33,13 @@ namespace Insound::Emails {
         std::string email;
     };
 
+    enum VerificationResult
+    {
+        OK,
+        InvalidToken,
+        TokenExpired,
+    };
+
     /**
      * Create post-registration verification email message
      *
@@ -55,6 +61,6 @@ namespace Insound::Emails {
      * @return         whether the token is valid
      */
     [[nodiscard]]
-    std::optional<EmailVerificationToken> verifyEmail(std::string_view token);
+    VerificationResult verifyEmail(std::string_view token, EmailVerificationToken *outToken);
 
 }
