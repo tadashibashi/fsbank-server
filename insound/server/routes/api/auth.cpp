@@ -297,12 +297,24 @@ namespace Insound
                     HttpStatus::BadRequest);
             }
 
-            auto token = Emails::verifyEmail(token_it->second);
+            Emails::EmailVerificationToken token;
+            auto verifyResult = Emails::verifyEmail(token_it->second, &token);
+
+            if (verifyResult == Emails::VerificationResult::TokenExpired)
+            {
+                return Response::json("Token expired.",
+                    HttpStatus::BadRequest);
+            }
+            else if (verifyResult == Emails::VerificationResult::InvalidToken)
+            {
+                return Response::json("Invalid token.",
+                    HttpStatus::BadRequest);
+            }
 
             auto UserModel = Mongo::Model<User>();
-            auto user = UserModel.findOne({"_id", token.value()._id});
+            auto user = UserModel.findById(token._id);
 
-            if (!user || user->body.email != token.value().email)
+            if (!user || user->body.email != token.email)
             {
                 return Response::json("Bad token.",
                     HttpStatus::BadRequest);
