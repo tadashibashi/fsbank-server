@@ -76,14 +76,16 @@ namespace Insound::Mongo {
         [[nodiscard]]
         std::optional<Document<Schema>> findById(const Id id)
         {
-            auto queryDoc = bsoncxx::builder::document{"_id", id.oid()};
+            if (!id.oid()) return {}; // empty id provided
+
+            auto queryDoc = bsoncxx::builder::document{"_id", id.oid().value()};
             return findOne(queryDoc);
         }
 
         [[nodiscard]]
         std::optional<Document<Schema>> findById(std::string_view id)
         {
-            auto queryDoc = bsoncxx::builder::document{"_id", Id(id)};
+            auto queryDoc = bsoncxx::builder::document{"_id", bsoncxx::oid(id)};
             return findOne(queryDoc);
         }
 
