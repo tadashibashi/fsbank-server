@@ -43,7 +43,7 @@ namespace Insound::Mongo {
          * @return the document, or none if there was a problem saving it to
          *         the database.
          */
-        std::optional<Document<Schema>> insertOne(const Schema &obj) const
+        std::optional<Document<Schema>> insertOne(const Schema &obj)
         {
             auto doc = Document(obj);
             if (doc.save())
@@ -64,7 +64,7 @@ namespace Insound::Mongo {
          * @return Document object if found, or none if one does not exist.
          */
         [[nodiscard]]
-        std::optional<Document<Schema>> findOne(bson query) const
+        std::optional<Document<Schema>> findOne(bson query)
         {
             auto queryDoc = query.view().get_document().value;
             auto doc = m_collection.find_one(queryDoc);
@@ -74,14 +74,14 @@ namespace Insound::Mongo {
         }
 
         [[nodiscard]]
-        std::optional<Document<Schema>> findById(const Id id) const
+        std::optional<Document<Schema>> findById(const Id id)
         {
             auto queryDoc = bsoncxx::builder::document{"_id", id.oid()};
             return findOne(queryDoc);
         }
 
         [[nodiscard]]
-        std::optional<Document<Schema>> findById(std::string_view id) const
+        std::optional<Document<Schema>> findById(std::string_view id)
         {
             auto queryDoc = bsoncxx::builder::document{"_id", Id(id)};
             return findOne(queryDoc);
@@ -98,7 +98,7 @@ namespace Insound::Mongo {
          *         none match the query.
          */
         [[nodiscard]]
-        std::vector<Document<Schema>> find(bson query) const
+        std::vector<Document<Schema>> find(bson query)
         {
             auto docs = m_collection.find(query.view().get_document().value);
             std::vector<Document<Schema>> res;
@@ -118,7 +118,7 @@ namespace Insound::Mongo {
          *
          * @return       whether a document was deleted
          */
-        bool deleteOne(bson query) const
+        bool deleteOne(bson query)
         {
             auto result = m_collection.delete_one(query.view().get_document().value);
             return result && result.value().deleted_count() == 1;
@@ -132,7 +132,7 @@ namespace Insound::Mongo {
          *
          * @return       whether any document was deleted
          */
-        bool deleteMany(bson query) const
+        bool deleteMany(bson query)
         {
             auto result = m_collection.delete_many(query.view().get_document().value);
             return result && result.value().deleted_count() > 0;
