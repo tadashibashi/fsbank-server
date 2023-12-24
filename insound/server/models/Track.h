@@ -45,13 +45,16 @@ namespace Insound
         // document ID of owner
         std::string owner;
 
-        Mongo::Document<User> getOwner() const;
-
         std::vector<MixPreset> presets;
 
         std::vector<TrackChannel> channels;
 
         std::vector<TrackMarker> markers;
+
+        /**
+         * Lua Script text data
+         */
+        std::string script;
 
 
         // ===== Helper functions =============================================
@@ -62,5 +65,10 @@ namespace Insound
          * @return buffer containing raw binary data.
          */
         std::string downloadZip() const;
+
+        /**
+         * Get the User object that owns this track
+         */
+        Mongo::Document<User> getOwner() const;
     };
 }
