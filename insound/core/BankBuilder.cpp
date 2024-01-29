@@ -1,7 +1,7 @@
 #include "BankBuilder.h"
 #include "fsbank.h"
-#include "insound/core/definitions.h"
 
+#include <insound/core/definitions.h>
 #include <insound/core/platform.h>
 #include <insound/core/thirdparty/fsbank.hpp>
 #include <insound/core/util.h>
