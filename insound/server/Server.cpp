@@ -20,7 +20,7 @@ namespace Insound {
     // Return param string without '?' in front of it, if any
     static inline std::string_view getQueryString(std::string_view rawUrl)
     {
-        auto qpos = rawUrl.find_first_of('?');
+        auto qpos = rawUrl.find('?');
         return (qpos == std::string_view::npos) ? "" :
             rawUrl.substr(qpos + 1);
     }
